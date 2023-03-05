@@ -1,0 +1,94 @@
+<% layout('layouts/boilerplate')%>
+
+<div class="row">
+  <div class="col-md-8 offset-md-2">
+    <div class="card shadow">
+      <div class="card-body">
+        <h1 class="text-center">Edit Story</h1>
+        <form
+          action="/fiction/<%=story._id%>?_method=PUT"
+          method="POST"
+          novalidate
+          class="validated-form"
+          enctype="multipart/form-data"
+        >
+          <div class="mb-3">
+            <label class="form-label" for="title">Title</label>
+            <input
+              class="form-control"
+              type="text"
+              id="title"
+              name="campground[title]"
+              value="<%=story.title%>"
+              required
+            />
+            <div class="valid-feedback">Looks good!</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="author">Author</label>
+            <input
+              class="form-control"
+              type="text"
+              id="author"
+              name="campground[author]"
+              value="<%=story.author%>"
+              required
+            />
+            <div class="valid-feedback">Looks good!</div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="image">Add Images</label>
+            <input type="file" name="image" id="image" multiple />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="link">Story Link</label>
+
+            <div class="input-group mb-3">
+              <span class="input-group-text" id="basic-addon1"></span>
+              <input type="text" class="form-control" id="link" placeholder="""
+              aria-label="link" aria-describedby="link-label"
+              name="campground[link]" value="<%=story.link%>" required />
+              <div class="valid-feedback">Looks good!</div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="Description">Description</label>
+            <textarea
+              class="form-control"
+              type="text"
+              id="description"
+              name="campground[description]"
+              required
+            >
+        <%=story.description%>
+  
+          </textarea
+            >
+            <div class="valid-feedback">Looks good!</div>
+          </div>
+          <div class="mb-3">
+            <% story.images.forEach(function(img,i) {%>
+            <img src="<%=img.thumbnail %>" alt="" class="img-thumbnail" />
+            <div class="form-check-inline">
+              <input
+                type="checkbox"
+                id="image-<%=i%>"
+                name="deleteImages[]"
+                value="<%=img.filename%>"
+              />
+            </div>
+            <label for="image-<%=i%>">Delete?</label>
+            <br />
+            <%})%>
+          </div>
+          <div class="mb-3">
+            <button class="btn btn-success">Update Campground</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

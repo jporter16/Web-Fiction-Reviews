@@ -1,0 +1,36 @@
+<% layout('layouts/boilerplate')%>
+
+<h1 class="text-center">All Fiction</h1>
+<div></div>
+<ul>
+  <% for (let story of stories) {%>
+  <div class="card mb-3">
+    <div class="row">
+      <div class="col-md-4">
+        <% if (story.images.length) {%>
+        <img class="img-fluid" src="<%=story.images[0].url%>" alt="" />
+
+        <%} else {%>
+        <img class="img-fluid" src="" alt="" />
+
+        <%}%>
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <h5 class="card-title"><%=story.title%></h5>
+          <p class="card-text"><%=story.description%></p>
+          <p class="card-text">
+            <small class="text-muted"> <%=story.tags%> </small>
+          </p>
+          <a class="btn btn-primary" href="fiction/<%=story.id%>"
+            >View <%=story.title%>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <%}%>
+</ul>
+<script>
+  const stories = {features: <%-JSON.stringify(stories)%>}
+</script>

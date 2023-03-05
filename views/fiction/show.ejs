@@ -1,0 +1,230 @@
+<% layout('layouts/boilerplate')%>
+<link rel="stylesheet" href="/stylesheets/stars.css" />
+
+<div class="row">
+  <div class="col-6">
+    <div
+      id="carouselExampleControls"
+      class="carousel slide"
+      data-ride="carousel"
+    >
+      <div class="carousel-inner">
+        <% story.images.forEach((img, i) => {%>
+
+        <div class="carousel-item <%= i===0? 'active': ''%>">
+          <img class="d-block w-100" src="<%=img.url%>" alt="" />
+        </div>
+
+        <%})%>
+      </div>
+
+      <% if (story.images.length>1) {%>
+      <button
+        class="carousel-control-prev"
+        type="button"
+        data-bs-target="#carouselExampleControls"
+        data-bs-slide="prev"
+      >
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button
+        class="carousel-control-next"
+        type="button"
+        data-bs-target="#carouselExampleControls"
+        data-bs-slide="next"
+      >
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+      <%}%>
+    </div>
+ 
+     <!-- Existing Reviews -->
+
+    <%for (let review of story.reviews) { %>
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="card-title"><%=review.poster.username%></h5>
+        <p class="starability-result" data-rating="<%=review.rating%>">
+          Rated: <%=review.rating%> stars
+        </p>
+
+        <h6 class="card-subtitle text-muted mb-2">
+          By <%=review.poster.username%>
+        </h6>
+        <p>Review: <%=review.body%></p>
+        <% if(currentUser && review.poster.equals(currentUser._id)) { %>
+
+        <form
+          method="POST"
+          action="/fiction/<%=story._id%>/reviews/<%=review._id%>?_method=DELETE"
+        >
+          <button class="btn btn-sm btn-danger">Delete</button>
+        </form>
+        <%}%>
+      </div>
+    </div>
+
+    <%}%>
+
+  </div>
+      <!-- The second column
+     -->
+  <div class="col-6">
+
+    <div class="card mb-3">
+      <div class="card-body">
+        <h1 class="card-title text-center"><%=story.title%></h1>
+        <p class="card-text"><%=story.description%></p>
+      </div>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+          Author: <%=story.author%>
+        </li>
+        <li class="list-group-item">
+          Tags: <%=story.tags%>
+        </li>
+        <li class="list-group-item">
+          Average Rating: <%
+          let avg=0;
+          let count = 0;
+          for (let review of story.reviews) { 
+            console.log(review.rating, "review rating")
+            avg += review.rating;
+
+
+            console.log(avg, "average");
+            console.log(count, "count")
+            count +=1;
+        
+          }
+          avg = avg / count;
+          %>
+
+            <%=avg%>  
+        
+        </li>
+        
+
+
+        <li class="list-group-item">
+          <a href= <%=story.link%> class = 'btn btn-success'>Read now</a>
+        </li>
+      </ul>
+      <% if(currentUser && story.poster.equals(currentUser._id)) { %>
+      <div class="card-body">
+        <a
+          class="btn btn-info card-link"
+          href="/fiction/<%=story._id%>/edit"
+          >Edit</a
+        >
+        <form
+          action="/fiction/<%=story._id%>?_method=DELETE"
+          method="POST"
+          class="d-inline"
+        >
+          <button class="btn btn-danger">Delete</button>
+        </form>
+      </div>
+      <%}%>
+
+      <div class="card-footer text-muted">
+        <footer>2 days ago</footer>
+      </div>
+    </div>
+
+    <!-- The Reviews start here: -->
+    <% if (currentUser) { %>
+    <h2 class = text-center>Leave a Review</h2>
+    <form
+      action="/fiction/<%=story._id%>/reviews"
+      method="POST"
+      class="mb-3 validated-form"
+      novalidate
+    >
+      <!-- <div class="mb-3">
+        <label class="form-label" for="rating">Rating</label>
+        <input
+          name="review[rating]"
+          class="form-range"
+          type="range"
+          min="1"
+          max="5"
+          id="rating"
+        />
+      </div> -->
+      <div class="mb-3">
+        <fieldset class="starability-basic">
+          <legend></legend>
+          <input
+            type="radio"
+            id="no-rate"
+            class="input-no-rate"
+            name="review[rating]"
+            value="1"
+            checked
+            aria-label="No rating."
+          />
+          <input
+            type="radio"
+            id="first-rate1"
+            name="review[rating]"
+            value="1"
+          />
+          <label for="first-rate1" title="Terrible">1 star</label>
+          <input
+            type="radio"
+            id="first-rate2"
+            name="review[rating]"
+            value="2"
+          />
+          <label for="first-rate2" title="Not good">2 stars</label>
+          <input
+            type="radio"
+            id="first-rate3"
+            name="review[rating]"
+            value="3"
+          />
+          <label for="first-rate3" title="Average">3 stars</label>
+          <input
+            type="radio"
+            id="first-rate4"
+            name="review[rating]"
+            value="4"
+          />
+          <label for="first-rate4" title="Very good">4 stars</label>
+          <input
+            type="radio"
+            id="first-rate5"
+            name="review[rating]"
+            value="5"
+          />
+          <label for="first-rate5" title="Amazing">5 stars</label>
+        </fieldset>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" for="body">Review Text</label>
+        <textarea
+          class="form-control"
+          name="review[body]"
+          id="body"
+          cols="30"
+          rows="3"
+          required
+        ></textarea>
+      </div>
+      <button class="btn btn-success">Submit</button>
+    </form>
+    <%}%> 
+   
+  </div>
+</div>
+
+<script>
+
+  const story = <%- JSON.stringify(story) %>
+</script>
+
+<footer></footer>

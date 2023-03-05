@@ -1,0 +1,98 @@
+<% layout('layouts/boilerplate')%>
+<div class="row justify-content-center">
+  <div class="col-md-6 offset-md-3">
+    <div class="card shadow">
+      <div class="card-body">
+        <h1 class="text-center">New Story</h1>
+
+        <form
+          action="/fiction"
+          method="POST"
+          novalidate
+          class="validated-form"
+          enctype="multipart/form-data"
+        >
+          <div class="mb-3">
+            <label class="form-label" for="title">Title</label>
+            <input
+              class="form-control"
+              type="text"
+              id="title"
+              name="campground[title]"
+              required
+            />
+            <div class="valid-feedback">Looks good!</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="Author">Author</label>
+            <input
+              class="form-control"
+              type="text"
+              id="author"
+              name="campground[author]"
+              required
+            />
+            <div class="valid-feedback">Looks good!</div>
+          </div>
+
+          <div class="mb-3">
+            <!-- <label class="form-label" for="image">Image URL</label>
+        <input
+          class="form-control"
+          type="text"
+          id="image"
+          name="campground[image]"
+          required
+        /> -->
+            <div class="valid-feedback">Looks good!</div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="link">Story link</label>
+
+            <div class="input-group mb-3">
+              <input
+                type="text"
+                class="form-control"
+                id="link"
+                placeholder=""
+                aria-label="Username"
+                aria-describedby="link-label"
+                name="campground[link]"
+                required
+              />
+              <div class="valid-feedback">Looks good!</div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="Description">Description</label>
+            <textarea
+              class="form-control"
+              type="text"
+              id="description"
+              name="campground[description]"
+            >
+            </textarea>
+            <div class="valid-feedback">Looks good!</div>
+          </div>
+
+          <div class="input-group mb-3">
+            <input
+              type="file"
+              class="form-control"
+              id="inputGroupFile02"
+              name="image"
+              multiple
+            />
+            <!-- <label class="input-group-text" for="inputGroupFile02"></label> -->
+          </div>
+
+          <div class="mb-3">
+            <button class="btn btn-success">Add Campground</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
