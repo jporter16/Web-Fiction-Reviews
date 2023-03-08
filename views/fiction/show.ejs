@@ -5,7 +5,7 @@
   <div class="col-6">
     <div
       id="carouselExampleControls"
-      class="carousel slide"
+      class="carousel slide mb-2"
       data-ride="carousel"
     >
       <div class="carousel-inner">
@@ -53,7 +53,26 @@
         <h6 class="card-subtitle text-muted mb-2">
           By <%=review.poster.username%>
         </h6>
+        <h6 class="card-subtitle text-muted mb-2">
+          Review upvotes: <%=review.upvotes.number%>
+        </h6>
+       
         <p>Review: <%=review.body%></p>
+
+        <form
+        method="POST"
+        action="/fiction/<%=story._id%>/reviews/<%=review._id%>/upvote?_method=PUT"
+      >
+        <button class="btn btn-sm btn-success">+1 Upvote</button>
+      </form>
+        <br>
+        <form
+        method="POST"
+        action="/fiction/<%=story._id%>/reviews/<%=review._id%>/report?_method=PUT"
+      >
+        <button class="btn btn-sm btn-danger">Report</button>
+      </form>
+      <br>
         <% if(currentUser && review.poster.equals(currentUser._id)) { %>
 
         <form
@@ -83,26 +102,22 @@
           Author: <%=story.author%>
         </li>
         <li class="list-group-item">
-          Tags: <%=story.tags%>
+          Tags: <%for (let tag of story.tags) {%>
+              <%=tag%>, 
+            <%}%>
         </li>
         <li class="list-group-item">
-          Average Rating: <%
-          let avg=0;
-          let count = 0;
-          for (let review of story.reviews) { 
-            console.log(review.rating, "review rating")
-            avg += review.rating;
+          Average Rating: 
+   <!-- first, make sure there are reviews. -->
+      <% if (story.ratingScore >-1) { %>
+          
+            <%=story.ratingScore%>  
 
-
-            console.log(avg, "average");
-            console.log(count, "count")
-            count +=1;
-        
-          }
-          avg = avg / count;
-          %>
-
-            <%=avg%>  
+          <%
+          } else {
+            %>
+            <p> There are no reviews yet for this story.</p>
+            <% }%>
         
         </li>
         
@@ -112,7 +127,20 @@
           <a href= <%=story.link%> class = 'btn btn-success'>Read now</a>
         </li>
       </ul>
-      <% if(currentUser && story.poster.equals(currentUser._id)) { %>
+
+      <div class="card-body">
+      <form
+          action="/fiction/<%=story._id%>/report?_method=PUT"
+          method="POST"
+          class="d-inline"
+        >
+          <button class="btn btn-danger btn-sm">Report</button>
+        </form>
+      </div>
+
+
+      <%
+      if(currentUser) { %>
       <div class="card-body">
         <a
           class="btn btn-info card-link"
@@ -135,8 +163,14 @@
     </div>
 
     <!-- The Reviews start here: -->
-    <% if (currentUser) { %>
-    <h2 class = text-center>Leave a Review</h2>
+    <%let alreadyPosted = false;
+      for (let review of story.reviews) {
+        if (currentUser && review.poster.equals(currentUser._id)) {
+          alreadyPosted = true;
+        }
+      }
+    if (currentUser && currentUser.isVerified) { %>
+    <h2 class = "text-center">Leave a Review</h2>
     <form
       action="/fiction/<%=story._id%>/reviews"
       method="POST"
@@ -225,6 +259,7 @@
 <script>
 
   const story = <%- JSON.stringify(story) %>
+  console.log(currentUser);
 </script>
 
 <footer></footer>

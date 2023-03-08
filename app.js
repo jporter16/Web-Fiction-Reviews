@@ -1,8 +1,18 @@
-// This is where everythign starts.
-// the current issue is I changed the folder that is now fiction to fiction from campgrounds.
+// This is where everything starts.
 // Now I can't access that page any more.
 // CURRENT ISSUES: when you add your own link, it won't work unless it is prefixed with http://
-
+// add catching/default page when you type random stuff into url.
+// to allow user email authentication: i could use nodemailer
+// add pagination
+// add report review option
+// fix the color of the carisol arrows because they are hard to see.Date
+// add a background?
+// replace buttons with larger clickable areas.
+// add instructions and requirements for adding new fiction.
+// add about/faq page.
+// add reported reviews to admin page-the report button works but it's not added yet.
+// i think there is a validation issue when only one tag is selected for editing a story?
+// email v
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
@@ -34,6 +44,8 @@ const reviewRoutes = require("./routes/reviews");
 const MongoDBStore = require("connect-mongo")(session);
 const dbUrl = "mongodb://localhost:27017/welp";
 const secret = "thisshouldbeabettersecret!";
+
+const databaseCalc = require("./controllers/databaseCalculations");
 
 const { date } = require("joi");
 // const dbUrl = process.env.DB_URL;
@@ -141,10 +153,10 @@ passport.deserializeUser(User.deserializeUser());
 
 // this is a really useful middleware that lets each partial access these variables!!!
 app.use((req, res, next) => {
-  console.log(req.query);
   res.locals.currentUser = req.user;
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
+  res.locals.genreList = databaseCalc.genreList;
   next();
 });
 
@@ -161,7 +173,7 @@ app.use("/fiction/:id/reviews", reviewRoutes);
 app.get("/", (req, res) => {
   res.render("home");
 });
-// get all campgrounds
+// get all stories
 
 app.all("*", (req, res, next) => {
   next(new ExpressError("Page Not Found", 404));

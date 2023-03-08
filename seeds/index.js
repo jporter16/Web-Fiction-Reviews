@@ -4,7 +4,6 @@ if (process.env.NODE_ENV !== "production") {
 
 const mongoose = require("mongoose");
 const Story = require("../models/fiction");
-const cities = require("./cities");
 
 const dbUrl = "mongodb://localhost:27017/welp";
 // const dbUrl = process.env.DB_URL || ;
@@ -27,7 +26,8 @@ const seedDB = async () => {
       link: "https://www.royalroad.com/fiction/32067/never-die-twice",
       tags: "Fantasy, litRPG",
       poster: "64031ea187db0eb0cd6f272c",
-      ratingScore: 3,
+      ratingScore: -1,
+      reported: false,
       images: [
         {
           url: "https://res.cloudinary.com/dj3dni7xt/image/upload/v1677957260/Welp/never-die-twice_dpfjww.jpg",
@@ -36,14 +36,6 @@ const seedDB = async () => {
         {
           url: "https://res.cloudinary.com/dj3dni7xt/image/upload/v1674868356/YelpCamp/lv5chzqfhnxq5wmlbzsr.jpg",
           filename: "YelpCamp/lv5chzqfhnxq5wmlbzsr",
-        },
-        {
-          url: "https://res.cloudinary.com/dj3dni7xt/image/upload/v1674868367/YelpCamp/iovh9o65ircskvuc1ikp.jpg",
-          filename: "YelpCamp/iovh9o65ircskvuc1ikp",
-        },
-        {
-          url: "https://res.cloudinary.com/dj3dni7xt/image/upload/v1674868369/YelpCamp/ye2w11p4sif5g9pa8zhs.jpg",
-          filename: "YelpCamp/ye2w11p4sif5g9pa8zhs",
         },
       ],
       description:
@@ -55,7 +47,10 @@ const seedDB = async () => {
       link: "https://www.royalroad.com/fiction/32067/never-die-twice",
       tags: "Fantasy, Adventure, Time Travel",
       poster: "64031ea187db0eb0cd6f272c",
-      ratingScore: 2,
+      ratingScore: -1,
+      reported: false,
+      verifiedByAuthor: false,
+      pending: true,
       images: [
         {
           url: "https://res.cloudinary.com/dj3dni7xt/image/upload/v1678003392/Welp/mother-of-learning-cover_lpmzt3.jpg",
@@ -67,7 +62,6 @@ const seedDB = async () => {
     },
   ];
   for (const storyObject of storyList) {
-    console.log(storyObject);
     // I'm working here!!! FIX ME:
     const string = "https://www.royalroad.com/fiction/32067/never-die-twice";
     const story = new Story({

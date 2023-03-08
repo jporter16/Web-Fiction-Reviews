@@ -18,7 +18,7 @@
               class="form-control"
               type="text"
               id="title"
-              name="campground[title]"
+              name="story[title]"
               value="<%=story.title%>"
               required
             />
@@ -30,10 +30,37 @@
               class="form-control"
               type="text"
               id="author"
-              name="campground[author]"
+              name="story[author]"
               value="<%=story.author%>"
               required
             />
+            <div class="valid-feedback">Looks good!</div>
+          </div>
+          <div class="mb-3">
+            <fieldset>
+              <legend class="small text-center">
+                Pick at least one tag and at most 3 tags for this story
+              </legend>
+              <% for (let genre of genreList) {%>
+
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id= <%=genre%>
+                name="story[tags]"
+                value= <%=genre%>
+                required
+                <%if (story.tags.includes(genre)) {%>
+                  checked
+                <%}%>
+              />
+              <label class="form-check-label" for=<%genre%>
+                ><%=genre%></label
+              >
+              <%}%>
+          
+            </fieldset>
+
             <div class="valid-feedback">Looks good!</div>
           </div>
 
@@ -49,7 +76,7 @@
               <span class="input-group-text" id="basic-addon1"></span>
               <input type="text" class="form-control" id="link" placeholder="""
               aria-label="link" aria-describedby="link-label"
-              name="campground[link]" value="<%=story.link%>" required />
+              name="story[link]" value="<%=story.link%>" required />
               <div class="valid-feedback">Looks good!</div>
             </div>
           </div>
@@ -60,7 +87,7 @@
               class="form-control"
               type="text"
               id="description"
-              name="campground[description]"
+              name="story[description]"
               required
             >
         <%=story.description%>
@@ -85,7 +112,7 @@
             <%})%>
           </div>
           <div class="mb-3">
-            <button class="btn btn-success">Update Campground</button>
+            <button class="btn btn-success">Update Story</button>
           </div>
         </form>
       </div>

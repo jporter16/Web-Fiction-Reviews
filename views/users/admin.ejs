@@ -1,0 +1,102 @@
+<% layout('layouts/boilerplate')%>
+
+<h1 class="text-center">Pending Stories</h1>
+<div>
+  <ul>
+    <% for (let story of pendingStories) {%>
+    <div class="card mb-3">
+      <div class="row">
+        <div class="col-md-2">
+          <% if (story.images.length) {%>
+          <img class="img-fluid" src="<%=story.images[0].url%>" alt="" />
+
+          <%} else {%>
+          <img class="img-fluid" src="" alt="" />
+
+          <%}%>
+        </div>
+        <div class="col-md-10">
+          <div class="card-body">
+            <h5 class="card-title"><%=story.title%></h5>
+            <p class="card-text"><%=story.description%></p>
+            <p class="card-text">
+              <small class="text-muted">
+                Tags: <%for (let tag of story.tags) {%> <%=tag%>, <%}%>
+              </small>
+            </p>
+            <p class="card-text">
+              <small class="text-muted">
+                Average Rating: <%if(story.ratingScore >-1) {%>
+                <%=story.ratingScore%> <%} else {%> This story is not yet rated.
+                <% } %>
+              </small>
+            </p>
+            <a class="btn btn-primary" href="/fiction/<%=story.id%>"
+              >View <%=story.title%>
+            </a>
+            <form
+              action="/fiction/<%=story._id%>/pending?_method=PUT"
+              method="POST"
+              class="d-inline"
+            >
+              <button class="btn btn-success">Approve</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <%}%>
+  </ul>
+</div>
+<h1 class="text-center">Reported Stories</h1>
+<div>
+  <ul>
+    <% for (let story of reportedStories) {%>
+    <div class="card mb-3">
+      <div class="row">
+        <div class="col-md-2">
+          <% if (story.images.length) {%>
+          <img class="img-fluid" src="<%=story.images[0].url%>" alt="" />
+
+          <%} else {%>
+          <img class="img-fluid" src="" alt="" />
+
+          <%}%>
+        </div>
+        <div class="col-md-10">
+          <div class="card-body">
+            <h5 class="card-title"><%=story.title%></h5>
+            <p class="card-text"><%=story.description%></p>
+            <p class="card-text">
+              <small class="text-muted">
+                Tags: <%for (let tag of story.tags) {%> <%=tag%>, <%}%>
+              </small>
+            </p>
+            <p class="card-text">
+              <small class="text-muted">
+                Average Rating: <%if(story.ratingScore >-1) {%>
+                <%=story.ratingScore%> <%} else {%> This story is not yet rated.
+                <% } %>
+              </small>
+            </p>
+            <a class="btn btn-primary" href="/fiction/<%=story.id%>"
+              >View <%=story.title%>
+            </a>
+            <form
+              action="/fiction/<%=story._id%>/delete?_method=DELETE"
+              method="POST"
+              class="d-inline"
+            >
+              <button class="btn btn-danger">Delete this Story</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <%}%>
+  </ul>
+</div>
+<script>
+
+  const pendingStories = {features: <%-JSON.stringify(pendingStories)%>}
+</script>

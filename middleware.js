@@ -1,10 +1,10 @@
-const { campgroundSchema, reviewSchema } = require("./schemas.js");
+const { storySchema, reviewSchema } = require("./schemas.js");
 const ExpressError = require("./utils/ExpressError");
-const Campground = require("./models/fiction");
+const Story = require("./models/fiction");
 const Review = require("./models/review");
+const User = require("./models/user");
 
 module.exports.isLoggedIn = (req, res, next) => {
-  console.log(req.user);
   if (!req.isAuthenticated()) {
     req.session.returnTo = req.originalUrl;
     req.flash("error", "You must be signed in first");
@@ -13,8 +13,19 @@ module.exports.isLoggedIn = (req, res, next) => {
   next();
 };
 
-module.exports.validateCampground = (req, res, next) => {
-  const { error } = campgroundSchema.validate(req.body);
+module.exports.isVerified = async (req, res, next) => {
+  const user = await User.findById(req.user._id);
+  if (!user.isVerified) {
+    req.flash("error", "You must verify your account first.");
+    console.log("not verified account");
+    return res.redirect(`/fiction/`);
+  }
+
+  next();
+};
+
+module.exports.validateStory = (req, res, next) => {
+  const { error } = storySchema.validate(req.body);
   if (error) {
     const msg = error.details.map((el) => el.message).join(",");
     throw new ExpressError(msg, 400);
@@ -25,16 +36,23 @@ module.exports.validateCampground = (req, res, next) => {
 
 module.exports.isPoster = async (req, res, next) => {
   const { id } = req.params;
-  const campground = await Campground.findById(id);
-  if (!campground.poster.equals(req.user._id)) {
+  const story = await Story.findById(id);
+  if (!story.poster.equals(req.user._id)) {
     req.flash("error", "You do not have permission to do that");
-    return res.redirect(`/campgrounds/${id}`);
+    return res.redirect(`/fiction/${id}`);
   }
   next();
 };
 
-module.exports.validateReview = (req, res, next) => {
+module.exports.validateReview = async (req, res, next) => {
   const { error } = reviewSchema.validate(req.body);
+  const users = await User.find({});
+  const allUserIds = users.map((user) => user._id);
+  // if user doesn't exist, then throw error.
+  if (!users.find((user) => (user._id = req.user._id))) {
+    message = "invalid user id";
+    throw new ExpressError(message, 400);
+  }
   if (error) {
     const msg = error.details.map((el) => el.message).join(",");
     throw new ExpressError(msg, 400);
@@ -48,7 +66,20 @@ module.exports.isReviewPoster = async (req, res, next) => {
   const review = await Review.findById(reviewId);
   if (!review.poster.equals(req.user._id)) {
     req.flash("error", "You do not have permission to do that");
-    return res.redirect(`/campgrounds/${id}`);
+    return res.redirect(`/fiction/${id}`);
+  }
+  next();
+};
+
+module.exports.notUpvoter = async (req, res, next) => {
+  // these parameters come from the url query string
+  const { id, reviewId } = req.params;
+  const review = await Review.findById(reviewId);
+  console.log(review, "review");
+  console.log(review.upvotes.upvoters);
+  if (review.upvotes.upvoters.includes(req.user._id)) {
+    req.flash("error", "You do not have permission to do that");
+    return res.redirect(`/fiction/${id}`);
   }
   next();
 };

@@ -27,6 +27,16 @@ const FictionSchema = new Schema(
       ref: "User",
     },
     ratingScore: Number,
+    reported: Boolean,
+    pending: {
+      type: Boolean,
+      default: true,
+    },
+    verifiedByAuthor: {
+      type: Boolean,
+      default: false,
+      // fix me-add these to the controller too for extra protection. force false
+    },
     reviews: [
       {
         type: Schema.Types.ObjectId,
@@ -50,7 +60,6 @@ FictionSchema.post("findOneAndDelete", async function (doc) {
       },
     });
   }
-  console.log(doc);
 });
 
 module.exports = mongoose.model("Fiction", FictionSchema);

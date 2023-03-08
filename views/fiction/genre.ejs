@@ -1,6 +1,6 @@
 <% layout('layouts/boilerplate')%>
 
-<h1 class="text-center">All Stories</h1>
+<h1 class="text-center"><%=genre%></h1>
 <div></div>
 <ul>
   <% for (let story of sortedStories) {%>
@@ -20,9 +20,7 @@
           <h5 class="card-title"><%=story.title%></h5>
           <p class="card-text"><%=story.description%></p>
           <p class="card-text">
-            <small class="text-muted">
-              Tags: <%for (let tag of story.tags) {%> <%=tag%>, <%}%>
-            </small>
+            <small class="text-muted"> <%=story.tags%> </small>
           </p>
           <p class="card-text">
             <small class="text-muted">
