@@ -27,7 +27,10 @@ const FictionSchema = new Schema(
       ref: "User",
     },
     ratingScore: Number,
-    reported: Boolean,
+    reported: {
+      type: Boolean,
+      default: false,
+    },
     pending: {
       type: Boolean,
       default: true,

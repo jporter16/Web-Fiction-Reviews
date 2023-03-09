@@ -31,7 +31,6 @@ module.exports.renderGenre = async (req, res) => {
 
 module.exports.renderSearch = async (req, res) => {
   const { genre, query } = req.params;
-  console.log(query);
   const searchStories = await Fiction.find({
     title: { $regex: new RegExp(query, "i") },
   });
@@ -48,6 +47,7 @@ module.exports.createStory = async (req, res, next) => {
     filename: f.filename,
   }));
   story.poster = req.user._id;
+  story.link = databaseCalc.cleanUrl(story.link);
   story.ratingScore = -1;
   story.reported = false;
   story.verifiedByAuthor = false;
@@ -55,8 +55,8 @@ module.exports.createStory = async (req, res, next) => {
   // if there is no image, add this default image.
   if (story.images.length < 1) {
     story.images = {
-      url: "https://res.cloudinary.com/dj3dni7xt/image/upload/v1678139130/Welp/placeholder-book-cover_iyoeqw.png",
-      filename: "placeholder-book-cover_iyoeqw",
+      url: "https://res.cloudinary.com/dj3dni7xt/image/upload/v1678325550/webfictionreviews/placeholder-book-cover_jmu4wk.png",
+      filename: "placeholder-book-cover_jmu4wk",
     };
   }
   // if there is only one tag, then take that string and turn it into an array.
@@ -69,22 +69,25 @@ module.exports.createStory = async (req, res, next) => {
   res.redirect(`/fiction/${story._id}`);
 };
 module.exports.showStory = async (req, res) => {
-  const story = await Fiction.findById(req.params.id)
-    .populate({
-      path: "reviews",
-      populate: {
-        path: "poster",
-      },
-    })
-    .populate("poster");
-  // pass organized reviews-reviews ranked by upvotes.
+  try {
+    const story = await Fiction.findById(req.params.id)
+      .populate({
+        path: "reviews",
+        populate: {
+          path: "poster",
+        },
+      })
+      .populate("poster");
+    // pass organized reviews-reviews ranked by upvotes.
 
-  if (!story) {
-    req.flash("error", "Cannot find that story!");
-    return res.redirect("/fiction");
+    if (!story) {
+      req.flash("error", "Cannot find that story!");
+      return res.redirect("/fiction");
+    }
+    res.render("fiction/show", { story });
+  } catch (e) {
+    res.render("missingpage");
   }
-  console.log("This is coming from controller", story.reviews);
-  res.render("fiction/show", { story });
 };
 
 module.exports.renderEditForm = async (req, res) => {
@@ -123,6 +126,7 @@ module.exports.updateStory = async (req, res) => {
     });
   }
   story.images.push(...imgs);
+  story.link = databaseCalc.cleanUrl(story.link);
 
   await story.save();
   req.flash("success", "Successfully updated the story.");

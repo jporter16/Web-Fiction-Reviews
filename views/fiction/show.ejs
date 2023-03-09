@@ -5,7 +5,7 @@
   <div class="col-6">
     <div
       id="carouselExampleControls"
-      class="carousel slide mb-2"
+      class="carousel slide mb-2 carousel-dark"
       data-ride="carousel"
     >
       <div class="carousel-inner">
@@ -140,26 +140,17 @@
 
 
       <%
-      if(currentUser) { %>
+      if(currentUser && story.poster && story.poster.equals(currentUser._id)) { %>
       <div class="card-body">
         <a
           class="btn btn-info card-link"
           href="/fiction/<%=story._id%>/edit"
           >Edit</a
         >
-        <form
-          action="/fiction/<%=story._id%>?_method=DELETE"
-          method="POST"
-          class="d-inline"
-        >
-          <button class="btn btn-danger">Delete</button>
-        </form>
+        
       </div>
       <%}%>
 
-      <div class="card-footer text-muted">
-        <footer>2 days ago</footer>
-      </div>
     </div>
 
     <!-- The Reviews start here: -->
@@ -251,7 +242,10 @@
       </div>
       <button class="btn btn-success">Submit</button>
     </form>
-    <%}%> 
+    <%} else {%> 
+          <h4 class="text-center">Log in and validate your email to leave a review.</h4>
+
+      <%}%>
    
   </div>
 </div>
@@ -259,7 +253,6 @@
 <script>
 
   const story = <%- JSON.stringify(story) %>
-  console.log(currentUser);
 </script>
 
 <footer></footer>

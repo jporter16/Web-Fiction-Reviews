@@ -5,7 +5,7 @@
 .everything-else {
   height: 100vh;
   background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5)),
-    url("https://res.cloudinary.com/dj3dni7xt/image/upload/v1678004262/Welp/home-page-background1_a886af.png");
+    url("https://res.cloudinary.com/dj3dni7xt/image/upload/v1678325428/webfictionreviews/home-page-background1_dis9fc.jpg");
   background-size: cover;
   /* background-position: center bottom; */
   text-shadow: 0 0.05rem 0.1rem rgba(0, 0, 0, 0.5);
@@ -32,4 +32,9 @@
 .nav-link.active {
   color: white;
   border-bottom-color: white;
+}
+
+.welcome,
+.guidelines {
+  margin-top: 80px;
 }

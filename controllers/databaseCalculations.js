@@ -50,13 +50,17 @@ module.exports.genreList = [
   "litRPG",
   "Science Fiction",
   "Cultivation",
+  "Virtual Reality",
+  "Action",
+  "Adventure",
+  "Slice of Life",
+  "Time Travel",
 ];
 
 module.exports.sortReviewList = async (story) => {
   sortedReviews = story.reviews.sort((r1, r2) => {
     return r2.upvotes.number - r1.upvotes.number;
   });
-  console.log("sorted reviews:", sortedReviews);
 
   // await story.save();
   // for (let i = 0; i < reviewList.length; i++) {
@@ -78,4 +82,20 @@ module.exports.sortReviewList = async (story) => {
   //   }
   // }
   // story.reviews = sortedReviewList;
+};
+module.exports.cleanUrl = (url) => {
+  if (url.slice(0, 12) === "https://www.") {
+    console.log("Url is acceptable ");
+    return url;
+  } else if (url.slice(0, 4) === "www.") {
+    console.log("http added");
+    const prefix = "https://";
+    newUrl = prefix + url;
+    return newUrl;
+  } else {
+    console.log("url is not acceptable, adding https://www.");
+    const prefix = "https://www.";
+    newUrl = prefix + url;
+    return newUrl;
+  }
 };

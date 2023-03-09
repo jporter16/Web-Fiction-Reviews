@@ -29,6 +29,7 @@ module.exports.storySchema = Joi.object({
     title: Joi.string().required().escapeHTML(),
     // Should this also be escapeHTML?
     link: Joi.string().required(),
+    reported: Joi.boolean(),
     // image: Joi.string().required(),
     author: Joi.string().required().escapeHTML(),
     description: Joi.string().required(),
@@ -43,4 +44,5 @@ module.exports.reviewSchema = Joi.object({
     rating: Joi.number().required().min(1).max(5),
     body: Joi.string().required().escapeHTML(),
   }).required(),
+  reviewedStory: Joi.string(),
 });

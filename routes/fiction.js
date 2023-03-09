@@ -14,6 +14,8 @@ const {
   isLoggedIn,
   isVerified,
   isPoster,
+  isAdmin,
+  isAdminOrStoryPoster,
   validateStory,
 } = require("../middleware");
 
@@ -48,19 +50,24 @@ router.put(
   isVerified,
   catchAsync(stories.reportStory)
 );
-
+// update a story here:
 router
   .route("/:id")
   .get(catchAsync(stories.showStory))
   .put(
     isLoggedIn,
     isVerified,
-    isPoster,
+    isAdminOrStoryPoster,
     upload.array("image"),
     validateStory,
     catchAsync(stories.updateStory)
   )
-  .delete(isLoggedIn, isVerified, isPoster, catchAsync(stories.deleteStory));
+  .delete(
+    isLoggedIn,
+    isVerified,
+    isAdminOrStoryPoster,
+    catchAsync(stories.deleteStory)
+  );
 
 // router.post(
 //   "/",
@@ -69,18 +76,18 @@ router
 //   })
 // );
 
-// edit a story
 router.get(
   "/:id/edit",
   isLoggedIn,
   isVerified,
-  isPoster,
+  isAdminOrStoryPoster,
   catchAsync(stories.renderEditForm)
 );
 router.put(
   "/:id/pending",
   isLoggedIn,
   isVerified,
+  isAdmin,
   catchAsync(stories.markNotPending)
 );
 

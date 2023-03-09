@@ -3,6 +3,7 @@ const Token = require("../models/token");
 const crypto = require("crypto");
 const sendEmail = require("../utils/mailer");
 const Fiction = require("../models/fiction");
+const Review = require("../models/review");
 
 module.exports.renderRegister = (req, res) => {
   res.render("users/register");
@@ -19,10 +20,8 @@ module.exports.register = async (req, res) => {
         userId: user._id,
         token: crypto.randomBytes(32).toString("hex"),
       }).save();
-      console.log("this is the token", token);
       const message = `${process.env.BASE_URL}/register/verify/${user.id}/${token.token}`;
       await sendEmail(user.email, "Verify Email", message);
-      console.log("just sent email");
 
       if (err) return next(err);
       req.flash(
@@ -91,6 +90,14 @@ module.exports.logout = (req, res, next) => {
 module.exports.renderAdmin = async (req, res, next) => {
   const pendingStories = await Fiction.find({ pending: true });
   const reportedStories = await Fiction.find({ reported: true });
+  const reportedReviews = await Review.find({ reported: true }).populate({
+    path: "reviewedStory",
+    model: "Fiction",
+  });
 
-  res.render("users/admin", { pendingStories, reportedStories });
+  res.render("users/admin", {
+    pendingStories,
+    reportedStories,
+    reportedReviews,
+  });
 };

@@ -5,6 +5,8 @@ const {
   isLoggedIn,
   isReviewPoster,
   isVerified,
+  isAdmin,
+  isAdminOrReviewPoster,
   notUpvoter,
 } = require("../middleware");
 
@@ -33,15 +35,16 @@ router.delete(
   "/:reviewId",
   isLoggedIn,
   isVerified,
-  isReviewPoster,
+  isAdminOrReviewPoster,
   catchAsync(reviews.deleteReview)
 );
-// FIX ME: fix-me: put notUpvoter back into middleware.
+
+// This upvotes a review.
 router.put(
   "/:reviewId/upvote",
   isLoggedIn,
   isVerified,
-  // notUpvoter,
+  notUpvoter,
   catchAsync(reviews.upvoteReview)
 );
 router.put(

@@ -41,6 +41,11 @@
             >
               <button class="btn btn-success">Approve</button>
             </form>
+            <a
+              class="btn btn-info card-link"
+              href="/fiction/<%=story._id%>/edit"
+              >Edit</a
+            >
           </div>
         </div>
       </div>
@@ -82,12 +87,68 @@
             <a class="btn btn-primary" href="/fiction/<%=story.id%>"
               >View <%=story.title%>
             </a>
+            <a
+              class="btn btn-info card-link"
+              href="/fiction/<%=story._id%>/edit"
+              >Edit</a
+            >
             <form
-              action="/fiction/<%=story._id%>/delete?_method=DELETE"
+              action="/fiction/<%=story._id%>?_method=DELETE"
               method="POST"
               class="d-inline"
             >
-              <button class="btn btn-danger">Delete this Story</button>
+              <button class="btn btn-danger" type="submit">
+                Delete this Story
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <%}%>
+  </ul>
+</div>
+
+<div>
+  <h1 class="text-center">Reported Reviews</h1>
+
+  <ul>
+    <% for (let review of reportedReviews) {%>
+    <div class="card mb-3">
+      <div class="row">
+        <div class="col-md-2">
+          <% if (review.reviewedStory.images.length) {%>
+          <img
+            class="img-fluid"
+            src="<%=review.reviewedStory.images[0].url%>"
+            alt=""
+          />
+
+          <%} else {%>
+          <img class="img-fluid" src="" alt="" />
+
+          <%}%>
+        </div>
+
+        <div class="col-md-10">
+          <div class="card-body mb-3">
+            <h5 class="card-title"><%=review.title%></h5>
+            <p class="card-text">Review Stars: <%=review.rating%></p>
+            <p class="card-text">Review Text: <%=review.body%></p>
+            <p class="card-text">Upvotes: <%=review.upvotes.number%></p>
+            <a
+              class="btn btn-success mb-3"
+              href="/fiction/<%=review.reviewedStory._id%>"
+              >View this story</a
+            >
+            <br />
+
+            <form
+              action="/fiction/<%=review.reviewedStory._id%>/reviews/<%=review._id%>?_method=DELETE"
+              method="POST"
+              class="d-inline"
+            >
+              <button class="btn btn-danger">Delete this Review</button>
             </form>
           </div>
         </div>

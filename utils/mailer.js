@@ -1,8 +1,6 @@
 const nodemailer = require("nodemailer");
 
 const sendEmail = async (email, subject, text) => {
-  console.log("user,", process.env.EMAIL_USERNAME);
-  console.log("password", process.env.PASS);
   try {
     const transporter = nodemailer.createTransport({
       host: process.env.HOST,

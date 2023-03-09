@@ -9,6 +9,10 @@ const reviewSchema = new Schema({
     upvoters: [Schema.Types.ObjectId],
   },
   reported: Boolean,
+  reviewedStory: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
   poster: {
     type: Schema.Types.ObjectId,
     ref: "User",

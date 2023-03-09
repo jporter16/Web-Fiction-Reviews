@@ -75,11 +75,46 @@ module.exports.notUpvoter = async (req, res, next) => {
   // these parameters come from the url query string
   const { id, reviewId } = req.params;
   const review = await Review.findById(reviewId);
-  console.log(review, "review");
-  console.log(review.upvotes.upvoters);
   if (review.upvotes.upvoters.includes(req.user._id)) {
     req.flash("error", "You do not have permission to do that");
     return res.redirect(`/fiction/${id}`);
   }
   next();
+};
+
+module.exports.isAdmin = async (req, res, next) => {
+  const user = await User.findById(req.user._id);
+  if (user.isAdmin) {
+    next();
+  } else {
+    req.flash("error", "You must be an admin to complete this action.");
+    console.log("not an admin");
+    return res.redirect(`/fiction/`);
+  }
+};
+
+// Now I need to combine some middleware:
+module.exports.isAdminOrStoryPoster = async (req, res, next) => {
+  const user = await User.findById(req.user._id);
+  const { id } = req.params;
+  const story = await Story.findById(id);
+  if (user.isAdmin || story.poster.equals(req.user._id)) {
+    console.log("user is admin or poster");
+    next();
+  } else {
+    req.flash("error", "You do not have permission to do that.");
+    return res.redirect(`/fiction/${id}`);
+  }
+};
+module.exports.isAdminOrReviewPoster = async (req, res, next) => {
+  const user = await User.findById(req.user._id);
+  const { reviewId } = req.params;
+  const review = await Review.findById(reviewId);
+  if (user.isAdmin || review.poster.equals(req.user._id)) {
+    console.log("user is admin or poster");
+    next();
+  } else {
+    req.flash("error", "You do not have permission to do that.");
+    return res.redirect(`/fiction/${id}`);
+  }
 };

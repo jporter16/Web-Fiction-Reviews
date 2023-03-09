@@ -5,7 +5,7 @@ const catchAsync = require("../utils/catchAsync");
 const User = require("../models/user");
 const users = require("../controllers/users");
 const Token = require("../models/token");
-const { isLoggedIn, isVerified } = require("../middleware");
+const { isLoggedIn, isVerified, isAdmin } = require("../middleware");
 
 router
   .route("/register")
@@ -25,7 +25,13 @@ router
 
 router.get("/register/verify/:id/:token", users.verify);
 
-router.get("/admin", isLoggedIn, isVerified, catchAsync(users.renderAdmin));
+router.get(
+  "/admin",
+  isLoggedIn,
+  isVerified,
+  isAdmin,
+  catchAsync(users.renderAdmin)
+);
 
 router.get("/logout", users.logout);
 

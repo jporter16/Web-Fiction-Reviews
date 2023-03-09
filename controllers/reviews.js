@@ -24,6 +24,7 @@ module.exports.createReview = async (req, res) => {
 
   const review = new Review(req.body.review);
   review.poster = req.user._id;
+  review.reviewedStory = story;
   story.reviews.push(review);
   story.ratingScore = -1;
   review.upvotes = {
@@ -62,8 +63,6 @@ module.exports.upvoteReview = async (req, res) => {
   const story = await Story.findById(id).populate("reviews");
   databaseCalculations.sortReviewList(story);
   await story.save();
-
-  console.log(story.reviews);
 
   req.flash("success", "Successfully upvoted a review");
   res.redirect(`/fiction/${id}`);

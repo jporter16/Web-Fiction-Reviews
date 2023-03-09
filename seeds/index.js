@@ -5,7 +5,7 @@ if (process.env.NODE_ENV !== "production") {
 const mongoose = require("mongoose");
 const Story = require("../models/fiction");
 
-const dbUrl = "mongodb://localhost:27017/welp";
+const dbUrl = "mongodb://localhost:27017/webfiction";
 // const dbUrl = process.env.DB_URL || ;
 
 mongoose.connect(dbUrl);
@@ -24,18 +24,14 @@ const seedDB = async () => {
       title: "Never Die Twice",
       author: "Maxime J. Durand (Void Herald)",
       link: "https://www.royalroad.com/fiction/32067/never-die-twice",
-      tags: "Fantasy, litRPG",
-      poster: "64031ea187db0eb0cd6f272c",
+      tags: ["Fantasy", "litRPG"],
+      poster: "640944696d1e63e7bb7c9b43",
       ratingScore: -1,
       reported: false,
       images: [
         {
-          url: "https://res.cloudinary.com/dj3dni7xt/image/upload/v1677957260/Welp/never-die-twice_dpfjww.jpg",
-          filename: "never-die-twice_dpfjww",
-        },
-        {
-          url: "https://res.cloudinary.com/dj3dni7xt/image/upload/v1674868356/YelpCamp/lv5chzqfhnxq5wmlbzsr.jpg",
-          filename: "YelpCamp/lv5chzqfhnxq5wmlbzsr",
+          url: "https://res.cloudinary.com/dj3dni7xt/image/upload/v1678325348/webfictionreviews/never-die-twice_ckxppc.jpg",
+          filename: "never-die-twice_ckxppc",
         },
       ],
       description:
@@ -45,16 +41,16 @@ const seedDB = async () => {
       title: "Mother of Learning",
       author: "nobody103",
       link: "https://www.royalroad.com/fiction/32067/never-die-twice",
-      tags: "Fantasy, Adventure, Time Travel",
-      poster: "64031ea187db0eb0cd6f272c",
+      tags: ["Fantasy", "Adventure", "Time Travel"],
+      poster: "640944696d1e63e7bb7c9b43",
       ratingScore: -1,
       reported: false,
       verifiedByAuthor: false,
       pending: true,
       images: [
         {
-          url: "https://res.cloudinary.com/dj3dni7xt/image/upload/v1678003392/Welp/mother-of-learning-cover_lpmzt3.jpg",
-          filename: "mother-of-learning-cover_lpmzt3",
+          url: "https://res.cloudinary.com/dj3dni7xt/image/upload/v1678325348/webfictionreviews/mother-of-learning-cover_m3kmfp.jpg",
+          filename: "mother-of-learning-cover_m3kmfp",
         },
       ],
       description:

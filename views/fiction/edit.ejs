@@ -41,24 +41,27 @@
               <legend class="small text-center">
                 Pick at least one tag and at most 3 tags for this story
               </legend>
+              <div class = "genre-wrapper d-flex flex-column  flex-wrap" style="max-height: 130px"> 
               <% for (let genre of genreList) {%>
-
-              <input
-                class="form-check-input"
-                type="checkbox"
-                id= <%=genre%>
-                name="story[tags]"
-                value= <%=genre%>
-                required
-                <%if (story.tags.includes(genre)) {%>
-                  checked
-                <%}%>
-              />
-              <label class="form-check-label" for=<%genre%>
-                ><%=genre%></label
-              >
+                <div>
+                  <input
+                  class="form-check-input"
+                  type="checkbox"
+                  id= <%=genre%>
+                  name="story[tags]"
+                  value= <%=genre%>
+                  required
+                  <%if (story.tags.includes(genre)) {%>
+                    checked
+                  <%}%>
+                />
+                <label class="form-check-label" for=<%genre%>
+                  ><%=genre%></label
+                >
+                </div>
+              
               <%}%>
-          
+              </div>
             </fieldset>
 
             <div class="valid-feedback">Looks good!</div>
@@ -82,7 +85,7 @@
           </div>
 
           <div class="mb-3">
-            <label class="form-label" for="Description">Description</label>
+            <label class="form-label" for="Description">Author's Summary</label>
             <textarea
               class="form-control"
               type="text"

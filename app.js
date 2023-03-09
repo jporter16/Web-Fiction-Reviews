@@ -1,18 +1,15 @@
 // This is where everything starts.
-// Now I can't access that page any more.
-// CURRENT ISSUES: when you add your own link, it won't work unless it is prefixed with http://
-// add catching/default page when you type random stuff into url.
-// to allow user email authentication: i could use nodemailer
+// CURRENT ISSUES to fix before going live:
+
+// FEATURES TO ADD EVENTUALLY
 // add pagination
-// add report review option
-// fix the color of the carisol arrows because they are hard to see.Date
 // add a background?
+// i want to populate the edit button but it's not working. the story.poster member isn't being passed along.
+// add password requirements, password update option.
 // replace buttons with larger clickable areas.
-// add instructions and requirements for adding new fiction.
-// add about/faq page.
-// add reported reviews to admin page-the report button works but it's not added yet.
 // i think there is a validation issue when only one tag is selected for editing a story?
-// email v
+//add link to the alert "you must verify your account first" to send new link.
+// create a page for each story that gives the change to write a blurb to report. routers,controller, etc.
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
@@ -42,7 +39,7 @@ const reviewRoutes = require("./routes/reviews");
 // const MongoStore = require("connect-mongo");
 
 const MongoDBStore = require("connect-mongo")(session);
-const dbUrl = "mongodb://localhost:27017/welp";
+const dbUrl = "mongodb://localhost:27017/webfiction";
 const secret = "thisshouldbeabettersecret!";
 
 const databaseCalc = require("./controllers/databaseCalculations");
@@ -115,19 +112,19 @@ const styleSrcUrls = [
   "https://use.fontawesome.com/",
   "https://cdn.jsdelivr.net/npm/",
 ];
-const connectSrcUrls = [
-  "https://api.mapbox.com/",
-  "https://a.tiles.mapbox.com/",
-  "https://b.tiles.mapbox.com/",
-  "https://events.mapbox.com/",
-];
+// const connectSrcUrls = [
+//   "https://api.mapbox.com/",
+//   "https://a.tiles.mapbox.com/",
+//   "https://b.tiles.mapbox.com/",
+//   "https://events.mapbox.com/",
+// ];
 const fontSrcUrls = [];
 // app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
 app.use(
   helmet.contentSecurityPolicy({
     directives: {
       defaultSrc: [],
-      connectSrc: ["'self'", ...connectSrcUrls],
+      // connectSrc: ["'self'", ...connectSrcUrls],
       scriptSrc: ["'unsafe-inline'", "'self'", ...scriptSrcUrls],
       styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
       workerSrc: ["'self'", "blob:"],
@@ -175,8 +172,14 @@ app.get("/", (req, res) => {
 });
 // get all stories
 
+app.get("/guidelines", (req, res) => {
+  res.render("guidelines");
+});
+
 app.all("*", (req, res, next) => {
-  next(new ExpressError("Page Not Found", 404));
+  res.render("missingpage.ejs");
+
+  // next(new ExpressError("Page Not Found", 404));
 });
 app.use((err, req, res, next) => {
   const { statusCode = 500 } = err;
