@@ -20,8 +20,8 @@ module.exports.register = async (req, res) => {
         userId: user._id,
         token: crypto.randomBytes(32).toString("hex"),
       }).save();
-      const message = `${process.env.BASE_URL}/register/verify/${user.id}/${token.token}`;
-      await sendEmail(user.email, "Verify Email", message);
+      const message = `Click this link to verify your account with Web Fiction Reviews: ${process.env.BASE_URL}/register/verify/${user.id}/${token.token}`;
+      await sendEmail(user.email, "Verify Your Email", message);
 
       if (err) return next(err);
       req.flash(
