@@ -3,10 +3,13 @@
 
 // FEATURES TO ADD EVENTUALLY
 // add pagination
+// update app.js cookies to say secure: true.
+// fix cover size for genre lists ( the css styles don't import from home page?)
 // add a background?
 // i want to populate the edit button but it's not working. the story.poster member isn't being passed along.
 // add password requirements, password update option.
 // replace buttons with larger clickable areas.
+// set expiration date for validation email
 // i think there is a validation issue when only one tag is selected for editing a story?
 //add link to the alert "you must verify your account first" to send new link.
 // create a page for each story that gives the change to write a blurb to report. routers,controller, etc.
@@ -39,13 +42,13 @@ const reviewRoutes = require("./routes/reviews");
 // const MongoStore = require("connect-mongo");
 
 const MongoDBStore = require("connect-mongo")(session);
-const dbUrl = "mongodb://localhost:27017/webfiction";
-const secret = "thisshouldbeabettersecret!";
+// const dbUrl = "mongodb://localhost:27017/webfiction";
+const secret = process.env.SECRET;
 
 const databaseCalc = require("./controllers/databaseCalculations");
 
 const { date } = require("joi");
-// const dbUrl = process.env.DB_URL;
+const dbUrl = process.env.DB_URL;
 
 mongoose.connect(dbUrl);
 // mongoose.connect(dbUrl);
@@ -121,26 +124,49 @@ const styleSrcUrls = [
 const fontSrcUrls = [];
 // app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
 app.use(
-  helmet.contentSecurityPolicy({
-    directives: {
-      defaultSrc: [],
-      // connectSrc: ["'self'", ...connectSrcUrls],
-      scriptSrc: ["'unsafe-inline'", "'self'", ...scriptSrcUrls],
-      styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
-      workerSrc: ["'self'", "blob:"],
-      objectSrc: [],
-      imgSrc: [
-        "'self'",
-        "blob:",
-        "data:",
-        "https://res.cloudinary.com/dj3dni7xt/", //SHOULD MATCH YOUR CLOUDINARY ACCOUNT!
-        "https://images.unsplash.com/",
-      ],
-      fontSrc: ["'self'", ...fontSrcUrls],
+  helmet({
+    crossOriginEmbedderPolicy: false,
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: [],
+        // connectSrc: ["'self'", ...connectSrcUrls],
+        scriptSrc: ["'unsafe-inline'", "'self'", ...scriptSrcUrls],
+        styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
+        workerSrc: ["'self'", "blob:"],
+        objectSrc: [],
+        imgSrc: [
+          "'self'",
+          "blob:",
+          "data:",
+          "https://res.cloudinary.com/dj3dni7xt/", //SHOULD MATCH YOUR CLOUDINARY ACCOUNT!
+          "https://images.unsplash.com/",
+        ],
+        fontSrc: ["'self'", ...fontSrcUrls],
+      },
     },
-    // crossOriginEmbedderPolicy: false,
   })
 );
+// app.use(
+//   helmet.contentSecurityPolicy({
+//     directives: {
+//       defaultSrc: [],
+//       // connectSrc: ["'self'", ...connectSrcUrls],
+//       scriptSrc: ["'unsafe-inline'", "'self'", ...scriptSrcUrls],
+//       styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
+//       workerSrc: ["'self'", "blob:"],
+//       objectSrc: [],
+//       imgSrc: [
+//         "'self'",
+//         "blob:",
+//         "data:",
+//         "https://res.cloudinary.com/dj3dni7xt/", //SHOULD MATCH YOUR CLOUDINARY ACCOUNT!
+//         "https://images.unsplash.com/",
+//       ],
+//       fontSrc: ["'self'", ...fontSrcUrls],
+//     },
+//     // crossOriginEmbedderPolicy: false,
+//   })
+// );
 
 app.use(passport.initialize());
 app.use(passport.session());

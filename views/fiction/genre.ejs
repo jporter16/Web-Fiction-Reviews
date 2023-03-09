@@ -6,7 +6,7 @@
   <% for (let story of sortedStories) {%>
   <div class="card mb-3">
     <div class="row">
-      <div class="col-md-2">
+      <div class="col-md-3">
         <% if (story.images.length) {%>
         <img class="img-fluid" src="<%=story.images[0].url%>" alt="" />
 
@@ -15,7 +15,7 @@
 
         <%}%>
       </div>
-      <div class="col-md-10">
+      <div class="col-md-9">
         <div class="card-body">
           <h5 class="card-title"><%=story.title%></h5>
           <p class="card-text"><%=story.description%></p>

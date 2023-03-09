@@ -45,16 +45,19 @@ module.exports.updateRatingScore = async (storyId) => {
 };
 
 module.exports.genreList = [
-  "Fantasy",
-  "Romance",
-  "litRPG",
-  "Science Fiction",
-  "Cultivation",
-  "Virtual Reality",
   "Action",
   "Adventure",
+  "Alternate Universe",
+  "Anti-hero",
+  "Comedy",
+  "Cultivation",
+  "Fantasy",
+  "litRPG",
+  "Romance",
+  "Science Fiction",
   "Slice of Life",
   "Time Travel",
+  "Virtual Reality",
 ];
 
 module.exports.sortReviewList = async (story) => {

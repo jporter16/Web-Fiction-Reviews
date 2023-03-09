@@ -26,7 +26,7 @@ module.exports.register = async (req, res) => {
       if (err) return next(err);
       req.flash(
         "success",
-        "Welcome to Yelp Camp! An email has been sent to your account to verify. Please check your spam folder if you do not see it."
+        "Welcome to Web Fiction Reviews! An email has been sent to your account to verify. Please check your spam folder if you do not see it."
       );
       res.redirect("/fiction");
     });
