@@ -1,0 +1,163 @@
+<% layout('layouts/boilerplate')%>
+
+<h1 class="text-center">Pending Stories</h1>
+<div>
+  <ul>
+    <% for (let story of pendingStories) {%>
+    <div class="card mb-3">
+      <div class="row">
+        <div class="col-md-2">
+          <% if (story.images.length) {%>
+          <img class="img-fluid" src="<%=story.images[0].url%>" alt="" />
+
+          <%} else {%>
+          <img class="img-fluid" src="" alt="" />
+
+          <%}%>
+        </div>
+        <div class="col-md-10">
+          <div class="card-body">
+            <h5 class="card-title"><%=story.title%></h5>
+            <p class="card-text"><%=story.description%></p>
+            <p class="card-text">
+              <small class="text-muted">
+                Tags: <%for (let tag of story.tags) {%> <%=tag%>, <%}%>
+              </small>
+            </p>
+            <p class="card-text">
+              <small class="text-muted">
+                Average Rating: <%if(story.ratingScore >-1) {%>
+                <%=story.ratingScore%> <%} else {%> This story is not yet rated.
+                <% } %>
+              </small>
+            </p>
+            <a class="btn btn-primary" href="/fiction/<%=story.id%>"
+              >View <%=story.title%>
+            </a>
+            <form
+              action="/fiction/<%=story._id%>/pending?_method=PUT"
+              method="POST"
+              class="d-inline"
+            >
+              <button class="btn btn-success">Approve</button>
+            </form>
+            <a
+              class="btn btn-info card-link"
+              href="/fiction/<%=story._id%>/edit"
+              >Edit</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+    <%}%>
+  </ul>
+</div>
+<h1 class="text-center">Reported Stories</h1>
+<div>
+  <ul>
+    <% for (let story of reportedStories) {%>
+    <div class="card mb-3">
+      <div class="row">
+        <div class="col-md-2">
+          <% if (story.images.length) {%>
+          <img class="img-fluid" src="<%=story.images[0].url%>" alt="" />
+
+          <%} else {%>
+          <img class="img-fluid" src="" alt="" />
+
+          <%}%>
+        </div>
+        <div class="col-md-10">
+          <div class="card-body">
+            <h5 class="card-title"><%=story.title%></h5>
+            <p class="card-text"><%=story.description%></p>
+            <p class="card-text">
+              <small class="text-muted">
+                Tags: <%for (let tag of story.tags) {%> <%=tag%>, <%}%>
+              </small>
+            </p>
+            <p class="card-text">
+              <small class="text-muted">
+                Average Rating: <%if(story.ratingScore >-1) {%>
+                <%=story.ratingScore%> <%} else {%> This story is not yet rated.
+                <% } %>
+              </small>
+            </p>
+            <a class="btn btn-primary" href="/fiction/<%=story.id%>"
+              >View <%=story.title%>
+            </a>
+            <a
+              class="btn btn-info card-link"
+              href="/fiction/<%=story._id%>/edit"
+              >Edit</a
+            >
+            <form
+              action="/fiction/<%=story._id%>?_method=DELETE"
+              method="POST"
+              class="d-inline"
+            >
+              <button class="btn btn-danger" type="submit">
+                Delete this Story
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <%}%>
+  </ul>
+</div>
+
+<div>
+  <h1 class="text-center">Reported Reviews</h1>
+
+  <ul>
+    <% for (let review of reportedReviews) {%>
+    <div class="card mb-3">
+      <div class="row">
+        <div class="col-md-2">
+          <% if (review.reviewedStory.images.length) {%>
+          <img
+            class="img-fluid"
+            src="<%=review.reviewedStory.images[0].url%>"
+            alt=""
+          />
+
+          <%} else {%>
+          <img class="img-fluid" src="" alt="" />
+
+          <%}%>
+        </div>
+
+        <div class="col-md-10">
+          <div class="card-body mb-3">
+            <h5 class="card-title"><%=review.title%></h5>
+            <p class="card-text">Review Stars: <%=review.rating%></p>
+            <p class="card-text">Review Text: <%=review.body%></p>
+            <p class="card-text">Upvotes: <%=review.upvotes.number%></p>
+            <a
+              class="btn btn-success mb-3"
+              href="/fiction/<%=review.reviewedStory._id%>"
+              >View this story</a
+            >
+            <br />
+
+            <form
+              action="/fiction/<%=review.reviewedStory._id%>/reviews/<%=review._id%>?_method=DELETE"
+              method="POST"
+              class="d-inline"
+            >
+              <button class="btn btn-danger">Delete this Review</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <%}%>
+  </ul>
+</div>
+<script>
+
+  const pendingStories = {features: <%-JSON.stringify(pendingStories)%>}
+</script>

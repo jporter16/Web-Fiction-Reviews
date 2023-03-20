@@ -101,3 +101,18 @@ module.exports.renderAdmin = async (req, res, next) => {
     reportedReviews,
   });
 };
+
+module.exports.renderAccount = async (req, res, next) => {
+  const pendingStories = await Fiction.find({ pending: true });
+  const reportedStories = await Fiction.find({ reported: true });
+  const reportedReviews = await Review.find({ reported: true }).populate({
+    path: "reviewedStory",
+    model: "Fiction",
+  });
+
+  res.render("users/admin", {
+    pendingStories,
+    reportedStories,
+    reportedReviews,
+  });
+};

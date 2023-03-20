@@ -183,12 +183,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get("/fakeUser", async (req, res) => {
-  const user = new User({ email: "ddoltt@gmail.com", username: "ddolttt" });
-  const newUser = await User.register(user, "chdicken");
-  res.send(newUser);
-});
-
 app.use("/", userRoutes);
 app.use("/fiction", fictionRoutes);
 app.use("/fiction/:id/reviews", reviewRoutes);
