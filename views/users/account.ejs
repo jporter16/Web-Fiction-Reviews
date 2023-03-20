@@ -1,59 +1,24 @@
 <% layout('layouts/boilerplate')%>
-
-<h1 class="text-center">Pending Stories</h1>
-<div>
-  <ul>
-    <% for (let story of pendingStories) {%>
-    <div class="card mb-3">
-      <div class="row">
-        <div class="col-md-2">
-          <% if (story.images.length) {%>
-          <img class="img-fluid" src="<%=story.images[0].url%>" alt="" />
-
-          <%} else {%>
-          <img class="img-fluid" src="" alt="" />
-
-          <%}%>
-        </div>
-        <div class="col-md-10">
-          <div class="card-body">
-            <h5 class="card-title"><%=story.title%></h5>
-            <p class="card-text"><%=story.description%></p>
-            <p class="card-text">
-              <small class="text-muted">
-                Tags: <%for (let tag of story.tags) {%> <%=tag%>, <%}%>
-              </small>
-            </p>
-            <p class="card-text">
-              <small class="text-muted">
-                Average Rating: <%if(story.ratingScore >-1) {%>
-                <%=story.ratingScore%> <%} else {%> This story is not yet rated.
-                <% } %>
-              </small>
-            </p>
-            <a class="btn btn-primary" href="/fiction/<%=story.id%>"
-              >View <%=story.title%>
-            </a>
-            <form
-              action="/fiction/<%=story._id%>/pending?_method=PUT"
+<h1 class="text-center">Account Information</h1>
+<div class="card">
+  <p class = 'm-3'>Username: <%=userInfo.username%></p>
+  <p class = "m-3">Email: <%=userInfo.email%></p>
+  <p class = "m-3">Account Status: <% if (userInfo.verified === true) {%>
+    <span>Verified</span> </p>
+    <% } else { %>
+      <span> Not Verified</span> </p>
+              <form
+              action="/reregister?_method=POST"
               method="POST"
               class="d-inline"
             >
-              <button class="btn btn-success">Approve</button>
+              <button class="btn btn-success m-3">email verification form again</button>
             </form>
-            <a
-              class="btn btn-info card-link"
-              href="/fiction/<%=story._id%>/edit"
-              >Edit</a
-            >
-          </div>
-        </div>
-      </div>
-    </div>
     <%}%>
-  </ul>
+ 
 </div>
-<h1 class="text-center">Reported Stories</h1>
+
+<h1 class="text-center">My Stories</h1>
 <div>
   <ul>
     <% for (let story of reportedStories) {%>
@@ -110,10 +75,10 @@
 </div>
 
 <div>
-  <h1 class="text-center">Reported Reviews</h1>
+  <h1 class="text-center">My Reviews</h1>
 
   <ul>
-    <% for (let review of reportedReviews) {%>
+    <% for (let review of userReviews) {%>
     <div class="card mb-3">
       <div class="row">
         <div class="col-md-2">
@@ -142,7 +107,6 @@
               >View this story</a
             >
             <br />
-
             <form
               action="/fiction/<%=review.reviewedStory._id%>/reviews/<%=review._id%>?_method=DELETE"
               method="POST"
@@ -150,6 +114,7 @@
             >
               <button class="btn btn-danger">Delete this Review</button>
             </form>
+
           </div>
         </div>
       </div>

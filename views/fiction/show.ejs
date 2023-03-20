@@ -45,7 +45,6 @@
     <%for (let review of story.reviews) { %>
     <div class="card mb-3">
       <div class="card-body">
-        <h5 class="card-title"><%=review.poster.username%></h5>
         <p class="starability-result" data-rating="<%=review.rating%>">
           Rated: <%=review.rating%> stars
         </p>
@@ -243,7 +242,7 @@
       <button class="btn btn-success">Submit</button>
     </form>
     <%} else {%> 
-          <h4 class="text-center">Log in and validate your email to leave a review.</h4>
+          <h4 class="text-center">Log in and verify your email to leave a review.</h4>
 
       <%}%>
    

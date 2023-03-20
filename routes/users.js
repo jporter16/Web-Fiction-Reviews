@@ -24,6 +24,7 @@ router
   );
 
 router.get("/register/verify/:id/:token", users.verify);
+router.post("/reregister", isLoggedIn, users.resendVerificationEmail);
 
 router.get(
   "/admin",
@@ -33,6 +34,15 @@ router.get(
   catchAsync(users.renderAdmin)
 );
 
+router.get("/account", isLoggedIn, catchAsync(users.renderAccount));
+
 router.get("/logout", users.logout);
+router.get("/reset-password", users.enterEmailtoResetPassword);
+router.post("/reset-password", users.sendResetPasswordLink);
+router.get("/reset-password/:id/:token", users.renderResetPasswordPage);
+router.post("/reset-password/:id/:token", users.resetPassword);
+
+router.get("/recover-username", users.renderRecoverUsername);
+router.post("/recover-username", users.recoverUsername);
 
 module.exports = router;
