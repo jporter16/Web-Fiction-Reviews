@@ -22,7 +22,9 @@
       </div>
       <div class="col-md-8">
         <div class="card-body">
-          <h4 class="card-title text-center"><%=story.title%></h4>
+          <h4 class="card-title text-center">
+            <a href="/fiction/<%=story.id%>"> <%=story.title%> </a>
+          </h4>
           <p class="card-text">
             <% let trimmedDescription = story.description.substr(0, 500);
             trimmedDescription = trimmedDescription.substr(0,
@@ -38,9 +40,6 @@
               <% } %>
             </small>
           </p>
-          <a class="btn btn-primary text-center" href="/fiction/<%=story.id%>"
-            >View <%=story.title%>
-          </a>
         </div>
       </div>
     </div>

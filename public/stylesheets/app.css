@@ -4,6 +4,19 @@
 .img-width-100 {
   width: 100%;
 }
+
+.title-link {
+  text-decoration: none;
+  color: rgb(40, 142, 77);
+}
+
+.title-link:hover {
+  text-decoration: underline;
+}
+.center-child {
+  text-align: center;
+}
+
 @media only screen and (max-width: 765px) {
   .img-width-100 {
     width: 30%;

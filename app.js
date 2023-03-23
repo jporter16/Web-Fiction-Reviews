@@ -1,5 +1,8 @@
 // This is where everything starts.
 // CURRENT ISSUES to fix before going live:
+// fix my stories part of account.
+// should report be an option for people who are not signed in?
+// fix delete option when you post a story.
 
 // FEATURES TO ADD EVENTUALLY
 // add pagination
