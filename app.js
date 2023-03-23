@@ -11,18 +11,12 @@
 // replace buttons with larger clickable areas.
 // set expiration date for validation email
 // i think there is a validation issue when only one tag is selected for editing a story?
-//add link to the alert "you must verify your account first" to send new link.
 // create a page for each story that gives the change to write a blurb to report. routers,controller, etc.
 // right now reviews cannot be edited only deleted.
 // add support form for users
-// add forgot-username or password.
 // add recaptcha for requesting email or username reset.
-// all usernames must be unique
-// currently working on account page--setting up username and email to be passed through as members of object.
 // for security purposes user entered data (like username? should be filtered to exclude <>/ symbols)
-// when i register it didn't flash the success message and i don't know why
-// Where I'm at right now: reset password sends the correct link but when i enter the new
-// password then it doesn't go through--it doesn't save the new password data.
+// the fiction index page-and all search/filter pages--should limit description to maybe 100 words.
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }

@@ -2,7 +2,7 @@
 <link rel="stylesheet" href="/stylesheets/stars.css" />
 
 <div class="row">
-  <div class="col-6">
+  <div class="col-md-4">
     <div
       id="carouselExampleControls"
       class="carousel slide mb-2 carousel-dark"
@@ -40,56 +40,12 @@
       <%}%>
     </div>
  
-     <!-- Existing Reviews -->
-
-    <%for (let review of story.reviews) { %>
-    <div class="card mb-3">
-      <div class="card-body">
-        <p class="starability-result" data-rating="<%=review.rating%>">
-          Rated: <%=review.rating%> stars
-        </p>
-
-        <h6 class="card-subtitle text-muted mb-2">
-          By <%=review.poster.username%>
-        </h6>
-        <h6 class="card-subtitle text-muted mb-2">
-          Review upvotes: <%=review.upvotes.number%>
-        </h6>
-       
-        <p>Review: <%=review.body%></p>
-
-        <form
-        method="POST"
-        action="/fiction/<%=story._id%>/reviews/<%=review._id%>/upvote?_method=PUT"
-      >
-        <button class="btn btn-sm btn-success">+1 Upvote</button>
-      </form>
-        <br>
-        <form
-        method="POST"
-        action="/fiction/<%=story._id%>/reviews/<%=review._id%>/report?_method=PUT"
-      >
-        <button class="btn btn-sm btn-danger">Report</button>
-      </form>
-      <br>
-        <% if(currentUser && review.poster.equals(currentUser._id)) { %>
-
-        <form
-          method="POST"
-          action="/fiction/<%=story._id%>/reviews/<%=review._id%>?_method=DELETE"
-        >
-          <button class="btn btn-sm btn-danger">Delete</button>
-        </form>
-        <%}%>
-      </div>
-    </div>
-
-    <%}%>
+     
 
   </div>
       <!-- The second column
      -->
-  <div class="col-6">
+  <div class="col-md-8">
 
     <div class="card mb-3">
       <div class="card-body">
@@ -150,9 +106,26 @@
       </div>
       <%}%>
 
+      <%
+      if(currentUser && story.poster && story.poster.equals(currentUser._id)) { %>
+      <div class="card-body">
+        <a
+          class="btn btn-danger card-link"
+          href="/fiction/<%=story._id%>/edit"
+          >Request to Delete</a
+        >
+        
+      </div>
+      <%}%>
+
+      
+
     </div>
 
-    <!-- The Reviews start here: -->
+  </div>
+
+
+  <!-- The Reviews start here: -->
     <%let alreadyPosted = false;
       for (let review of story.reviews) {
         if (currentUser && review.poster.equals(currentUser._id)) {
@@ -246,7 +219,59 @@
 
       <%}%>
    
-  </div>
+
+  <!-- Existing Reviews -->
+
+  <h2 class="text-center">Reviews</h2>
+
+    <%for (let review of story.reviews) { %>
+    <div class="card mb-3">
+      <div class="card-body">
+        <p class="starability-result" data-rating="<%=review.rating%>">
+          Rated: <%=review.rating%> stars
+        </p>
+
+        <h6 class="card-subtitle text-muted mb-2">
+          By <%=review.poster.username%>
+        </h6>
+        <h6 class="card-subtitle text-muted mb-2">
+          Review upvotes: <%=review.upvotes.number%>
+        </h6>
+       
+        <p class ="text-left">Review: <%=review.body%></p>
+
+        <form
+        method="POST"
+        action="/fiction/<%=story._id%>/reviews/<%=review._id%>/upvote?_method=PUT"
+      >
+        <button class="btn btn-sm btn-success">+1 Upvote</button>
+      </form>
+        <br>
+        <form
+        method="POST"
+        action="/fiction/<%=story._id%>/reviews/<%=review._id%>/report?_method=PUT"
+      >
+        <button class="btn btn-sm btn-danger">Report</button>
+      </form>
+      <br>
+        <% if(currentUser && review.poster.equals(currentUser._id)) { %>
+
+        <form
+          method="POST"
+          action="/fiction/<%=story._id%>/reviews/<%=review._id%>?_method=DELETE"
+        >
+          <button class="btn btn-sm btn-danger">Delete</button>
+        </form>
+        <%}%>
+      </div>
+    </div>
+
+    <%}%>
+    <% if (story.reviews.length ===0) {%>
+      <h4 class="text-center mb-3">There are no reviews for this story yet. Be the first to review this story!</h4>
+      
+
+    <%}%>
 </div>
 
 <script>
