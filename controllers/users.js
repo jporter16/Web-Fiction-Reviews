@@ -38,13 +38,20 @@ module.exports.register = async (req, res) => {
       )
     ) {
       e.message = "There is already an account using that email address.";
+      req.flash(
+        "error",
+        e.message
+        // "Either your username or your email is already in use. You might need to pick a different username."
+      );
+      res.redirect("/login");
+    } else {
+      req.flash(
+        "error",
+        e.message
+        // In this case, the username is taken.
+      );
+      res.redirect("/register");
     }
-    req.flash(
-      "error",
-      e.message
-      // "Either your username or your email is already in use. You might need to pick a different username."
-    );
-    res.redirect("/register");
   }
 };
 
@@ -224,9 +231,7 @@ module.exports.enterEmailtoResetPassword = async (req, res) => {
 
 module.exports.sendResetPasswordLink = async (req, res) => {
   try {
-    console.log(req.body, "req.body");
     const { email } = req.body;
-    console.log(email, "email");
 
     const user = await User.findOne({ email: email });
 
@@ -271,5 +276,38 @@ module.exports.recoverUsername = async (req, res) => {
   } catch (e) {
     req.flash("error", e.message);
     res.redirect("/account");
+  }
+};
+
+module.exports.renderContact = (req, res) => {
+  res.render("users/contact.ejs");
+};
+
+module.exports.sendContactEmail = async (req, res) => {
+  const user = await User.findById(req.user._id);
+  userInfo = {
+    username: user.username,
+    email: user.email,
+    verified: user.isVerified,
+  };
+  try {
+    console.log(req.body);
+    const { subject, message } = req.body;
+    const newMessage = `From: ${userInfo.email} ` + message;
+
+    await sendEmail("webfictionreviews@gmail.com", subject, newMessage);
+
+    req.flash(
+      "success",
+      "Your message has been sent. A response will be sent to your the email linked to your account. Please check your spam folder if you do not see it."
+    );
+    res.redirect("/fiction");
+  } catch (e) {
+    req.flash(
+      "error",
+      e.message
+      // In this case, the username is taken.
+    );
+    res.redirect("/fiction");
   }
 };

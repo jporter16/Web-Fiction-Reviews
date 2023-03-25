@@ -1,19 +1,25 @@
 // This is where everything starts.
 // CURRENT ISSUES to fix before going live:
-// fix my stories part of account.
+// research secret-should i have new secrets generated instead of just one?
+// sessions don't time out in db?
+
 // should report be an option for people who are not signed in?
 // fix delete option when you post a story.
+// figure out meta tags
+// figure out how to update the title of a page
+// add site map
+// create unreport option for admin
+// request to delete button only takes you to the edit button.
 
 // FEATURES TO ADD EVENTUALLY
 // add pagination
 // update app.js cookies to say secure: true.
 // fix cover size for genre lists ( the css styles don't import from home page?)
 // add a background?
-// i want to populate the edit button but it's not working. the story.poster member isn't being passed along.
+// tags aren't showing up in the edit page.
 // add password requirements, password update option.
 // replace buttons with larger clickable areas.
 // set expiration date for validation email
-// i think there is a validation issue when only one tag is selected for editing a story?
 // create a page for each story that gives the change to write a blurb to report. routers,controller, etc.
 // right now reviews cannot be edited only deleted.
 // add support form for users

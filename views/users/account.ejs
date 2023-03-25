@@ -1,6 +1,12 @@
 <% layout('layouts/boilerplate')%>
-<h1 class="text-center">Account</h1>
-<h2 class="text-center">Account Information</h2>
+<div class="row">
+  <div class="col-md-2"></div>
+  <div class="col-md-10">
+
+    <h1 class="text-center">Account</h1>
+    <h2 class="text-center">Profile</h2>  </div>
+</div>
+
 <div class="card">
   <p class = 'm-3'>Username: <%=userInfo.username%></p>
   <p class = "m-3">Email: <%=userInfo.email%></p>
@@ -16,11 +22,18 @@
               <button class="btn btn-success m-3">email verification form again</button>
             </form>
     <%}%>
+  <span> <a class="btn btn-primary m-3" href="/contact">Contact Web Fiction Reviews</a></span> 
+
   <span> <a class="btn btn-primary m-3" href="/logout">Logout</a></span> 
 
-</div>
 
-<h2 class="text-center">My Stories</h2>
+</div>
+<div class="row">
+  <div class="col-md-2"></div>
+  <div class="col-md-10">
+    <h2 class="text-center">My Stories</h2>
+  </div>
+</div>
 <div>
   <ul class = 'remove-padding'>
     <% for (let story of reportedStories) {%>
@@ -37,7 +50,9 @@
         </div>
         <div class="col-md-10">
           <div class="card-body">
-            <h5 class="card-title"><%=story.title%></h5>
+            <h4 class="card-title text-center">
+              <a href="/fiction/<%=story.id%>"> <%=story.title%> </a>
+            </h4>
             <p class="card-text"><%=story.description%></p>
             <p class="card-text">
               <small class="text-muted">
@@ -51,9 +66,7 @@
                 <% } %>
               </small>
             </p>
-            <a class="btn btn-primary" href="/fiction/<%=story.id%>"
-              >View <%=story.title%>
-            </a>
+
             <a
               class="btn btn-info card-link"
               href="/fiction/<%=story._id%>/edit"
@@ -77,7 +90,13 @@
 </div>
 
 <div>
-  <h2 class="text-center">My Reviews</h2>
+  <div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-10">
+  
+      <h2 class="text-center">My Reviews</h2>
+
+  </div>
 
   <ul class ="remove-padding">
     <% for (let review of userReviews) {%>
@@ -99,15 +118,14 @@
 
         <div class="col-md-10">
           <div class="card-body mb-3">
+            <h4 class="card-title text-center">
+              <a href="/fiction/<%=review.reviewedStory._id%>"> <%=review.reviewedStory.title%> </a>
+            </h4>
             <h5 class="card-title"><%=review.title%></h5>
             <p class="card-text">Review Stars: <%=review.rating%></p>
             <p class="card-text">Review: <%=review.body%></p>
             <p class="card-text">Upvotes: <%=review.upvotes.number%></p>
-            <a
-              class="btn btn-success mb-3"
-              href="/fiction/<%=review.reviewedStory._id%>"
-              >View this story</a
-            >
+
             <br />
             <form
               action="/fiction/<%=review.reviewedStory._id%>/reviews/<%=review._id%>?_method=DELETE"

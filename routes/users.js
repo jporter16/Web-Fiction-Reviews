@@ -45,4 +45,7 @@ router.post("/reset-password/:id/:token", users.resetPassword);
 router.get("/recover-username", users.renderRecoverUsername);
 router.post("/recover-username", users.recoverUsername);
 
+router.get("/contact", isLoggedIn, users.renderContact);
+router.post("/contact", isLoggedIn, catchAsync(users.sendContactEmail));
+
 module.exports = router;

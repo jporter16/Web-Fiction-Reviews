@@ -47,8 +47,14 @@
                 type="password"
                 id="password"
                 name="password"
+                pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
                 required
               />
+              <p>
+                *Passwords must be at least 8 characters. They must contain at
+                least one uppercase letter, at least one lowercase letter, and
+                at least one number.
+              </p>
               <div class="valid-feedback">Looks good!</div>
             </div>
             <div class="d-grid gap-2">
