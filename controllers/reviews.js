@@ -1,6 +1,7 @@
 const Story = require("../models/fiction");
 const review = require("../models/review");
 const Review = require("../models/review");
+const ReportReview = require("../models/reportReview");
 const databaseCalculations = require("./databaseCalculations");
 
 module.exports.createReview = async (req, res) => {
@@ -32,6 +33,7 @@ module.exports.createReview = async (req, res) => {
     upvoters: [],
   };
   review.reported = false;
+  review.reportList = [];
   await review.save();
   await story.save();
   await databaseCalculations.updateRatingScore(story._id);
@@ -68,11 +70,41 @@ module.exports.upvoteReview = async (req, res) => {
   res.redirect(`/fiction/${id}`);
 };
 module.exports.reportReview = async (req, res) => {
+  try {
+    const { id, reviewId } = req.params;
+    const { message } = req.body;
+    const newReport = new ReportReview({
+      body: message,
+      adminResponded: false,
+      adminAccepted: false,
+      reportedReview: id,
+      poster: req.user._id,
+    });
+    newReport.save(async function (err, report) {
+      const reportId = report.id;
+
+      const review = await Review.findById(reviewId);
+      review.reported = true;
+      review.reportList.push(reportId);
+      await review.save();
+    });
+
+    req.flash("success", "Successfully reported a review.");
+    res.redirect(`/fiction/${id}`);
+  } catch (e) {
+    req.flash("error", "There was an error reporting this review.");
+    console.log(e);
+    res.redirect(`/fiction/${id}`);
+  }
+};
+
+module.exports.unReportReview = async (req, res) => {
   const { id, reviewId } = req.params;
+
   const review = await Review.findById(reviewId);
-  review.reported = true;
+  review.reported = false;
   await review.save();
 
-  req.flash("success", "Successfully reported a review.");
-  res.redirect(`/fiction/${id}`);
+  req.flash("success", "Successfully ignored a reported review");
+  res.redirect("/admin");
 };

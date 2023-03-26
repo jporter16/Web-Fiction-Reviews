@@ -47,11 +47,18 @@ router.put(
   notUpvoter,
   catchAsync(reviews.upvoteReview)
 );
-router.put(
+router.post(
   "/:reviewId/report",
   isLoggedIn,
   isVerified,
   catchAsync(reviews.reportReview)
 );
 
+router.put(
+  "/:reviewId/:/reportId/",
+  isLoggedIn,
+  isVerified,
+  isAdmin,
+  catchAsync(reviews.unReportReview)
+);
 module.exports = router;

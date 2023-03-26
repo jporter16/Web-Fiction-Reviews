@@ -13,6 +13,15 @@ const reviewSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "User",
   },
+  reportList: {
+    type: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "reportReview",
+      },
+    ],
+    default: [],
+  },
   poster: {
     type: Schema.Types.ObjectId,
     ref: "User",

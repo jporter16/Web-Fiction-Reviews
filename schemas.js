@@ -32,6 +32,7 @@ module.exports.storySchema = Joi.object({
     reported: Joi.boolean(),
     // image: Joi.string().required(),
     author: Joi.string().required().escapeHTML(),
+    reportList: Joi.array(),
     description: Joi.string().required(),
     tags: Joi.alternatives().try(Joi.array().max(3).min(1), Joi.string()),
     // ratingScore: Joi.number(),
@@ -45,4 +46,5 @@ module.exports.reviewSchema = Joi.object({
     body: Joi.string().required().escapeHTML(),
   }).required(),
   reviewedStory: Joi.string(),
+  reportList: Joi.array(),
 });

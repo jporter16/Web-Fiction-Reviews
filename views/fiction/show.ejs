@@ -81,30 +81,42 @@
         <li class="list-group-item">
           <a href= <%=story.link%> class = 'btn btn-success'>Read now</a>
         </li>
-      </ul>
-
-      <div class="card-body">
-      <form
-          action="/fiction/<%=story._id%>/report?_method=PUT"
-          method="POST"
-          class="d-inline"
-        >
-          <button class="btn btn-danger btn-sm">Report</button>
-        </form>
-      </div>
-
+      
 
       <%
       if(currentUser && story.poster && story.poster.equals(currentUser._id)) { %>
-      <div class="card-body">
+      <li class="list-group-item">
         <a
           class="btn btn-info card-link"
           href="/fiction/<%=story._id%>/edit"
-          >Edit</a
+          > Edit</a>
+        
+      </li>
+      <%}%>
+
+        <li class="list-group-item">
+          <button class="btn btn-danger btn-sm" type="button" id="view-report-story-form">Report this story</button>
+          
+      <form
+          action="/fiction/<%=story._id%>/report"
+          method="POST"
+          class=" hide"
+          id="hide-report-story-form"
         >
         
+            <textArea id="report-story-body" class="m-2" name ="message" cols="100" style ="max-width: 100%;"> </textArea>
+            <br/>
+            <button class="btn btn-danger btn-sm" type="submit" id="report-story-button"> Report this story</button>
+
+        </form>
+          </li>
+      </ul>
+
+      <div class="card-body">
+      
       </div>
-      <%}%>
+
+
 
       <%
       if(currentUser && story.poster && story.poster.equals(currentUser._id)) { %>
@@ -224,7 +236,8 @@
 
   <h2 class="text-center">Reviews</h2>
 
-    <%for (let review of story.reviews) { %>
+    <% let count = 0;
+    for (let review of story.reviews) { count +=1;%>
     <div class="card mb-3">
       <div class="card-body">
         <p class="starability-result" data-rating="<%=review.rating%>">
@@ -244,15 +257,23 @@
         method="POST"
         action="/fiction/<%=story._id%>/reviews/<%=review._id%>/upvote?_method=PUT"
       >
-        <button class="btn btn-sm btn-success">+1 Upvote</button>
-      </form>
-        <br>
+        <button class="btn btn-sm btn-success m-2">+1 Upvote</button>
+        </form>
+        <button class="btn btn-danger btn-sm m-2 hidden-form-button" type="button" id="view-report-review-form<%=count%>">Report this review</button>
         <form
-        method="POST"
-        action="/fiction/<%=story._id%>/reviews/<%=review._id%>/report?_method=PUT"
-      >
-        <button class="btn btn-sm btn-danger">Report</button>
-      </form>
+          action="/fiction/<%=story._id%>/reviews/<%=review._id%>/report"
+          method="POST"
+          class=" hide"
+          id="report-review-form<%=count%>"
+        >
+        
+            <textArea id="report-review-body<%=count%>" class="m-2" name ="message" cols="100" style ="max-width: 100%;"> </textArea>
+            <br/>
+            <button class="btn btn-danger btn-sm m-2" type="submit" id="report-story-button<%=count%>"> Report</button>
+
+        </form>
+
+
       <br>
         <% if(currentUser && review.poster.equals(currentUser._id)) { %>
 
@@ -260,7 +281,7 @@
           method="POST"
           action="/fiction/<%=story._id%>/reviews/<%=review._id%>?_method=DELETE"
         >
-          <button class="btn btn-sm btn-danger">Delete</button>
+          <button class="btn btn-sm btn-danger m-2">Delete</button>
         </form>
         <%}%>
       </div>
@@ -278,5 +299,6 @@
 
   const story = <%- JSON.stringify(story) %>
 </script>
+<script src="/javascripts/toggleHiddenDiv.js"></script>
 
 <footer></footer>

@@ -56,7 +56,7 @@
 <h1 class="text-center">Reported Stories</h1>
 <div>
   <ul>
-    <% for (let story of reportedStories) {%>
+    <% for (let story of storiesWithUnrespondedReports) {%>
     <div class="card mb-3">
       <div class="row">
         <div class="col-md-2">
@@ -84,6 +84,25 @@
                 <% } %>
               </small>
             </p>
+            <h5>These are the reports for this story:</h5>
+            <% for (i = 0; i <story.reportList.length; i++) { if
+            (story.reportList[i].adminResponded ===false) {%>
+            <h6>reporter's email: <%=story.reportList[i].poster.email %></h6>
+            <p>Message: <%=story.reportList[i].body %></p>
+            <form
+              action="/fiction/<%=story._id%>/<%=story.reportList[i]._id%>/remove-report?_method=PUT"
+              method="POST"
+              class="d-inline"
+            >
+              <button class="btn btn-primary" type="submit">
+                Mark this report as responded
+              </button>
+            </form>
+            <p>---</p>
+
+            <br />
+            <%} }%>
+
             <a class="btn btn-primary" href="/fiction/<%=story.id%>"
               >View <%=story.title%>
             </a>
@@ -92,6 +111,7 @@
               href="/fiction/<%=story._id%>/edit"
               >Edit</a
             >
+
             <form
               action="/fiction/<%=story._id%>?_method=DELETE"
               method="POST"
@@ -111,9 +131,10 @@
 
 <div>
   <h1 class="text-center">Reported Reviews</h1>
-
+  <p><%=reviewsWithUnrespondedReports.length%></p>
   <ul>
-    <% for (let review of reportedReviews) {%>
+    <% if (reviewsWithUnrespondedReports.length > 0) { 
+      for (let review of reviewsWithUnrespondedReports) {%>
     <div class="card mb-3">
       <div class="row">
         <div class="col-md-2">
@@ -143,6 +164,22 @@
             >
             <br />
 
+            <% if (review.reportList[0]) { for (let i = 0; i <review.reportList.length; i++) { %>
+
+            <p>Report Text: <%=review.reportList[i].body%></p>
+
+            <form
+              action="/fiction/<%=review.reviewedStory._id%>/reviews/<%=review._id%>/<%=review.reportList[i]._id%>?_method=PUT"
+              method="POST"
+              class="d-inline"
+            >
+              <button class="btn btn-primary" type="submit">
+                Remove the report on this review
+              </button>
+            </form>
+            <p>---</p>
+            <%} }%>
+
             <form
               action="/fiction/<%=review.reviewedStory._id%>/reviews/<%=review._id%>?_method=DELETE"
               method="POST"
@@ -154,10 +191,12 @@
         </div>
       </div>
     </div>
-    <%}%>
+    <%}
+  }%>
   </ul>
 </div>
 <script>
 
   const pendingStories = {features: <%-JSON.stringify(pendingStories)%>}
-</script>
+  const reviewsWithUnrespondedReports = <%- JSON.stringify(reviewsWithUnrespondedReports) %>
+  </script>

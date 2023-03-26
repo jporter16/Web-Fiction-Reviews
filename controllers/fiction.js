@@ -1,5 +1,6 @@
 const { request } = require("express");
 const Fiction = require("../models/fiction");
+const ReportStory = require("../models/reportStory");
 const { cloudinary } = require("../cloudinary");
 const databaseCalc = require("./databaseCalculations");
 const review = require("../models/review");
@@ -140,12 +141,47 @@ module.exports.deleteStory = async (req, res) => {
   res.redirect("/fiction");
 };
 module.exports.reportStory = async (req, res) => {
-  const { id } = req.params;
-  const story = await Fiction.findById(id);
-  story.reported = true;
-  story.save();
-  req.flash("success", "Successfully reported the story");
-  res.redirect("/fiction");
+  try {
+    const { id } = req.params;
+    const { message } = req.body;
+    console.log(message);
+    const newReport = new ReportStory({
+      body: message,
+      adminResponded: false,
+      adminAccepted: false,
+      reportedStory: id,
+      poster: req.user._id,
+    });
+    let reportId;
+    newReport.save(async function (err, report) {
+      reportId = report.id;
+
+      const story = await Fiction.findById(id);
+      story.reported = true;
+      console.log("reportid: ", reportId);
+
+      story.reportList.push(reportId);
+      story.save();
+    });
+
+    req.flash("success", "Successfully reported the story");
+    res.redirect("/fiction");
+  } catch (e) {
+    req.flash("error", "there was an error reporting this story.", e);
+    res.redirect("/fiction");
+  }
+};
+
+module.exports.unReportStory = async (req, res) => {
+  const { id, reportId } = req.params;
+  // const story = await Fiction.findById(id);
+  // story.reported = false;
+  // story.save();
+  const report = await ReportStory.findById(reportId);
+  report.adminResponded = true;
+  report.save();
+  req.flash("success", "Successfully responded to a report of a story.");
+  res.redirect("/admin");
 };
 
 module.exports.markNotPending = async (req, res) => {

@@ -43,13 +43,21 @@ router.get("/genres/:genre", stories.renderGenre);
 // show searched stories
 router.get("/search/:query", stories.renderSearch);
 
-// show one story
-router.put(
+// show report a story
+router.post(
   "/:id/report",
   isLoggedIn,
   isVerified,
   catchAsync(stories.reportStory)
 );
+router.put(
+  "/:id/:reportId/remove-report",
+  isLoggedIn,
+  isVerified,
+  isAdmin,
+  catchAsync(stories.unReportStory)
+);
+
 // update a story here:
 router
   .route("/:id")

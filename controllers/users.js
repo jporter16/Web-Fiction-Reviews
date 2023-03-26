@@ -130,15 +130,53 @@ module.exports.logout = (req, res, next) => {
 
 module.exports.renderAdmin = async (req, res, next) => {
   const pendingStories = await Fiction.find({ pending: true });
-  const reportedStories = await Fiction.find({ reported: true });
-  const reportedReviews = await Review.find({ reported: true }).populate({
-    path: "reviewedStory",
-    model: "Fiction",
+  const reportedStories = await Fiction.find({ reported: true }).populate({
+    path: "reportList",
+    model: "reportStory",
+    populate: {
+      path: "poster",
+      model: "User",
+    },
   });
+
+  const reportedReviews = await Review.find({ reported: true })
+    .populate({
+      path: "reviewedStory",
+      model: "Fiction",
+    })
+    .populate({
+      path: "reportList",
+      // Fix me-does this need to be capitalized?
+      model: "ReportReview",
+    });
+
+  let storiesWithUnrespondedReports = [];
+  // console.log(reportedStories, "reportedStories");
+  for (let i = 0; i < reportedStories.length; i++) {
+    for (let j = 0; j < reportedStories[i].reportList.length; j++) {
+      if (reportedStories[i].reportList[j].adminResponded === false) {
+        storiesWithUnrespondedReports.push(reportedStories[i]);
+        break;
+      }
+    }
+  }
+
+  let reviewsWithUnrespondedReports = [];
+  for (let i = 0; i < reportedReviews.length; i++) {
+    for (let j = 0; j < reportedReviews[i].reportList.length; j++) {
+      if (reportedReviews[i].reportList[j].adminResponded === false) {
+        reviewsWithUnrespondedReports.push(reportedReviews[i]);
+        break;
+      }
+    }
+  }
+  console.log(reviewsWithUnrespondedReports, "unresponded report reviews");
+  console.log(reviewsWithUnrespondedReports[0].reportList, "list of reports");
 
   res.render("users/admin", {
     pendingStories,
-    reportedStories,
+    storiesWithUnrespondedReports,
+    reviewsWithUnrespondedReports,
     reportedReviews,
   });
 };
@@ -160,6 +198,7 @@ module.exports.renderAccount = async (req, res, next) => {
     email: user.email,
     verified: user.isVerified,
   };
+  console.log(reportedStories);
   res.render("users/account", {
     pendingStories,
     reportedStories,

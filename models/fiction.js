@@ -31,6 +31,15 @@ const FictionSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    reportList: {
+      type: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: "reportStory",
+        },
+      ],
+      default: [],
+    },
     pending: {
       type: Boolean,
       default: true,
