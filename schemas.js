@@ -34,6 +34,7 @@ module.exports.storySchema = Joi.object({
     author: Joi.string().required().escapeHTML(),
     reportList: Joi.array(),
     description: Joi.string().required(),
+    requestDelete: Joi.boolean(),
     tags: Joi.alternatives().try(Joi.array().max(3).min(1), Joi.string()),
     // ratingScore: Joi.number(),
   }).required(),

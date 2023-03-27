@@ -97,7 +97,9 @@ module.exports.isAdmin = async (req, res, next) => {
 module.exports.isAdminOrStoryPoster = async (req, res, next) => {
   const user = await User.findById(req.user._id);
   const { id } = req.params;
+  console.log(id);
   const story = await Story.findById(id);
+  console.log("this is the story", story);
   if (user.isAdmin || story.poster.equals(req.user._id)) {
     console.log("user is admin or poster");
     next();

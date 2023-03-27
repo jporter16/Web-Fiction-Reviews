@@ -129,12 +129,65 @@
   </ul>
 </div>
 
+<h1 class="text-center">Request-to-delete Stories:</h1>
+<div>
+  <ul>
+    <% for (let story of requestToDeleteStories) {%>
+    <div class="card mb-3">
+      <div class="row">
+        <div class="col-md-2">
+          <% if (story.images.length) {%>
+          <img class="img-fluid" src="<%=story.images[0].url%>" alt="" />
+
+          <%} else {%>
+          <img class="img-fluid" src="" alt="" />
+
+          <%}%>
+        </div>
+        <div class="col-md-10">
+          <div class="card-body">
+            <h5 class="card-title"><%=story.title%></h5>
+            <p class="card-text"><%=story.description%></p>
+            <p class="card-text">
+              <small class="text-muted">
+                Tags: <%for (let tag of story.tags) {%> <%=tag%>, <%}%>
+              </small>
+            </p>
+            <p class="card-text">
+              <small class="text-muted">
+                Average Rating: <%if(story.ratingScore >-1) {%>
+                <%=story.ratingScore%> <%} else {%> This story is not yet rated.
+                <% } %>
+              </small>
+            </p>
+            <a class="btn btn-primary" href="/fiction/<%=story.id%>"
+              >View <%=story.title%>
+            </a>
+            <a
+              class="btn btn-info card-link"
+              href="/fiction/<%=story._id%>/edit"
+              >Edit
+            </a>
+            <form
+              action="/fiction/<%=story._id%>/?_method=DELETE"
+              method="POST"
+              class="d-inline"
+            >
+              <button class="btn btn-danger">Delete</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <%}%>
+  </ul>
+</div>
+
 <div>
   <h1 class="text-center">Reported Reviews</h1>
-  <p><%=reviewsWithUnrespondedReports.length%></p>
   <ul>
-    <% if (reviewsWithUnrespondedReports.length > 0) { 
-      for (let review of reviewsWithUnrespondedReports) {%>
+    <% if (reviewsWithUnrespondedReports.length > 0) { for (let review of
+    reviewsWithUnrespondedReports) {%>
     <div class="card mb-3">
       <div class="row">
         <div class="col-md-2">
@@ -164,8 +217,9 @@
             >
             <br />
 
-            <% if (review.reportList[0]) { for (let i = 0; i <review.reportList.length; i++) { %>
-
+            <% if (review.reportList[0]) { for (let i = 0; i
+            <review.reportList.length; i++) { if
+            (review.reportList[i].adminResponded===false) { %>
             <p>Report Text: <%=review.reportList[i].body%></p>
 
             <form
@@ -178,7 +232,8 @@
               </button>
             </form>
             <p>---</p>
-            <%} }%>
+
+            <% }} }%>
 
             <form
               action="/fiction/<%=review.reviewedStory._id%>/reviews/<%=review._id%>?_method=DELETE"
@@ -191,12 +246,11 @@
         </div>
       </div>
     </div>
-    <%}
-  }%>
+    <%} }%>
   </ul>
 </div>
 <script>
 
   const pendingStories = {features: <%-JSON.stringify(pendingStories)%>}
   const reviewsWithUnrespondedReports = <%- JSON.stringify(reviewsWithUnrespondedReports) %>
-  </script>
+</script>

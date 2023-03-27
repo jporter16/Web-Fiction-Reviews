@@ -55,6 +55,10 @@ const FictionSchema = new Schema(
         ref: "Review",
       },
     ],
+    requestDelete: {
+      type: Boolean,
+      default: false,
+    },
   },
   opts
 );

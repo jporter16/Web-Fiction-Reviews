@@ -1,11 +1,6 @@
 // This is where everything starts.
 // currently working on... There is a weird glitch on the admin page where if there are no reported reviews,
 // nothing populates. I think if I set it so there is always one review left, it will be fine.
-// but that leads to the second issue I'm working on now. unreporting makes a review be marked as not flagged
-// but it should really just remove one report.
-
-// The review reports get saved to the database, now i just ahve to show them in the admin page
-// and i have to figure out how to mark them as read.
 
 // CURRENT ISSUES to fix before going live:
 // add user email to report admin page.
@@ -13,15 +8,14 @@
 // research secret-should i have new secrets generated instead of just one?
 // sessions don't time out in db?
 // the 404 page is actually called guidelines in the top title?
-
 // should report be an option for people who are not signed in?
-// fix delete option when you post a story-users should only be able to delete a story with <5 reviews.
 // figure out meta tags
 // figure out how to update the title of a page
 // add site map
-// request to delete button only takes you to the edit button.
 
 // FEATURES TO ADD EVENTUALLY
+// figure out whether to delete reviews when a story gets deleted. maybe have a backup.
+// fix delete option--make it a form request like a report when reviews >2
 // add pagination
 // update app.js cookies to say secure: true.
 // fix cover size for genre lists ( the css styles don't import from home page?)

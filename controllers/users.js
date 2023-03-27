@@ -150,6 +150,9 @@ module.exports.renderAdmin = async (req, res, next) => {
       model: "ReportReview",
     });
 
+  const requestToDeleteStories = await Fiction.find({ requestDelete: true });
+  console.log(requestToDeleteStories, "request to delete stories");
+
   let storiesWithUnrespondedReports = [];
   // console.log(reportedStories, "reportedStories");
   for (let i = 0; i < reportedStories.length; i++) {
@@ -170,14 +173,15 @@ module.exports.renderAdmin = async (req, res, next) => {
       }
     }
   }
-  console.log(reviewsWithUnrespondedReports, "unresponded report reviews");
-  console.log(reviewsWithUnrespondedReports[0].reportList, "list of reports");
+  // console.log(reviewsWithUnrespondedReports, "unresponded report reviews");
+  // console.log(reviewsWithUnrespondedReports[0].reportList, "list of reports");
 
   res.render("users/admin", {
     pendingStories,
     storiesWithUnrespondedReports,
     reviewsWithUnrespondedReports,
     reportedReviews,
+    requestToDeleteStories,
   });
 };
 

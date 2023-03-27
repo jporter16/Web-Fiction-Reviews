@@ -4,6 +4,7 @@ const ReportStory = require("../models/reportStory");
 const { cloudinary } = require("../cloudinary");
 const databaseCalc = require("./databaseCalculations");
 const review = require("../models/review");
+const User = require("../models/user");
 
 module.exports.index = async (req, res) => {
   const unsortedStories = await Fiction.find({});
@@ -135,10 +136,32 @@ module.exports.updateStory = async (req, res) => {
 };
 
 module.exports.deleteStory = async (req, res) => {
-  const { id } = req.params;
-  await Fiction.findByIdAndDelete(id);
-  req.flash("success", "Successfully deleted the story");
-  res.redirect("/fiction");
+  try {
+    const { id } = req.params;
+    const story = await Fiction.findById(id);
+    const userId = req.user._id;
+    const user = await User.findById(userId);
+
+    if (story.reviews.length > 2 && !user.isAdmin) {
+      story.requestDelete = true;
+      await story.save();
+      req.flash(
+        "success",
+        "Stories with 3 or more reviews can only be deleted by an admin. A request has been sent to delete this story."
+      );
+      res.redirect("/fiction");
+    } else if (story.reviews.length > 2 && user.isAdmin) {
+      await Fiction.findByIdAndDelete(id);
+      req.flash("success", "Admin successfully deleted this story.");
+      res.redirect("/fiction");
+    } else {
+      await Fiction.findByIdAndDelete(id);
+      req.flash("success", "Successfully deleted this story.");
+      res.redirect("/fiction");
+    }
+  } catch (e) {
+    req.flash("error", "Something went wrong with deleting this story.");
+  }
 };
 module.exports.reportStory = async (req, res) => {
   try {

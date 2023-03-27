@@ -55,7 +55,7 @@ router.post(
 );
 
 router.put(
-  "/:reviewId/:/reportId/",
+  "/:reviewId/:reportId/",
   isLoggedIn,
   isVerified,
   isAdmin,

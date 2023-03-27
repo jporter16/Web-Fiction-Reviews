@@ -9,7 +9,7 @@ module.exports.createReview = async (req, res) => {
   // check to make sure poster doesn't currently have reviews for this story:
   let alreadyReviewed = false;
   for (let review of story.reviews) {
-    if (review.poster.equals(req.user.id)) {
+    if (review.poster.equals(req.user._id)) {
       alreadyReviewed = true;
     }
   }
@@ -99,12 +99,19 @@ module.exports.reportReview = async (req, res) => {
 };
 
 module.exports.unReportReview = async (req, res) => {
-  const { id, reviewId } = req.params;
+  const { id, reviewId, reportId } = req.params;
+  const report = await ReportReview.findById(reportId);
+  console.log(report, "this is the report that is being addressed");
+  report.adminResponded = true;
+  await report.save();
+  console.log(report, "this is the report that is being addressed round 2");
 
-  const review = await Review.findById(reviewId);
-  review.reported = false;
-  await review.save();
+  // note that the review reported status never changes--review.reported stays true.
 
-  req.flash("success", "Successfully ignored a reported review");
+  // const review = await Review.findById(reviewId);
+  // review.reported = false;
+  // await review.save();
+
+  req.flash("success", "Successfully addressed a reported review");
   res.redirect("/admin");
 };

@@ -110,25 +110,30 @@
 
         </form>
           </li>
+
+            <%
+      if(currentUser && story.poster && story.poster.equals(currentUser._id)) { %>
+      <li class="list-group-item">
+        <form
+        action ="/fiction/<%=story._id%>/?_method=Delete"
+        method = "POST"
+        class = "form"
+        >
+          <button
+          class="btn btn-sm btn-danger"
+          >Delete 
+          </button>
+        </form>
+        
+        
+      </li>
+      <%}%>
       </ul>
 
-      <div class="card-body">
-      
-      </div>
 
 
 
-      <%
-      if(currentUser && story.poster && story.poster.equals(currentUser._id)) { %>
-      <div class="card-body">
-        <a
-          class="btn btn-danger card-link"
-          href="/fiction/<%=story._id%>/edit"
-          >Request to Delete</a
-        >
-        
-      </div>
-      <%}%>
+   
 
       
 
