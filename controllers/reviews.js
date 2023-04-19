@@ -14,10 +14,10 @@ module.exports.createReview = async (req, res) => {
     }
   }
   // FIX ME: I am making this so i can make multiple reviews.
-  // if (alreadyReviewed === 4) {
+  // if (alreadyReviewed === true) {
   //   req.flash(
   //     "error",
-  //     "Review canceled, user already posted a review for this story."
+  //     "Review canceled-- you have already posted a review for this story."
   //   );
   //   res.redirect(`/fiction/${story._id}`);
   //   return;
@@ -37,6 +37,7 @@ module.exports.createReview = async (req, res) => {
   await review.save();
   await story.save();
   await databaseCalculations.updateRatingScore(story._id);
+  await databaseCalculations.calculatePopularity(story._id);
 
   req.flash("success", "Created new review!");
   // originally this:
@@ -51,6 +52,7 @@ module.exports.deleteReview = async (req, res) => {
   const story = await Story.findById(id);
   await story.save();
   await databaseCalculations.updateRatingScore(id);
+  await databaseCalculations.calculatePopularity(story._id);
 
   req.flash("success", "Successfully deleted a review");
   res.redirect(`/fiction/${id}`);

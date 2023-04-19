@@ -2,13 +2,21 @@
 <div class="row">
   <div class="col-md-3"></div>
   <div class="col-md-9">
-    <h1 class="text-center">All Stories</h1>
+    <h1 class="text-center"><%=title%></h1>
   </div>
 </div>
 
 <div></div>
 <ul class="remove-padding">
-  <% for (let story of sortedStories) {%>
+  <%if (!paginatedStories.length>0) {%>
+  <div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-9">
+      <h4 class="text-center">There are no stories in this genre yet.</h4>
+    </div>
+  </div>
+
+  <%} %> <% for (let story of paginatedStories) {%>
   <div class="card mb-3">
     <div class="row">
       <div class="col-md-3">
@@ -38,8 +46,11 @@
           <p class="card-text">
             <small class="text-muted">
               Average Rating: <%if(story.ratingScore >-1) {%>
-              <%=story.ratingScore%> <%} else {%> This story is not yet rated.
-              <% } %>
+              <%=story.ratingScore%> (<%=story.reviews.length%>
+              <span
+                ><%= (story.reviews.length>1) ? "reviews" : "review"%>)</span
+              >
+              <% } else {%> This story is not yet rated. <% } %>
             </small>
           </p>
         </div>
@@ -48,7 +59,28 @@
   </div>
   <%}%>
 </ul>
+<%if (title === "All Stories") {%>
+<ul class="pagination">
+  <% for(let i = 1; i <= totalPages; i++) { %>
+  <li class="page-item <% if(currentPage == i) { %>active<% } %>">
+    <a class="page-link" href="/fiction?page=<%= i %>"><%= i %></a>
+  </li>
+  <% } %>
+</ul>
+<%} else { %>
+
+<ul class="pagination">
+  <% for(let i = 1; i <= totalPages; i++) { %>
+  <li class="page-item <% if(currentPage == i) { %>active<% } %>">
+    <a class="page-link" href="/fiction/genres/<%=title%>?page=<%= i %>"
+      ><%= i %></a
+    >
+  </li>
+  <% } %>
+</ul>
+<%}%>
+
 <script>
 
-  const sortedStories = {features: <%-JSON.stringify(sortedStories)%>}
+  const paginatedStories = {features: <%-JSON.stringify(paginatedStories)%>}
 </script>

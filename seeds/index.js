@@ -40,7 +40,7 @@ const seedDB = async () => {
     {
       title: "Mother of Learning",
       author: "nobody103",
-      link: "https://www.royalroad.com/fiction/32067/never-die-twice",
+      link: "https://www.royalroad.com/fiction/21220/mother-of-learning",
       tags: ["Fantasy", "Adventure", "Time Travel"],
       poster: "640a4568e962686921f0259b",
       ratingScore: -1,

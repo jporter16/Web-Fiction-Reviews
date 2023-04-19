@@ -1,11 +1,19 @@
 const express = require("express");
 const router = express.Router();
 const passport = require("passport");
+
 const catchAsync = require("../utils/catchAsync");
 const User = require("../models/user");
 const users = require("../controllers/users");
 const Token = require("../models/token");
-const { isLoggedIn, isVerified, isAdmin } = require("../middleware");
+
+const {
+  isLoggedIn,
+  isVerified,
+  isAdmin,
+  limiter,
+  userLimiter,
+} = require("../middleware");
 
 router
   .route("/register")
@@ -16,6 +24,8 @@ router
   .route("/login")
   .get(users.renderLogin)
   .post(
+    limiter,
+    userLimiter,
     passport.authenticate("local", {
       failureFlash: true,
       failureRedirect: "/login",

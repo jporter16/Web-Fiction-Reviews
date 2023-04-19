@@ -220,6 +220,7 @@
             <% if (review.reportList[0]) { for (let i = 0; i
             <review.reportList.length; i++) { if
             (review.reportList[i].adminResponded===false) { %>
+            <p>reporter's email: <%=review.reportList[i].poster.email%></p>
             <p>Report Text: <%=review.reportList[i].body%></p>
 
             <form

@@ -44,6 +44,22 @@ module.exports.updateRatingScore = async (storyId) => {
   }
 };
 
+module.exports.calculatePopularity = async (storyId) => {
+  // Run this after updating ratingScore.
+  const story = await Fiction.findById(storyId).populate("reviews");
+  const avgRating = story.ratingScore;
+  const minNumRatings = 1;
+  if (avgRating == -1) {
+    story.popularity = 0;
+    await story.save();
+  } else {
+    const numRatings = story.reviews.length;
+    const popularity = (avgRating * numRatings) / (numRatings + minNumRatings);
+    story.popularity = popularity;
+    await story.save();
+  }
+};
+
 module.exports.genreList = [
   "Action",
   "Adventure",

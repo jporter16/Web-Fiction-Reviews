@@ -3,16 +3,41 @@ const Fiction = require("../models/fiction");
 const ReportStory = require("../models/reportStory");
 const { cloudinary } = require("../cloudinary");
 const databaseCalc = require("./databaseCalculations");
-const review = require("../models/review");
+const Review = require("../models/review");
 const User = require("../models/user");
 
 module.exports.index = async (req, res) => {
-  const unsortedStories = await Fiction.find({});
+  // to paginate this:
+  const itemsPerPage = 10;
+  const title = "All Stories";
+  const currentPage = req.query.page || 1;
+  const skip = (currentPage - 1) * itemsPerPage;
+  let totalStories;
 
-  const sortedStories =
-    databaseCalc.createSortedArrayOfStories(unsortedStories);
+  const paginatedStories = await Fiction.find()
+    .sort({ popularity: -1, ratingScore: -1, title: 1 })
+    .skip(skip)
+    .limit(itemsPerPage);
+  // calculate the number of stories:
 
-  res.render("fiction/index", { sortedStories });
+  try {
+    totalStories = await Fiction.countDocuments();
+    console.log(`There are ${totalStories} items in the Fiction collection.`);
+  } catch (err) {
+    console.error(err);
+    totalStories = 0;
+  }
+
+  const totalPages = Math.ceil(totalStories / itemsPerPage);
+  console.log(totalPages, " TotalPages");
+  console.log(currentPage, " currentPage");
+
+  res.render("fiction/index", {
+    paginatedStories,
+    totalPages,
+    currentPage,
+    title,
+  });
 };
 
 module.exports.renderNewForm = (req, res) => {
@@ -22,20 +47,55 @@ module.exports.renderNewForm = (req, res) => {
 
 module.exports.renderGenre = async (req, res) => {
   const { genre } = req.params;
-  const genreStories = await Fiction.find({
-    tags: { $regex: new RegExp(genre, "i") },
-  });
+  if (!databaseCalc.genreList.includes(genre)) {
+    res.render("missingpage");
+  } else {
+    // const genreStories = await Fiction.find({
+    //   tags: { $regex: new RegExp(genre, "i") },
+    // });
+    // to paginate this:
+    const itemsPerPage = 10;
+    const currentPage = req.query.page || 1;
+    const skip = (currentPage - 1) * itemsPerPage;
+    let totalStories;
 
-  const sortedStories = databaseCalc.createSortedArrayOfStories(genreStories);
+    const paginatedStories = await Fiction.find({
+      tags: { $regex: new RegExp(genre, "i") },
+    })
+      .sort({ popularity: -1, ratingScore: -1, title: 1 })
+      .skip(skip)
+      .limit(itemsPerPage);
+    // calculate the number of stories:
 
-  res.render("fiction/genre", { sortedStories, genre });
+    try {
+      totalStories = await Fiction.countDocuments({
+        tags: { $regex: new RegExp(genre, "i") },
+      });
+      console.log(`There are ${totalStories} items in the Fiction collection.`);
+    } catch (err) {
+      console.error(err);
+      totalStories = 0;
+    }
+
+    const totalPages = Math.ceil(totalStories / itemsPerPage);
+    console.log(totalPages, " TotalPages");
+    console.log(currentPage, " currentPage");
+    const title = genre;
+
+    res.render("fiction/index", {
+      paginatedStories,
+      totalPages,
+      currentPage,
+      title,
+    });
+  }
 };
 
 module.exports.renderSearch = async (req, res) => {
   const { genre, query } = req.params;
   const searchStories = await Fiction.find({
     title: { $regex: new RegExp(query, "i") },
-  });
+  }).sort({ popularity: -1 });
 
   const sortedStories = databaseCalc.createSortedArrayOfStories(searchStories);
 
@@ -71,12 +131,20 @@ module.exports.createStory = async (req, res, next) => {
   res.redirect(`/fiction/${story._id}`);
 };
 module.exports.showStory = async (req, res) => {
+  const currentPage = req.query.page || 1;
+  const itemsPerPage = 10;
+
   try {
     const story = await Fiction.findById(req.params.id)
       .populate({
         path: "reviews",
         populate: {
           path: "poster",
+        },
+        options: {
+          sort: { "upvotes.number": -1 }, // sort by upvotes in descending order
+          skip: (currentPage - 1) * itemsPerPage,
+          limit: itemsPerPage,
         },
       })
       .populate("poster");
@@ -86,7 +154,20 @@ module.exports.showStory = async (req, res) => {
       req.flash("error", "Cannot find that story!");
       return res.redirect("/fiction");
     }
-    res.render("fiction/show", { story });
+
+    const totalReviews = await Review.countDocuments({
+      reviewedStory: req.params.id,
+    });
+    console.log(totalReviews, "total reviews");
+    const totalPages = Math.ceil(totalReviews / itemsPerPage);
+    console.log("totalPages", totalPages);
+
+    res.render("fiction/show", {
+      story,
+      currentPage,
+      totalPages,
+      totalReviews,
+    });
   } catch (e) {
     res.render("missingpage");
   }

@@ -1,3 +1,11 @@
+const rateLimit = require("express-rate-limit");
+const MongoStore = require("rate-limit-mongo");
+
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
+const dbUrl = process.env.DB_URL;
+
 const { storySchema, reviewSchema } = require("./schemas.js");
 const ExpressError = require("./utils/ExpressError");
 const Story = require("./models/fiction");
@@ -120,3 +128,45 @@ module.exports.isAdminOrReviewPoster = async (req, res, next) => {
     return res.redirect(`/fiction/${id}`);
   }
 };
+
+const loginlimiter = rateLimit({
+  store: new MongoStore({
+    uri: dbUrl,
+    // should match windowMs
+    expireTimeMs: 5 * 60 * 1000,
+    // errorHandler: console.error.bind(null, "rate-limit-mongo"),
+    // see Configuration section for more options and details
+  }),
+  windowMs: 5 * 60 * 1000, // 5 minutes
+  max: 7, // Limit each IP to 5 requests per `window` (here, per 10 minutes)
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  handler: (req, res, next) => {
+    // res.status(429).send("Too many login attempts. Please try again later.");
+    req.flash("error", "Too many login attempts. Please try again later.");
+    res.redirect("/login");
+  },
+});
+
+// This next limiter is user-specific:
+const userLimiter = rateLimit({
+  store: new MongoStore({
+    uri: dbUrl, //
+    collectionName: "user-limits",
+    expireTimeMs: 5 * 60 * 1000,
+  }),
+  windowMs: 5 * 60 * 1000,
+  max: 7, // maximum number of attempts
+  // skipSuccessfulRequests: true,
+  keyGenerator: (req) => req.body.username.toString(), // use the user ID as the rate limit key
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  handler: (req, res, next) => {
+    // res.status(429).send("Too many login attempts. Please try again later.");
+    req.flash("error", "Too many login attempts. Please try again later.");
+    res.redirect("/login");
+  },
+});
+
+module.exports.limiter = loginlimiter;
+module.exports.userLimiter = userLimiter;

@@ -3,12 +3,10 @@
 // nothing populates. I think if I set it so there is always one review left, it will be fine.
 
 // CURRENT ISSUES to fix before going live:
-// add user email to report admin page.
-// one user can post multiple reviews of the same story! Fix this.
+// consider limiting forgot password using mongo limiter?
+// keep user data in db-only query db.
 // research secret-should i have new secrets generated instead of just one?
 // sessions don't time out in db?
-// the 404 page is actually called guidelines in the top title?
-// should report be an option for people who are not signed in?
 // figure out meta tags
 // figure out how to update the title of a page
 // add site map
@@ -16,17 +14,13 @@
 // FEATURES TO ADD EVENTUALLY
 // figure out whether to delete reviews when a story gets deleted. maybe have a backup.
 // fix delete option--make it a form request like a report when reviews >2
-// add pagination
 // update app.js cookies to say secure: true.
-// fix cover size for genre lists ( the css styles don't import from home page?)
 // add a background?
 // tags aren't showing up in the edit page.
 // add password requirements, password update option.
 // replace buttons with larger clickable areas.
 // set expiration date for validation email
-// create a page for each story that gives the change to write a blurb to report. routers,controller, etc.
 // right now reviews cannot be edited only deleted.
-// add support form for users
 // add recaptcha for requesting email or username reset.
 // for security purposes user entered data (like username? should be filtered to exclude <>/ symbols)
 // the fiction index page-and all search/filter pages--should limit description to maybe 100 words.

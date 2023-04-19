@@ -148,6 +148,10 @@ module.exports.renderAdmin = async (req, res, next) => {
       path: "reportList",
       // Fix me-does this need to be capitalized?
       model: "ReportReview",
+      populate: {
+        path: "poster",
+        select: "email",
+      },
     });
 
   const requestToDeleteStories = await Fiction.find({ requestDelete: true });
@@ -187,11 +191,8 @@ module.exports.renderAdmin = async (req, res, next) => {
 
 module.exports.renderAccount = async (req, res, next) => {
   const pendingStories = await Fiction.find({ pending: true });
-  const reportedStories = await Fiction.find({ reported: true });
-  const reportedReviews = await Review.find({ reported: true }).populate({
-    path: "reviewedStory",
-    model: "Fiction",
-  });
+  const myStories = await Fiction.find({ poster: req.user._id });
+
   const userReviews = await Review.find({ poster: req.user._id }).populate({
     path: "reviewedStory",
     model: "Fiction",
@@ -202,11 +203,9 @@ module.exports.renderAccount = async (req, res, next) => {
     email: user.email,
     verified: user.isVerified,
   };
-  console.log(reportedStories);
   res.render("users/account", {
     pendingStories,
-    reportedStories,
-    reportedReviews,
+    myStories,
     userReviews,
     userInfo,
   });
