@@ -3,12 +3,13 @@
 // nothing populates. I think if I set it so there is always one review left, it will be fine.
 
 // CURRENT ISSUES to fix before going live:
-// consider limiting forgot password using mongo limiter?
+// make sure I am showing the searches in a safe way (displaying results for whatever user searches xss)
+// look into preventing XSS when taking new/edit form data and putting into db.
+// review all pages, make sure user info doesn't go through? eg check account.
+// go through everything and make sure   passwords are not exposed.
 // keep user data in db-only query db.
 // research secret-should i have new secrets generated instead of just one?
 // sessions don't time out in db?
-// figure out meta tags
-// figure out how to update the title of a page
 // add site map
 
 // FEATURES TO ADD EVENTUALLY

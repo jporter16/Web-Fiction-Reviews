@@ -13,15 +13,15 @@ module.exports.createReview = async (req, res) => {
       alreadyReviewed = true;
     }
   }
-  // FIX ME: I am making this so i can make multiple reviews.
-  // if (alreadyReviewed === true) {
-  //   req.flash(
-  //     "error",
-  //     "Review canceled-- you have already posted a review for this story."
-  //   );
-  //   res.redirect(`/fiction/${story._id}`);
-  //   return;
-  // }
+  // NOTE: Comment this out if you want to make multiple reviews.
+  if (alreadyReviewed === true) {
+    req.flash(
+      "error",
+      "Review canceled-- you have already posted a review for this story."
+    );
+    res.redirect(`/fiction/${story._id}`);
+    return;
+  }
 
   const review = new Review(req.body.review);
   review.poster = req.user._id;

@@ -1,3 +1,4 @@
 /views/fiction/show.ejs
 /views/fiction/new.ejs
 /views/fiction/edit.ejs
+/views/layouts/boilerplate.ejs

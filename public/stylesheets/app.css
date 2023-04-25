@@ -29,3 +29,13 @@
 .hide {
   display: none;
 }
+
+.no-margin {
+  margin: 0px;
+}
+.remove-padding-left {
+  padding-left: 0px;
+}
+.remove-padding-right {
+  padding-right: 0px;
+}

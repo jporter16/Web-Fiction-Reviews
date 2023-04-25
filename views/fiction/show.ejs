@@ -1,4 +1,9 @@
-<% layout('layouts/boilerplate')%>
+<% locals.pageTitle = story.title;
+
+locals.description = story.description.substring(0, 150); // get the first maxLength characters of the description
+locals.description = locals.description.substring(0, locals.description.lastIndexOf(' '));
+%>
+<% layout('layouts/boilerplate'); %>
 <link rel="stylesheet" href="/stylesheets/stars.css" />
 
 <div class="row">

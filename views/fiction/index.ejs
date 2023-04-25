@@ -1,7 +1,7 @@
 <% layout('layouts/boilerplate')%>
 <div class="row">
-  <div class="col-md-3"></div>
-  <div class="col-md-9">
+  <div class="col-md-2"></div>
+  <div class="col-md-10">
     <h1 class="text-center"><%=title%></h1>
   </div>
 </div>
@@ -10,16 +10,16 @@
 <ul class="remove-padding">
   <%if (!paginatedStories.length>0) {%>
   <div class="row">
-    <div class="col-md-3"></div>
-    <div class="col-md-9">
+    <div class="col-md-2"></div>
+    <div class="col-md-10">
       <h4 class="text-center">There are no stories in this genre yet.</h4>
     </div>
   </div>
 
   <%} %> <% for (let story of paginatedStories) {%>
-  <div class="card mb-3">
+  <div class="card m-3">
     <div class="row">
-      <div class="col-md-3">
+      <div class="col-md-2 remove-padding-right">
         <% if (story.images.length) {%>
         <img class="img-width-100" src="<%=story.images[0].url%>" alt="" />
 
@@ -28,22 +28,23 @@
 
         <%}%>
       </div>
-      <div class="col-md-9">
+      <div class="col-md-10 remove-padding-left">
         <div class="card-body">
           <h4 class="card-title text-center">
             <a href="/fiction/<%=story.id%>"> <%=story.title%> </a>
           </h4>
-          <p class="card-text">
-            <% let trimmedDescription = story.description.substr(0, 500);
+          <h5 class="card-title text-center">by <%=story.author%></h5>
+          <p class="card-text m-1">
+            <% let trimmedDescription = story.description.substr(0, 400);
             trimmedDescription = trimmedDescription.substr(0,
             trimmedDescription.lastIndexOf(" ")); %> <%=trimmedDescription%>...
           </p>
-          <p class="card-text">
+          <p class="m-1">
             <small class="text-muted">
               Tags: <%for (let tag of story.tags) {%> <%=tag%>, <%}%>
             </small>
           </p>
-          <p class="card-text">
+          <p class="m-1">
             <small class="text-muted">
               Average Rating: <%if(story.ratingScore >-1) {%>
               <%=story.ratingScore%> (<%=story.reviews.length%>

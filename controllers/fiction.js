@@ -186,6 +186,7 @@ module.exports.renderEditForm = async (req, res) => {
 
 module.exports.updateStory = async (req, res) => {
   const { id } = req.params;
+
   const story = await Fiction.findByIdAndUpdate(id, {
     ...req.body.story,
   }).populate("images");

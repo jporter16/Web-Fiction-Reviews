@@ -243,27 +243,42 @@ module.exports.resetPassword = async (req, res) => {
 
     // now confirm that the email entered belongs ot the same user as the id:
     const confirmUser = await User.findOne({ email: email });
+    console.log("This is the confirmed user: ", user.email);
     if (user._id.equals(confirmUser._id)) {
       console.log("inside if");
       try {
-        const user = await User.findById(req.params.id);
-        // FIX ME: this should be a hash encoded
         await user.setPassword(password);
         await user.save();
+        // I tried to automatically authenticate here but it wouldn't work:
+
+        // user.authenticate(user.username, password);
+
+        // const authenticate = User.authenticate();
+        // authenticate(user.username, password, function (err, result) {
+        //   if (err) {
+        //     req.flash("error", "Unable to authenticate your account.");
+        //     res.redirect("/login");
+        //   }
+
+        //   // Value 'result' is set to false. The user could not be authenticated since the user is not active
+        // });
+
+        await Token.findByIdAndRemove(token._id);
+        req.flash("success", "Your password has been updated!");
+        res.redirect("/login");
       } catch (error) {
         console.log("user update failed");
+        req.flash("error", "There was an error resetting your password");
+        res.redirect("/login");
       }
-      await Token.findByIdAndRemove(token._id);
-      req.flash("success", "Your password has been updated!");
-      res.redirect("/account");
     } else {
       req.flash("error", "Your email and account information do not match");
-      res.redirect("/account");
+      res.redirect("/login");
     }
   } catch (e) {
     req.flash("error", "There was an error resetting your password");
     console.log(e);
-    res.redirect("/fiction");
+    res.redirect("/login");
   }
 };
 

@@ -49,15 +49,14 @@
                   type="checkbox"
                   id= <%=genre%>
                   name="story[tags]"
-                  value= <%=genre%>
+                  value= "<%=genre%>"
                   required
                   <%if (story.tags.includes(genre)) {%>
                     checked
                   <%}%>
                 />
                 <label class="form-check-label" for=<%genre%>
-                  ><%=genre%></label
-                >
+                  ><%=genre%></label>
                 </div>
               
               <%}%>

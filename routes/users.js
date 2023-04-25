@@ -13,6 +13,7 @@ const {
   isAdmin,
   limiter,
   userLimiter,
+  resetPasswordLimiter,
 } = require("../middleware");
 
 router
@@ -48,9 +49,17 @@ router.get("/account", isLoggedIn, catchAsync(users.renderAccount));
 
 router.get("/logout", users.logout);
 router.get("/reset-password", users.enterEmailtoResetPassword);
-router.post("/reset-password", users.sendResetPasswordLink);
+router.post(
+  "/reset-password",
+  resetPasswordLimiter,
+  users.sendResetPasswordLink
+);
 router.get("/reset-password/:id/:token", users.renderResetPasswordPage);
-router.post("/reset-password/:id/:token", users.resetPassword);
+router.post(
+  "/reset-password/:id/:token",
+  resetPasswordLimiter,
+  users.resetPassword
+);
 
 router.get("/recover-username", users.renderRecoverUsername);
 router.post("/recover-username", users.recoverUsername);

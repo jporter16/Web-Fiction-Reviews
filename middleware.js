@@ -55,7 +55,7 @@ module.exports.isPoster = async (req, res, next) => {
 module.exports.validateReview = async (req, res, next) => {
   const { error } = reviewSchema.validate(req.body);
   const users = await User.find({});
-  const allUserIds = users.map((user) => user._id);
+  // const allUserIds = users.map((user) => user._id);
   // if user doesn't exist, then throw error.
   if (!users.find((user) => (user._id = req.user._id))) {
     message = "invalid user id";
@@ -168,5 +168,24 @@ const userLimiter = rateLimit({
   },
 });
 
+const resetPasswordLimiter = rateLimit({
+  // This is applied to requesting email link for password reset and resetting password
+  store: new MongoStore({
+    uri: dbUrl,
+    collectionName: "password-reset-limits",
+    expireTimeMs: 5 * 60 * 1000,
+  }),
+  windowMs: 5 * 60 * 1000, // 5 minutes
+  max: 7, // Limit each IP to 5 requests per `window` (here, per 10 minutes)
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  handler: (req, res, next) => {
+    // res.status(429).send("Too many login attempts. Please try again later.");
+    req.flash("error", "Too many attempts. Please try again later.");
+    res.redirect("/login");
+  },
+});
+
 module.exports.limiter = loginlimiter;
 module.exports.userLimiter = userLimiter;
+module.exports.resetPasswordLimiter = resetPasswordLimiter;
