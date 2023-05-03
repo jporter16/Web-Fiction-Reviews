@@ -23,6 +23,12 @@ const UserSchema = new Schema({
     type: Boolean,
     default: false,
   },
+  collections: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Collection",
+    },
+  ],
 });
 
 UserSchema.plugin(passportLocalMongoose);

@@ -2,3 +2,11 @@
 /views/fiction/new.ejs
 /views/fiction/edit.ejs
 /views/layouts/boilerplate.ejs
+/views/collections/new.ejs
+/views/collections/edit.ejs
+/views/users/admin.ejs
+/views/collections/list.ejs
+/views/collections/index.ejs
+/views/collections/collections.ejs
+/views/collections/show-collection.ejs
+

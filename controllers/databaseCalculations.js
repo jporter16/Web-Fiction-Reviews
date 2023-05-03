@@ -60,15 +60,99 @@ module.exports.calculatePopularity = async (storyId) => {
   }
 };
 
+module.exports.calculateAudienceAndWarnings = async (storyId) => {
+  const story = await Fiction.findById(storyId).populate("reviews");
+  if (story.reviews.length > 0) {
+    // First calculate Audience :
+
+    let avg = 0;
+    let count = 0;
+    for (let i = 0; i < story.reviews.length; i++) {
+      // 0 is null so don't calculate that into average.
+      if (story.reviews[i].audience > 0) {
+        avg += story.reviews[i].audience;
+        count += 1;
+      }
+    }
+    if (count > 0) {
+      avg = avg / count;
+    } else {
+      avg = 0;
+    }
+    story.audience = avg;
+    // Now calculate Warnings:
+    let avgViolence = 0;
+    let countViolence = 0;
+    let avgProfanity = 0;
+    let countProfanity = 0;
+    let avgSexualContent = 0;
+    let countSexualContent = 0;
+    try {
+      for (let j = 0; j < story.reviews.length; j++) {
+        // 0 is null so don't calculate that into average.
+        if (story.reviews[j].warnings.violence > 0) {
+          avgViolence += story.reviews[j].warnings.violence;
+          countViolence += 1;
+        }
+      }
+      if (countViolence > 0) {
+        avgViolence = avgViolence / countViolence;
+      }
+      // Now calculate sexualContent:
+      for (let j = 0; j < story.reviews.length; j++) {
+        if (story.reviews[j].warnings.sexualContent > 0) {
+          avgSexualContent += story.reviews[j].warnings.sexualContent;
+          countSexualContent += 1;
+        }
+      }
+      if (countSexualContent > 0) {
+        avgSexualContent = avgSexualContent / countSexualContent;
+      }
+      // Now calculate profanity:
+      for (let j = 0; j < story.reviews.length; j++) {
+        if (story.reviews[j].warnings.profanity > 0) {
+          avgProfanity += story.reviews[j].warnings.profanity;
+          countProfanity += 1;
+        }
+      }
+      if (countProfanity > 0) {
+        avgProfanity = avgProfanity / countProfanity;
+      }
+    } catch (e) {
+      console.log(e);
+      console.log("there was an error calculating warning ratings");
+    }
+    story.warnings = {};
+    story.warnings.sexualContent = avgSexualContent;
+    story.warnings.violence = avgViolence;
+    story.warnings.profanity = avgProfanity;
+    await story.save();
+  } else {
+    story.audience = 0;
+    story.warnings = {};
+    story.warnings.sexualContent = 0;
+    story.warnings.violence = 0;
+    story.warnings.profanity = 0;
+
+    await story.save();
+  }
+};
+
 module.exports.genreList = [
   "Action",
   "Adventure",
   "Alternate Universe",
   "Anti-hero",
+  "Contemporary",
   "Comedy",
   "Cultivation",
+  "Drama",
   "Fantasy",
+  "Historical",
+  "Horror",
   "litRPG",
+  "Martial Arts",
+  "Mystery",
   "Romance",
   "Science Fiction",
   "Slice of Life",
@@ -102,6 +186,7 @@ module.exports.sortReviewList = async (story) => {
   // }
   // story.reviews = sortedReviewList;
 };
+// I'm not going to use this. Taking this out.
 module.exports.cleanUrl = (url) => {
   if (url.slice(0, 12) === "https://www.") {
     console.log("Url is acceptable ");

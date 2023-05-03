@@ -20,6 +20,8 @@
               id="title"
               name="story[title]"
               value="<%=story.title%>"
+              maxlength="200"
+
               required
             />
             <div class="valid-feedback">Looks good!</div>
@@ -29,6 +31,8 @@
             <input
               class="form-control"
               type="text"
+              maxlength="200"
+
               id="author"
               name="story[author]"
               value="<%=story.author%>"
@@ -39,24 +43,23 @@
           <div class="mb-3">
             <fieldset>
               <legend class="small text-center">
-                Pick at least one tag and at most 3 tags for this story
+                Pick at least one tag and at most 4 tags for this story
               </legend>
-              <div class = "genre-wrapper d-flex flex-column  flex-wrap" style="max-height: 130px"> 
-              <% for (let genre of genreList) {%>
+              <div class = "genre-wrapper d-flex flex-column  flex-wrap"> 
+              <% for (let tag of genreList) {%>
                 <div>
                   <input
-                  class="form-check-input"
+                  class="form-check-input tag-check"
                   type="checkbox"
-                  id= <%=genre%>
+                  id= <%=tag%>
                   name="story[tags]"
-                  value= "<%=genre%>"
-                  required
-                  <%if (story.tags.includes(genre)) {%>
+                  value= "<%=tag%>"
+                  <%if (story.tags.includes(tag)) {%>
                     checked
                   <%}%>
                 />
-                <label class="form-check-label" for=<%genre%>
-                  ><%=genre%></label>
+                <label class="form-check-label" for="<%=tag%>"
+                  ><%=tag%></label>
                 </div>
               
               <%}%>
@@ -66,10 +69,6 @@
             <div class="valid-feedback">Looks good!</div>
           </div>
 
-          <div class="mb-3">
-            <label class="form-label" for="image">Add Images</label>
-            <input type="file" name="image" id="image" multiple />
-          </div>
 
           <div class="mb-3">
             <label class="form-label" for="link">Story Link</label>
@@ -78,7 +77,9 @@
               <span class="input-group-text" id="basic-addon1"></span>
               <input type="text" class="form-control" id="link" placeholder="""
               aria-label="link" aria-describedby="link-label"
-              name="story[link]" value="<%=story.link%>" required />
+              name="story[link]" value="<%=story.link%>" required 
+              maxlength="2000"
+              />
               <div class="valid-feedback">Looks good!</div>
             </div>
           </div>
@@ -91,13 +92,19 @@
               id="description"
               name="story[description]"
               required
-            >
-        <%=story.description%>
-  
-          </textarea
-            >
+              maxlength="4000"><%=story.description%></textarea>
             <div class="valid-feedback">Looks good!</div>
           </div>
+          <label class="form-label" for="inputGroupFile02">Cover art*</label>
+
+          <div class="mb-3">
+            <input class="form-control"
+            type="file" name="image" id="inputGroupFile02" multiple accept=".jpg,.jpeg,.png" data-original-images="<%=story.images.length%>"/>
+          </div>
+          <p id="image-error" class="text-danger" style="display: none">You cannot upload more than 5 files.</p>
+
+          <small>*Max file size is 10 MB. You cannot upload more than 5 files. The file must be a .jpeg, .jpg, or .png</small>
+
           <div class="mb-3">
             <% story.images.forEach(function(img,i) {%>
             <img src="<%=img.thumbnail %>" alt="" class="img-thumbnail" />
@@ -121,3 +128,4 @@
     </div>
   </div>
 </div>
+<script src="/javascripts/storyClientsideValidation.js"></script>

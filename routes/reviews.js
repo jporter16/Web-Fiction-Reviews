@@ -38,6 +38,14 @@ router.delete(
   isAdminOrReviewPoster,
   catchAsync(reviews.deleteReview)
 );
+// This edits an existing review:
+router.put(
+  "/:reviewId",
+  isLoggedIn,
+  isVerified,
+  isAdminOrReviewPoster,
+  catchAsync(reviews.editReview)
+);
 
 // This upvotes a review.
 router.put(
@@ -47,6 +55,7 @@ router.put(
   notUpvoter,
   catchAsync(reviews.upvoteReview)
 );
+
 router.post(
   "/:reviewId/report",
   isLoggedIn,
@@ -61,4 +70,5 @@ router.put(
   isAdmin,
   catchAsync(reviews.unReportReview)
 );
+
 module.exports = router;

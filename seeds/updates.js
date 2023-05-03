@@ -1,5 +1,6 @@
 const {
   calculatePopularity,
+  calculateAudienceAndWarnings,
 } = require("../controllers/databaseCalculations.js");
 
 if (process.env.NODE_ENV !== "production") {
@@ -51,7 +52,15 @@ const updateDatabase = async () => {
   }
 };
 
-updateDatabase().then(() => {
+const updateDatabaseWarningsAndAudience = async () => {
+  const allStories = await Story.find();
+  const storyIds = allStories.map((story) => story._id);
+  for (let i = 0; i < storyIds.length; i++) {
+    await calculateAudienceAndWarnings(storyIds[i]);
+  }
+};
+
+updateDatabaseWarningsAndAudience().then(() => {
   setTimeout(() => {
     mongoose.connection.close();
   }, 2000);

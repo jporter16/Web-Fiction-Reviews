@@ -45,9 +45,9 @@ module.exports.renderNewForm = (req, res) => {
   res.render("fiction/new", { genreList });
 };
 
-module.exports.renderGenre = async (req, res) => {
-  const { genre } = req.params;
-  if (!databaseCalc.genreList.includes(genre)) {
+module.exports.renderTag = async (req, res) => {
+  const { tag } = req.params;
+  if (!databaseCalc.genreList.includes(tag)) {
     res.render("missingpage");
   } else {
     // const genreStories = await Fiction.find({
@@ -60,7 +60,7 @@ module.exports.renderGenre = async (req, res) => {
     let totalStories;
 
     const paginatedStories = await Fiction.find({
-      tags: { $regex: new RegExp(genre, "i") },
+      tags: { $regex: new RegExp(tag, "i") },
     })
       .sort({ popularity: -1, ratingScore: -1, title: 1 })
       .skip(skip)
@@ -69,7 +69,7 @@ module.exports.renderGenre = async (req, res) => {
 
     try {
       totalStories = await Fiction.countDocuments({
-        tags: { $regex: new RegExp(genre, "i") },
+        tags: { $regex: new RegExp(tag, "i") },
       });
       console.log(`There are ${totalStories} items in the Fiction collection.`);
     } catch (err) {
@@ -80,7 +80,7 @@ module.exports.renderGenre = async (req, res) => {
     const totalPages = Math.ceil(totalStories / itemsPerPage);
     console.log(totalPages, " TotalPages");
     console.log(currentPage, " currentPage");
-    const title = genre;
+    const title = tag;
 
     res.render("fiction/index", {
       paginatedStories,
@@ -92,28 +92,32 @@ module.exports.renderGenre = async (req, res) => {
 };
 
 module.exports.renderSearch = async (req, res) => {
-  const { genre, query } = req.params;
+  const { tag, query } = req.params;
   const searchStories = await Fiction.find({
     title: { $regex: new RegExp(query, "i") },
   }).sort({ popularity: -1 });
 
   const sortedStories = databaseCalc.createSortedArrayOfStories(searchStories);
 
-  res.render("fiction/search", { sortedStories, genre, query });
+  res.render("fiction/search", { sortedStories, tag, query });
 };
 
 module.exports.createStory = async (req, res, next) => {
+  console.log("story tags 1", req.body.story.tags);
   const story = new Fiction(req.body.story);
+  console.log(story.tags, "story tags");
   story.images = req.files.map((f) => ({
     url: f.path,
     filename: f.filename,
   }));
   story.poster = req.user._id;
-  story.link = databaseCalc.cleanUrl(story.link);
+  // story.link = databaseCalc.cleanUrl(story.link);
   story.ratingScore = -1;
   story.reported = false;
   story.verifiedByAuthor = false;
   story.pending = true;
+  story.audience = 0;
+  story.warnings = { violence: 0, profanity: 0, sexualContent: 0 };
   // if there is no image, add this default image.
   if (story.images.length < 1) {
     story.images = {
@@ -162,11 +166,30 @@ module.exports.showStory = async (req, res) => {
     const totalPages = Math.ceil(totalReviews / itemsPerPage);
     console.log("totalPages", totalPages);
 
+    // Check for audience, convert audience from 1-3 to E, T, M
+    let estimatedAudience =
+      "Reviewers have not provided an estimated audience for this story.";
+    let rounded;
+    if (story.audience > 0) {
+      rounded = Math.round(story.audience);
+      if (rounded == 1) {
+        estimatedAudience = "E";
+      } else if (rounded == 2) {
+        estimatedAudience = "T";
+      } else if (rounded === 3) {
+        estimatedAudience = "M";
+      } else {
+        estimatedAudience =
+          "There was an error calculating the estimated audience.";
+      }
+    }
+
     res.render("fiction/show", {
       story,
       currentPage,
       totalPages,
       totalReviews,
+      estimatedAudience,
     });
   } catch (e) {
     res.render("missingpage");
@@ -196,6 +219,7 @@ module.exports.updateStory = async (req, res) => {
     url: f.path,
     filename: f.filename,
   }));
+  console.log("imgs", imgs);
   if (req.body.deleteImages) {
     for (let filename of req.body.deleteImages) {
       if (filename !== "placeholder-book-cover_iyoeqw") {
@@ -208,11 +232,43 @@ module.exports.updateStory = async (req, res) => {
     await story.updateOne({
       $pull: { images: { filename: { $in: req.body.deleteImages } } },
     });
+    console.log("just removed,", story.images);
   }
   story.images.push(...imgs);
-  story.link = databaseCalc.cleanUrl(story.link);
+  console.log(story.images, "story images");
+  // story.link = databaseCalc.cleanUrl(story.link);
 
   await story.save();
+
+  const updatedStory = await Fiction.findById(id).populate("images");
+  console.log(updatedStory.images, "updatedVersion");
+  // remove the default image if it appears:
+  if (updatedStory.images.length > 1) {
+    console.log("about to remove default image");
+    const removeThisItem = {
+      url: "https://res.cloudinary.com/dj3dni7xt/image/upload/v1678325550/webfictionreviews/placeholder-book-cover_jmu4wk.png",
+      filename: "placeholder-book-cover_jmu4wk",
+    };
+    updatedStory.images = updatedStory.images.filter((item) => {
+      return (
+        item.url !== removeThisItem.url ||
+        item.filename !== removeThisItem.filename
+      );
+    });
+
+    await updatedStory.save();
+  }
+
+  if (updatedStory.images.length === 0) {
+    console.log("about to add default image");
+    updatedStory.images = [
+      {
+        url: "https://res.cloudinary.com/dj3dni7xt/image/upload/v1678325550/webfictionreviews/placeholder-book-cover_jmu4wk.png",
+        filename: "placeholder-book-cover_jmu4wk",
+      },
+    ];
+    await updatedStory.save();
+  }
   req.flash("success", "Successfully updated the story.");
   res.redirect(`/fiction/${story._id}`);
 };
@@ -272,7 +328,8 @@ module.exports.reportStory = async (req, res) => {
     req.flash("success", "Successfully reported the story");
     res.redirect("/fiction");
   } catch (e) {
-    req.flash("error", "there was an error reporting this story.", e);
+    console.log(e);
+    req.flash("error", "there was an error reporting this story.");
     res.redirect("/fiction");
   }
 };

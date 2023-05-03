@@ -4,6 +4,7 @@ const crypto = require("crypto");
 const sendEmail = require("../utils/mailer");
 const Fiction = require("../models/fiction");
 const Review = require("../models/review");
+const Collection = require("../models/collection");
 
 module.exports.renderRegister = (req, res) => {
   res.render("users/register");
@@ -130,12 +131,24 @@ module.exports.logout = (req, res, next) => {
 
 module.exports.renderAdmin = async (req, res, next) => {
   const pendingStories = await Fiction.find({ pending: true });
+  const reportedCollections = await Collection.find({
+    reported: true,
+  }).populate({
+    path: "reportList",
+    model: "reportCollection",
+    populate: {
+      path: "poster",
+      model: "User",
+      select: "username email",
+    },
+  });
   const reportedStories = await Fiction.find({ reported: true }).populate({
     path: "reportList",
     model: "reportStory",
     populate: {
       path: "poster",
       model: "User",
+      select: "username email",
     },
   });
 
@@ -151,6 +164,7 @@ module.exports.renderAdmin = async (req, res, next) => {
       populate: {
         path: "poster",
         select: "email",
+        select: "username email",
       },
     });
 
@@ -186,28 +200,23 @@ module.exports.renderAdmin = async (req, res, next) => {
     reviewsWithUnrespondedReports,
     reportedReviews,
     requestToDeleteStories,
+    reportedCollections,
   });
 };
 
 module.exports.renderAccount = async (req, res, next) => {
-  const pendingStories = await Fiction.find({ pending: true });
+  // Originally I included pending stories. But I'm not approving stories in advance.
+  // const pendingStories = await Fiction.find({ pending: true });
   const myStories = await Fiction.find({ poster: req.user._id });
 
   const userReviews = await Review.find({ poster: req.user._id }).populate({
     path: "reviewedStory",
     model: "Fiction",
   });
-  const user = await User.findById(req.user._id);
-  userInfo = {
-    username: user.username,
-    email: user.email,
-    verified: user.isVerified,
-  };
+
   res.render("users/account", {
-    pendingStories,
     myStories,
     userReviews,
-    userInfo,
   });
 };
 

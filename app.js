@@ -3,28 +3,44 @@
 // nothing populates. I think if I set it so there is always one review left, it will be fine.
 
 // CURRENT ISSUES to fix before going live:
-// make sure I am showing the searches in a safe way (displaying results for whatever user searches xss)
-// look into preventing XSS when taking new/edit form data and putting into db.
-// review all pages, make sure user info doesn't go through? eg check account.
-// go through everything and make sure   passwords are not exposed.
-// keep user data in db-only query db.
-// research secret-should i have new secrets generated instead of just one?
-// sessions don't time out in db?
+// install validator for search queries with mongoose.
+// one person can review a story multiple times.
+// fix collections/collections view formatting
+// make sure all mongoose searches are wrapped in try/catch blocks.
+// fix username issue capitalization
+// backup mongo db upgrade
+// confirm you can only upvote reviews once.
+// I don't have schemas for reportReview.
+// figure out server options
+// the flash alerts are sometimes out of sync. like a page reload late or they never appear.
 // add site map
 
 // FEATURES TO ADD EVENTUALLY
-// figure out whether to delete reviews when a story gets deleted. maybe have a backup.
-// fix delete option--make it a form request like a report when reviews >2
+// for an empty collection, the page numbers on the left are not at the bottom of the screen.
+// There are no limits to the number of times someone can report a story or review or collection.
+// add bootstrap backgrounds for cards
+// style the review form so it disappears when a button is pressed and reappears.
+// consider centering the review form.
+// currently I can post multiple reviews.
+// fix delete option--make it a form request like a report when reviews <<I think I did this.
 // update app.js cookies to say secure: true.
 // add a background?
-// tags aren't showing up in the edit page.
-// add password requirements, password update option.
 // replace buttons with larger clickable areas.
 // set expiration date for validation email
 // right now reviews cannot be edited only deleted.
 // add recaptcha for requesting email or username reset.
 // for security purposes user entered data (like username? should be filtered to exclude <>/ symbols)
 // the fiction index page-and all search/filter pages--should limit description to maybe 100 words.
+
+// Other things:
+// I made sure is a limit to the number of images-I did this client side and the server side with Multer. technically not with when you edit a story.
+// I fixed it so validateReview doesn't crash on errors. ValidateStory never has.
+// I don't know why the story route middleware upload(array) goes before the validateStory. But it needs to go first or there is an error...
+// is there a difference between the language "remove report on this review" and "mark this report as responded" for a story.
+// NO sql injections are fixed by express-mongo-sanitize
+// sessions don't time out in db-I checked. They don't.
+// figure out whether to delete reviews when a story gets deleted--It does this.
+
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
@@ -50,6 +66,7 @@ const mongoSanitize = require("express-mongo-sanitize");
 const userRoutes = require("./routes/users");
 const fictionRoutes = require("./routes/fiction");
 const reviewRoutes = require("./routes/reviews");
+const collectionRoutes = require("./routes/collections");
 
 // const MongoStore = require("connect-mongo");
 
@@ -60,6 +77,7 @@ const secret = process.env.SECRET;
 const databaseCalc = require("./controllers/databaseCalculations");
 
 const { date } = require("joi");
+const { collection } = require("./models/user");
 const dbUrl = process.env.DB_URL;
 
 mongoose.connect(dbUrl);
@@ -198,6 +216,7 @@ app.use((req, res, next) => {
 app.use("/", userRoutes);
 app.use("/fiction", fictionRoutes);
 app.use("/fiction/:id/reviews", reviewRoutes);
+app.use("/collections", collectionRoutes);
 
 app.get("/", (req, res) => {
   res.render("home");
@@ -216,6 +235,11 @@ app.all("*", (req, res, next) => {
 app.use((err, req, res, next) => {
   const { statusCode = 500 } = err;
   if (!err.message) err.message = "Oh no, something went wrong!";
+  // Check if the error is an EJS error
+  if (err.name === "TypeError" && err.stack.includes(".ejs")) {
+    err.message = "An error occurred while rendering this page template";
+  }
+  console.log("error name", err.name);
   res.status(statusCode).render("error", { err });
 });
 const port = process.env.PORT || 3000;

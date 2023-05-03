@@ -12,7 +12,7 @@
   <div class="row">
     <div class="col-md-2"></div>
     <div class="col-md-10">
-      <h4 class="text-center">There are no stories in this genre yet.</h4>
+      <h4 class="text-center">There are no stories with this tag yet.</h4>
     </div>
   </div>
 
@@ -40,14 +40,12 @@
             trimmedDescription.lastIndexOf(" ")); %> <%=trimmedDescription%>...
           </p>
           <p class="m-1">
-            <small class="text-muted">
-              Tags: <%for (let tag of story.tags) {%> <%=tag%>, <%}%>
-            </small>
+            <small class="text-muted"> Tags: <%=story.tags.join(', ')%> </small>
           </p>
           <p class="m-1">
             <small class="text-muted">
               Average Rating: <%if(story.ratingScore >-1) {%>
-              <%=story.ratingScore%> (<%=story.reviews.length%>
+              <%=story.ratingScore.toFixed(1)%> (<%=story.reviews.length%>
               <span
                 ><%= (story.reviews.length>1) ? "reviews" : "review"%>)</span
               >
@@ -73,7 +71,7 @@
 <ul class="pagination">
   <% for(let i = 1; i <= totalPages; i++) { %>
   <li class="page-item <% if(currentPage == i) { %>active<% } %>">
-    <a class="page-link" href="/fiction/genres/<%=title%>?page=<%= i %>"
+    <a class="page-link" href="/fiction/tags/<%=title%>?page=<%= i %>"
       ><%= i %></a
     >
   </li>

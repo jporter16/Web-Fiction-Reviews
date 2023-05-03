@@ -8,9 +8,9 @@
 </div>
 
 <div class="card">
-  <p class = 'm-3'>Username: <%=userInfo.username%></p>
-  <p class = "m-3">Email: <%=userInfo.email%></p>
-  <p class = "m-3">Account Status: <% if (userInfo.verified === true) {%>
+  <p class = 'm-3'>Username: <%=currentUser.username%></p>
+  <p class = "m-3">Email: <%=currentUser.email%></p>
+  <p class = "m-3">Account Status: <% if (currentUser.verified === true) {%>
     <span>Verified</span> </p>
     <% } else { %>
       <span> Not Verified</span> </p>
@@ -19,7 +19,7 @@
               method="POST"
               class="d-inline"
             >
-              <button class="btn btn-success m-3">email verification form again</button>
+              <button class="btn btn-success m-3">send my email verification link again</button>
             </form>
     <%}%>
   <span> <a class="btn btn-primary m-3" href="/contact">Contact Web Fiction Reviews</a></span> 

@@ -14,6 +14,27 @@ ImageSchema.virtual("thumbnail").get(function () {
 
 const opts = { toJSON: { virtuals: true } };
 
+const warningSchema = new Schema({
+  violence: {
+    type: Number,
+    default: 0,
+    min: 0,
+    max: 3,
+  },
+  profanity: {
+    type: Number,
+    default: 0,
+    min: 0,
+    max: 3,
+  },
+  sexualContent: {
+    type: Number,
+    default: 0,
+    min: 0,
+    max: 3,
+  },
+});
+
 const FictionSchema = new Schema(
   {
     title: String,
@@ -28,6 +49,10 @@ const FictionSchema = new Schema(
     },
     ratingScore: Number,
     popularity: Number,
+    warnings: {
+      type: warningSchema,
+    },
+    audience: Number,
     reported: {
       type: Boolean,
       default: false,

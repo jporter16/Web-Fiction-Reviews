@@ -6,11 +6,18 @@ if (process.env.NODE_ENV !== "production") {
 }
 const dbUrl = process.env.DB_URL;
 
-const { storySchema, reviewSchema } = require("./schemas.js");
+const {
+  storySchema,
+  reviewSchema,
+  collectionSchema,
+  reportCollectionSchema,
+  reportStorySchema,
+} = require("./schemas.js");
 const ExpressError = require("./utils/ExpressError");
 const Story = require("./models/fiction");
 const Review = require("./models/review");
 const User = require("./models/user");
+const Collection = require("./models/collection");
 
 module.exports.isLoggedIn = (req, res, next) => {
   if (!req.isAuthenticated()) {
@@ -42,6 +49,37 @@ module.exports.validateStory = (req, res, next) => {
   }
 };
 
+module.exports.validateReportStory = (req, res, next) => {
+  const { error } = reportStorySchema.validate(req.body);
+  if (error) {
+    const msg = error.details.map((el) => el.message).join(",");
+    throw new ExpressError(msg, 400);
+  } else {
+    next();
+  }
+};
+
+module.exports.validateReportCollection = (req, res, next) => {
+  const { error } = reportCollectionSchema.validate(req.body);
+  if (error) {
+    const msg = error.details.map((el) => el.message).join(",");
+    throw new ExpressError(msg, 400);
+  } else {
+    next();
+  }
+};
+
+module.exports.validateCollection = (req, res, next) => {
+  const { error } = collectionSchema.validate(req.body);
+  if (error) {
+    const msg = error.details.map((el) => el.message).join(",");
+    console.log(error);
+    throw new ExpressError(msg, 400);
+  } else {
+    next();
+  }
+};
+
 module.exports.isPoster = async (req, res, next) => {
   const { id } = req.params;
   const story = await Story.findById(id);
@@ -51,21 +89,25 @@ module.exports.isPoster = async (req, res, next) => {
   }
   next();
 };
-
 module.exports.validateReview = async (req, res, next) => {
-  const { error } = reviewSchema.validate(req.body);
-  const users = await User.find({});
-  // const allUserIds = users.map((user) => user._id);
-  // if user doesn't exist, then throw error.
-  if (!users.find((user) => (user._id = req.user._id))) {
-    message = "invalid user id";
-    throw new ExpressError(message, 400);
-  }
-  if (error) {
-    const msg = error.details.map((el) => el.message).join(",");
-    throw new ExpressError(msg, 400);
-  } else {
-    next();
+  try {
+    const { error } = reviewSchema.validate(req.body);
+    const user = await User.findById(req.user._id);
+    // const allUserIds = users.map((user) => user._id);
+    // if user doesn't exist, then throw error.
+    console.log(user, "user");
+    if (!user) {
+      message = "invalid user id";
+      return next(new ExpressError(message, 400));
+    }
+    if (error) {
+      const msg = error.details.map((el) => el.message).join(",");
+      return next(new ExpressError(msg, 400));
+    } else {
+      next();
+    }
+  } catch (err) {
+    next(err);
   }
 };
 
@@ -90,6 +132,26 @@ module.exports.notUpvoter = async (req, res, next) => {
   next();
 };
 
+module.exports.notCollectionUpvoter = async (req, res, next) => {
+  const { collectionId } = req.params;
+
+  try {
+    const collection = await Collection.findById(collectionId);
+    if (collection.upvotes.upvoters.includes(req.user._id)) {
+      req.flash(
+        "error",
+        "You do not have permission to do that. Have you upvoted this collection already?"
+      );
+      return res.redirect(`/collections/${collectionId}`);
+    }
+    next();
+  } catch (error) {
+    const msg = "There was an error upvoting. Have you upvoted this already?";
+    req.flash("error", msg);
+    return res.redirect(`/collections/${collectionId}`);
+  }
+};
+
 module.exports.isAdmin = async (req, res, next) => {
   const user = await User.findById(req.user._id);
   if (user.isAdmin) {
@@ -103,29 +165,73 @@ module.exports.isAdmin = async (req, res, next) => {
 
 // Now I need to combine some middleware:
 module.exports.isAdminOrStoryPoster = async (req, res, next) => {
-  const user = await User.findById(req.user._id);
-  const { id } = req.params;
-  console.log(id);
-  const story = await Story.findById(id);
-  console.log("this is the story", story);
-  if (user.isAdmin || story.poster.equals(req.user._id)) {
-    console.log("user is admin or poster");
-    next();
-  } else {
-    req.flash("error", "You do not have permission to do that.");
-    return res.redirect(`/fiction/${id}`);
+  try {
+    const user = await User.findById(req.user._id);
+    const { id } = req.params;
+    console.log(id);
+    const story = await Story.findById(id);
+    console.log("this is the story", story);
+    if (!story) {
+      req.flash("error", "Story not found.");
+      return res.redirect("/fiction/");
+    }
+    if (user.isAdmin || story.poster.equals(req.user._id)) {
+      console.log("user is admin or poster");
+      next();
+    } else {
+      req.flash("error", "You do not have permission to do that.");
+      return res.redirect(`/fiction/${id}`);
+    }
+  } catch (error) {
+    console.log(error);
+    req.flash("error", "There was an error with this request");
+    return res.redirect(`/fiction/`);
   }
 };
+
 module.exports.isAdminOrReviewPoster = async (req, res, next) => {
-  const user = await User.findById(req.user._id);
-  const { reviewId } = req.params;
-  const review = await Review.findById(reviewId);
-  if (user.isAdmin || review.poster.equals(req.user._id)) {
-    console.log("user is admin or poster");
-    next();
-  } else {
-    req.flash("error", "You do not have permission to do that.");
-    return res.redirect(`/fiction/${id}`);
+  try {
+    const user = await User.findById(req.user._id);
+    const { reviewId } = req.params;
+    const review = await Review.findById(reviewId);
+    if (!review) {
+      req.flash("error", "review not found.");
+      return res.redirect("/fiction/");
+    }
+    if (user.isAdmin || review.poster.equals(req.user._id)) {
+      console.log("user is admin or poster");
+      next();
+    } else {
+      req.flash("error", "You do not have permission to do that.");
+      return res.redirect(`/fiction/${id}`);
+    }
+  } catch (error) {
+    console.log(error);
+    req.flash("error", "There was an error with this request");
+    return res.redirect(`/fiction/`);
+  }
+};
+
+module.exports.isAdminOrCollectionPoster = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id);
+    const { collectionId } = req.params;
+    const collection = await Collection.findById(collectionId);
+    console.log("this is the collection", collection);
+    if (!collection) {
+      req.flash("error", "Collection not found.");
+      return res.redirect("/collections/");
+    }
+    if (user.isAdmin || collection.poster.equals(req.user._id)) {
+      console.log("user is admin or poster");
+      next();
+    } else {
+      req.flash("error", "You do not have permission to do that.");
+      return res.redirect(`/${collectionId}`);
+    }
+  } catch (error) {
+    req.flash("error", "There was an error with this request");
+    return res.redirect(`/collections`);
   }
 };
 

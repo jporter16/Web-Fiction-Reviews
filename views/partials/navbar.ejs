@@ -1,7 +1,7 @@
 <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
     <a class="navbar-brand" href="/">Web Fiction Reviews</a>
-    
+
     <button
       class="navbar-toggler"
       type="button"
@@ -15,7 +15,7 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
-        <a class="nav-link" href="/fiction">Stories List</a>
+        <a class="nav-link" href="/fiction">All Stories</a>
         <li class="nav-item dropdown">
           <a
             class="nav-link dropdown-toggle"
@@ -25,52 +25,84 @@
             data-bs-toggle="dropdown"
             aria-expanded="false"
           >
-            Genres
+            Tags
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <% for (genre of genreList) {%>
+            <% for (tag of genreList) {%>
             <li>
-              <a class="dropdown-item" href="/fiction/genres/<%=genre%>"
-                ><%=genre%></a
+              <a class="dropdown-item" href="/fiction/tags/<%=tag%>"
+                ><%=tag%></a
               >
             </li>
 
-            </li>
             <%}%>
           </ul>
         </li>
-        <a class="nav-link" href="/guidelines">Guidelines</a>
         <a class="nav-link" href="/fiction/new">Add Story</a>
 
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            id="navbarDropdownCollections"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            Collections
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li>
+              <a class="dropdown-item" href="/collections/"
+                >Public Collections</a
+              >
+            </li>
+            <li>
+              <a class="dropdown-item" href="/collections/my-collections/"
+                >My Collections</a
+              >
+            </li>
+            <li>
+              <a class="dropdown-item" href="/collections/new/"
+                >New Collection</a
+              >
+            </li>
+          </ul>
+        </li>
+
+        <a class="nav-link" href="/guidelines">Guidelines</a>
       </div>
-    
+
       <div class="navbar-nav ms-auto">
-        <form class="d-flex" method = "GET" action = "/fiction" id = "searchForm">
-          <input class="form-control me-2" name = "search" type="search" placeholder="Search by title" aria-label="Search">
+        <form class="d-flex" method="GET" action="/fiction" id="searchForm">
+          <input
+            class="form-control me-2"
+            name="search"
+            type="search"
+            placeholder="Search stories by title"
+            aria-label="Search"
+          />
           <button class="btn btn-outline-success" type="submit">Search</button>
         </form>
         <% if (!currentUser) { %>
         <a class="nav-link" aria-current="page" href="/login">Login</a>
         <a class="nav-link" href="/register">Register</a>
         <%} else {%>
-            <a class="nav-link" href="/account">Account</a>
+        <a class="nav-link" href="/account">Account</a>
         <%}%>
       </div>
     </div>
   </div>
 </nav>
 <script>
-  const searchForm =  document.querySelector("#searchForm");
-  const searchInput =   document.querySelector("#searchForm input");
-  searchForm.addEventListener('submit', (e) => {
+  const searchForm = document.querySelector("#searchForm");
+  const searchInput = document.querySelector("#searchForm input");
+  searchForm.addEventListener("submit", (e) => {
     e.preventDefault();
-    
+
     searchForm.action = `/fiction/search/${searchInput.value}`;
     if (searchInput.value.trim().length > 0) {
       window.location.href = `${searchForm.action}`;
-
     }
-
-  })
-  
+  });
 </script>

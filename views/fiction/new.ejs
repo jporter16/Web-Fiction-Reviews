@@ -1,6 +1,6 @@
 <% layout('layouts/boilerplate')%>
 <div class="row justify-content-center">
-  <div class="col-md-6 offset-md-3">
+  <div class="col-md-6 mx-auto">
     <div class="card shadow">
       <div class="card-body">
         <h1 class="text-center">New Story</h1>
@@ -19,6 +19,7 @@
               type="text"
               id="title"
               name="story[title]"
+              maxlength="200"
               required
             />
             <div class="valid-feedback">Looks good!</div>
@@ -30,31 +31,29 @@
               class="form-control"
               type="text"
               id="author"
+              maxlength="200"
               name="story[author]"
               required
             />
             <div class="valid-feedback">Looks good!</div>
           </div>
-          <!-- This is where I'm working now-add the tags for a new Story. -->
           <div class="mb-3">
             <fieldset>
               <legend class="small text-center">
-                Pick at least one tag and at most 3 tags for this story
+                Pick at least one tag and at most 4 tags for this story
               </legend>
-              <div class = "genre-wrapper d-flex flex-column  flex-wrap" style="max-height: 130px"> 
-              <% for (let genre of genreList) {%>
+              <div class = "genre-wrapper d-flex flex-column  flex-wrap"> 
+              <% for (let tag of genreList) {%>
                   <div>
                     <input
-                    class="form-check-input"
+                    class="form-check-input tag-check"
                     type="checkbox"
-                    id= <%=genre%>
+                    id= "<%=tag%>"
                     name="story[tags]"
-                    value= <%=genre%>
+                    value= "<%=tag%>"
                     required
                   />
-                  <label class="form-check-label" for=<%genre%>
-                    ><%=genre%></label
-                  >
+                  <label class="form-check-label" for="<%=tag%>"><%=tag%></label>
                   </div>
                
               <%}%>
@@ -77,20 +76,23 @@
           </div>
 
           <div class="mb-3">
-            <label class="form-label" for="link">Story link</label>
+            <label class="form-label" for="link">Story link <br/> (The url must start with http:// or https://)</label>
 
             <div class="input-group mb-3">
               <input
-                type="text"
+                type="url"
                 class="form-control"
                 id="link"
                 placeholder=""
-                aria-label="Username"
+                aria-label="link"
+                maxlength="2000"
                 aria-describedby="link-label"
                 name="story[link]"
                 required
               />
               <div class="valid-feedback">Looks good!</div>
+              <div class="invalid-feedback">The link must be a valid url starting with http:// or https://</div>
+
             </div>
           </div>
 
@@ -100,10 +102,15 @@
               class="form-control"
               type="text"
               id="description"
+              maxlength="4000"
+
               name="story[description]"
             ></textarea>
             <div class="valid-feedback">Looks good!</div>
+
           </div>
+
+          <label class="form-label" for="inputGroupFile02">Cover art*</label>
 
           <div class="input-group mb-3">
             <input
@@ -112,19 +119,23 @@
               id="inputGroupFile02"
               name="image"
               multiple
+              accept=".jpg,.jpeg,.png"
             />
-            <!-- <label class="input-group-text" for="inputGroupFile02"></label> -->
           </div>
+          <p id="image-error" class="text-danger" style="display: none">You cannot upload more than 5 files.</p>
+
+          <small>*Max file size is 10 MB. You cannot upload more than 5 files.  The file must be a .jpeg, .jpg, or .png</small>
+          <p></p>
 
           <div class="mb-3">
             <button class="btn btn-success">Add Story</button>
           </div>
         </form>
       </div>
+
     </div>
+    <br>
+
   </div>
 </div>
-
-<script>
- 
-</script>
+<script src="/javascripts/storyClientsideValidation.js"></script>

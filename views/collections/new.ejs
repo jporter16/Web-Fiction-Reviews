@@ -1,0 +1,110 @@
+<% layout('layouts/boilerplate')%>
+<div class="row justify-content-center">
+  <div class="col-md-6 mx-auto">
+    <div class="card shadow">
+      <div class="card-body">
+        <h1 class="text-center" id="document-title">New Collection</h1>
+
+        <form
+          action="/collections"
+          method="POST"
+          novalidate
+          class="validated-form"
+          enctype="application/x-www-form-urlencoded"
+        >
+          <div class="mb-3">
+            <label class="form-label" for="title">Collection Title</label>
+            <input
+              class="form-control"
+              type="text"
+              id="title"
+              name="collection[title]"
+              maxlength="200"
+              required
+            />
+            <div class="valid-feedback">Looks good!</div>
+          </div>
+          <p id="similar-titles"></p>
+
+          <div class="mb-3">
+            <fieldset>
+              <legend class="small">
+                Pick at least one tag and at most 8 tags for this collection
+              </legend>
+              <div
+                class="genre-wrapper d-flex flex-column flex-wrap">
+                <% for (let tag of genreList) {%>
+                <div>
+                  <input
+                    class="form-check-input tag-check"
+                    type="checkbox"
+                    id="<%=tag%>"
+                    name="collection[tags]" value= "<%=tag%>" required />
+                  <label class="form-check-label" for="<%=tag%>"> <%=tag%></label>
+                </div>
+
+                <%}%>
+              </div>
+            </fieldset>
+
+            <div class="valid-feedback">Looks good!</div>
+          </div>
+
+
+          <div class="mb-3">
+            <label class="form-label" for="Description">Describe your collection:</label>
+            <textarea
+              class="form-control"
+              type="text"
+              id="description"
+              maxlength="2000"
+              name="collection[description]"
+            ></textarea>
+            <div class="valid-feedback">Looks good!</div>
+          </div>
+          <label class="form-check-label" id="public-label">This collection is public</label>
+
+          <div class="mb-3 form-check form-switch d-flex ">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              role="switch"
+              id="public"
+              value="true"
+              name="collection[public]"
+              checked
+            />
+            <div class="valid-feedback">Looks good!</div>
+          </div>
+          <br/>
+
+          <div class="mb-3">
+              <label class="" for="selected-stories">Search and Select stories:</label>
+              <input class = "form-control mb-2" list="story-titles" id="selected-stories">
+              <datalist id="story-titles">
+                <% storyList.forEach(function(story) { %>
+                  <option value="<%= story.title %>" data-id="<%= story._id %>"><%= story.title %></option>
+                <% }); %>
+              </datalist>
+              <!-- <input type = "hidden" name="selected-stories-ids" id="selected-stories-ids" multiple> -->
+              <!-- <input name="selected-stories-names" id="selected-stories-names" multiple> -->
+              <div id="checkbox-container" class = "m-1"></div>
+
+            
+          </div>
+
+          <div class="mb-3">
+            <button class="btn btn-success my-3">Add collection</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <br />
+  </div>
+</div>
+<script src="/javascripts/storyClientsideValidation.js"></script>
+<script src="/javascripts/addStoriesToCollection.js"></script>
+
+<script>
+
+</script>

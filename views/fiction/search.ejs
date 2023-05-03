@@ -36,8 +36,8 @@
           <p class="card-text">
             <small class="text-muted">
               Average Rating: <%if(story.ratingScore >-1) {%>
-              <%=story.ratingScore%> <%} else {%> This story is not yet rated.
-              <% } %>
+              <%=story.ratingScore.toFixed(1)%> <%} else {%> This story is not
+              yet rated. <% } %>
             </small>
           </p>
         </div>

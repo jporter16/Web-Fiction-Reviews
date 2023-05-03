@@ -7,7 +7,10 @@ const catchAsync = require("../utils/catchAsync");
 const multer = require("multer");
 const { storage } = require("../cloudinary");
 
-const upload = multer({ storage });
+const upload = multer({
+  storage: storage,
+  limits: { files: 5, fileSize: 10 * 1000 * 1000 }, // 10 * 1000 * 1000 eg 10mb rounded down to be safe in case cloudinary calculates by decimal not binary.
+});
 
 const Fiction = require("../models/fiction");
 const {
@@ -17,6 +20,7 @@ const {
   isAdmin,
   isAdminOrStoryPoster,
   validateStory,
+  validateReportStory,
 } = require("../middleware");
 
 router
@@ -37,8 +41,8 @@ router
 // create new story:
 router.get("/new", isLoggedIn, isVerified, stories.renderNewForm);
 
-// show stories filtered by genre
-router.get("/genres/:genre", stories.renderGenre);
+// show stories filtered by tags
+router.get("/tags/:tag", stories.renderTag);
 
 // show searched stories
 router.get("/search/:query", stories.renderSearch);
@@ -48,6 +52,7 @@ router.post(
   "/:id/report",
   isLoggedIn,
   isVerified,
+  validateReportStory,
   catchAsync(stories.reportStory)
 );
 router.put(

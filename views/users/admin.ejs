@@ -87,6 +87,7 @@
             <h5>These are the reports for this story:</h5>
             <% for (i = 0; i <story.reportList.length; i++) { if
             (story.reportList[i].adminResponded ===false) {%>
+              <h6>reporter's username: <%=story.reportList[i].poster.username %></h6>
             <h6>reporter's email: <%=story.reportList[i].poster.email %></h6>
             <p>Message: <%=story.reportList[i].body %></p>
             <form
@@ -182,6 +183,48 @@
     <%}%>
   </ul>
 </div>
+<h1 class="text-center">Reported Collections</h1>
+
+<div class="mb-3 card">
+ 
+  <div class="card-body">
+    <%if (reportedCollections.length > 0) for (let collection of
+  reportedCollections) {%>
+  <h3><%=collection.title%></h3>
+  <p><%=collection.description%></p>
+  <p><%=collection.tags.join(', ')%></p>
+
+  <h3>These are the reports for this collection:</h3>
+  <% if (collection.reportList[0]) { for (let i = 0; i
+  <collection.reportList.length; i++) { if
+  (collection.reportList[i].adminResponded===false) { %>
+    <p>reporter's username: <%=collection.reportList[i].poster.username%></p>
+  <p>reporter's email: <%=collection.reportList[i].poster.email%></p>
+  <p>Report Text: <%=collection.reportList[i].body%></p>
+
+  <form
+    action="/collections/<%=collection._id%>/<%=collection.reportList[i]._id%>/remove-report?_method=PUT"
+    method="POST"
+    class="d-inline"
+  >
+    <button class="btn btn-primary" type="submit">
+      Remove the report on this collection
+    </button>
+  </form>
+
+  <p>---</p>
+
+  <% }} }%>
+  <a class="btn btn-primary" href="/collections/<%=collection.id%>">View <%=collection.title%>
+  </a>
+  <a class="btn btn-info card-link" href="/collections/<%=collection._id%>/edit">Edit</a>
+  <form action="/collections/<%=collection._id%>?_method=DELETE" method="POST" class="d-inline">
+    <button class="btn btn-danger" type="submit"> Delete this Collection</button>
+  </form>
+    <%}%>
+    </div>
+  
+</div>
 
 <div>
   <h1 class="text-center">Reported Reviews</h1>
@@ -220,6 +263,7 @@
             <% if (review.reportList[0]) { for (let i = 0; i
             <review.reportList.length; i++) { if
             (review.reportList[i].adminResponded===false) { %>
+            <p>reporter's username: <%=review.reportList[i].poster.username%></p>
             <p>reporter's email: <%=review.reportList[i].poster.email%></p>
             <p>Report Text: <%=review.reportList[i].body%></p>
 

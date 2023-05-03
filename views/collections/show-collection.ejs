@@ -1,0 +1,164 @@
+<% layout('layouts/boilerplate')%>
+<div class="overlay" id="deleteConfirmationOverlay" style="display: none"></div>
+
+<!-- Modal confirmation dialog for deleting a story: -->
+<div
+  class="confirmation-dialog"
+  id="deleteStoryConfirmationDialog"
+  style="display: none"
+>
+  <p>Are you sure you want to delete this collection?</p>
+  <div class="d-flex justify-content-between">
+    <button class="btn-info btn btn-sm" id="closeDeleteStoryConfirmationDialog">
+      Don't Delete
+    </button>
+
+    <form
+      action="/collections/<%=paginatedCollection._id%>/?_method=Delete"
+      method="POST"
+      class="form"
+    >
+      <button class="btn btn-sm btn-danger">Delete</button>
+    </form>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-2"></div>
+  <div class="col-md-10">
+    <h1 class="text-center"><%=title%> (Collection)</h1>
+  </div>
+</div>
+
+<div></div>
+<ul class="remove-padding">
+  <%if (!paginatedCollection.stories.length>0) {%>
+  <div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-10">
+      <h4 class="text-center">There are no stories in this collection.</h4>
+    </div>
+  </div>
+
+  <%} %>
+  <div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-10 mx-auto" >
+      <h4 class="text-center">Description:</h4>
+      <p class="text-center"><%=paginatedCollection.description%></p>
+      <p class="text-center">
+        Tags: <%=paginatedCollection.tags.join(', ')%></p>
+      <p class="text-center">
+        Upvotes: <%=paginatedCollection.upvotes.number%>
+       
+      </p>
+
+
+
+      <ul class="d-flex justify-content-center">
+
+        <li class="list-group-item mx-2">
+          <form
+          method="POST" 
+          action="/collections/<%=paginatedCollection._id%>/upvote?_method=PUT">
+        <button class="btn btn-sm btn-success">+1 Upvote</button>
+      </form>
+        </li>
+        <% if (currentUser && paginatedCollection.poster &&
+        paginatedCollection.poster.equals(currentUser._id)) { %>
+        <li class="list-group-item mx-2">
+          <a class="btn btn-sm btn-info card-link mx-2" href="/collections/<%=paginatedCollection._id%>/edit">
+            Edit</a>
+          <%}%> <% if(currentUser && paginatedCollection.poster &&
+          paginatedCollection.poster.equals(currentUser._id)){ %>
+        </li>
+
+        <li class="list-group-item mx-2">
+          <button class="btn btn-sm btn-danger" id="delete-story-button">
+            Delete
+          </button>
+        </li>
+        <%}%>
+
+        <li class="list-group-item mx-2">
+          <button class="btn btn-danger btn-sm" type="button" id="view-report-collection-form">Report</button>
+          
+      
+          </li>
+      </ul>
+      <form
+          action="/collections/<%=paginatedCollection._id%>/report"
+          method="POST"
+          class="hide "
+          id="hide-report-collection-form"
+        >
+        
+            <textArea id="report-collection-body" class="m-2" name ="message" cols="100" style ="max-width: 90%;" maxlength="4000"> </textArea>
+            <button class="btn btn-danger btn-sm" type="submit" id="report-collection-button"> Report this collection</button>
+
+        </form>
+    </div>
+  </div>
+
+  <% for (let story of paginatedCollection.stories) {%>
+  <div class="card m-3">
+    <div class="row">
+      <div class="col-md-2 remove-padding-right">
+        <% if (story.images.length) {%>
+        <img class="img-width-100" src="<%=story.images[0].url%>" alt="" />
+
+        <%} else {%>
+        <img class="img-width-100" src="" alt="" />
+
+        <%}%>
+      </div>
+      <div class="col-md-10 remove-padding-left">
+        <div class="card-body">
+          <h4 class="card-title text-center">
+            <a href="/fiction/<%=story.id%>"> <%=story.title%> </a>
+          </h4>
+          <h5 class="card-title text-center">by <%=story.author%></h5>
+          <p class="card-text m-1">
+            <% let trimmedDescription = story.description.substr(0, 400);
+            trimmedDescription = trimmedDescription.substr(0,
+            trimmedDescription.lastIndexOf(" ")); %> <%=trimmedDescription%>...
+          </p>
+          <p class="m-1">
+            <small class="text-muted">
+              Tags: <%for (let tag of story.tags) {%> <%=tag%>, <%}%>
+            </small>
+          </p>
+          <p class="m-1">
+            <small class="text-muted">
+              Average Rating: <%if(story.ratingScore >-1) {%>
+              <%=story.ratingScore.toFixed(1)%> (<%=story.reviews.length%>
+              <span
+                ><%= (story.reviews.length>1) ? "reviews" : "review"%>)</span
+              >
+              <% } else {%> This story is not yet rated. <% } %>
+            </small>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <%}%>
+</ul>
+
+<ul class="pagination">
+  <% for(let i = 1; i <= totalPages; i++) { %>
+  <li class="page-item <% if(currentPage == i) { %>active<% } %>">
+    <a
+      class="page-link"
+      href="/collections/<%=paginatedCollection._id%>?page=<%= i %>"
+      ><%= i %></a
+    >
+  </li>
+  <% } %>
+</ul>
+
+<script>
+
+  const paginatedCollection = {features: <%-JSON.stringify(paginatedCollection)%>}
+</script>
+<script src="/javascripts/toggleHiddenDivCollectionPage.js"></script>

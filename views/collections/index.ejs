@@ -1,0 +1,105 @@
+<% layout('layouts/boilerplate')%>
+<div class="row">
+  <h1 class="text-center"><%=title%></h1>
+  <div class="d-flex flex-column">
+    <ul class="d-flex justify-content-center">
+      <li class="list-unstyled mx-2">
+        <% if (title === "My Collections" ) {%>
+            <a href="/collections">Public Collections</a>
+
+        <%} else {%>
+          <a href="/collections/my-collections">My Collections</a>
+
+        <%} %>
+      </li>
+      <li class="list-unstyled mx-2">
+        <a href="/collections/new">New Collection</a>
+      </li>
+    </ul>
+    <button class="btn btn-info mx-auto">Advanced Search</button>
+    <form class= "container" id="tagSelectionForm">
+      <label for="filter-title">Search By Title:</label>
+      <input id="filter-title" class="form-control" type="search" name="filter[title]"/>
+     
+      <label for="filter-description">Search By Description:</label>
+      <input id="filter-description" class="form-control" type="search" name="filter[description]"/>
+     
+     
+      <p>Filter collections by tag:</p>
+
+      <div class="genre-wrapper d-flex flex-column flex-wrap">
+        <% for (let tag of genreList) {%>
+        <div>
+          <input
+            class="form-check-input tag-check"
+            type="checkbox"
+            id="<%=tag%>"
+            name="filter[tags]" value="<%=tag%>" />
+          <label class="form-check-label" for="<%=tag%>"> <%=tag%></label>
+        </div>
+        <%}%>
+      </div>
+      <button class="btn btn-success" type="submit">Submit</button>
+    </form>
+    
+
+
+  </div>
+
+  <div></div>
+  <ul class="remove-padding">
+    <%if (!paginatedCollections.length>0) {%>
+    <div class="row">
+      <h4 class="text-center">There are no public collections yet.</h4>
+    </div>
+
+    <%} %> <% for (let collection of paginatedCollections) {%>
+    <div class="card m-3">
+      <div class="row">
+        <div class="col-md-12 remove-padding-left">
+          <div class="card-body">
+            <h4 class="card-title text-center">
+              <a href="/collections/<%=collection.id%>">
+                <%=collection.title%>
+              </a>
+            </h4>
+            <p class="card-text m-1">
+              <% let trimmedDescription = collection.description.substr(0, 400);
+              if (trimmedDescription.length < collection.description.length) {
+              trimmedDescription = trimmedDescription.substr(0,
+              trimmedDescription.lastIndexOf(" ")); %>
+              <%=trimmedDescription%>... <%} else {%>
+              <%=collection.description%> <%}%>
+            </p>
+            <p class="m-1">
+              <small class="text-muted">
+                Tags: <%=collection.tags.join(', ')%>
+              </small>
+            </p>
+            <p class="m-1">
+              <small class="text-muted">
+                Total Upvotes: <%if(collection.upvotes.number >-1) {%>
+                <%=collection.upvotes.number%> <% } else {%> 0 <% } %>
+              </small>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <%}%>
+  </ul>
+  <ul class="pagination">
+    <% for(let i = 1; i <= totalPages; i++) { %>
+    <li class="page-item <% if(currentPage == i) { %>active<% } %>">
+      <a class="page-link" href="/collections?page=<%= i %>"><%= i %></a>
+    </li>
+    <% } %>
+  </ul>
+
+  <script>
+
+    const paginatedCollections = {features: <%-JSON.stringify(paginatedCollections)%>}
+  </script>
+</div>
+
+<script src="/javascripts/filterByTag.js"></script>
