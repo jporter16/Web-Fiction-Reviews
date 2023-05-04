@@ -144,10 +144,45 @@
   text-align: center;
 }
 .genre-wrapper {
-  max-height: 180px; /* The number of columns for larger screens */
+  max-height: 200px; /* The number of columns for larger screens */
 }
+/* this sets the pagination numbers at the bottom of the pages */
+.all-content-wrapper {
+  flex: 1;
+  min-height: 82vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.pagination {
+  margin-top: auto;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+main {
+  min-height: 100%;
+}
+
+/* New rules */
+body {
+  display: flex;
+  flex-direction: column;
+  /* background-color: #f5f7f7; */
+}
+
+#tagSelectionForm {
+  display: none;
+}
+/* add a background color to all cards */
+.card {
+  background-color: #f1f8ff;
+}
+
 @media screen and (max-width: 900px) {
   .genre-wrapper {
-    max-height: 250px; /* Adjust the max-height for smaller screens */
+    max-height: 280px; /* Adjust the max-height for smaller screens */
   }
 }

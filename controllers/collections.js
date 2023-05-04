@@ -8,49 +8,49 @@ const Review = require("../models/review");
 const User = require("../models/user");
 const Collection = require("../models/collection");
 const { reportCollectionSchema } = require("../schemas");
+const validator = require("validator");
 
-// collections:
+// // collections:
+// module.exports.renderOldCollections = async (req, res) => {
+//   // to paginate this:
+//   const itemsPerPage = 10;
+//   const currentPage = req.query.page || 1;
+//   const skip = (currentPage - 1) * itemsPerPage;
+//   let totalCollections;
+
+//   const paginatedCollections = await Collection.find({ public: true })
+//     .sort({ upvotes: -1, title: 1 })
+//     .skip(skip)
+//     .limit(itemsPerPage);
+//   // calculate the number of stories:
+
+//   try {
+//     totalCollections = await Collection.find({ public: true }).countDocuments();
+//     console.log(`There are ${totalCollections} collections altogether.`);
+//   } catch (err) {
+//     console.error(err);
+//     totalCollections = 0;
+//   }
+
+//   const totalPages = Math.ceil(totalCollections / itemsPerPage);
+//   console.log(totalPages, " TotalPages");
+//   console.log(currentPage, " currentPage");
+
+//   const genreList = databaseCalc.genreList;
+//   const title = "Public Collections";
+//   res.render("collections/index", {
+//     genreList,
+//     title,
+//     paginatedCollections,
+//     totalPages,
+//     currentPage,
+//   });
+// };
+
 module.exports.renderCollections = async (req, res) => {
-  // to paginate this:
-  const itemsPerPage = 10;
-  const currentPage = req.query.page || 1;
-  const skip = (currentPage - 1) * itemsPerPage;
-  let totalCollections;
-
-  const paginatedCollections = await Collection.find({ public: true })
-    .sort({ upvotes: -1, title: 1 })
-    .skip(skip)
-    .limit(itemsPerPage);
-  // calculate the number of stories:
-
-  try {
-    totalCollections = await Collection.find({ public: true }).countDocuments();
-    console.log(`There are ${totalCollections} collections altogether.`);
-  } catch (err) {
-    console.error(err);
-    totalCollections = 0;
-  }
-
-  const totalPages = Math.ceil(totalCollections / itemsPerPage);
-  console.log(totalPages, " TotalPages");
-  console.log(currentPage, " currentPage");
-
-  const genreList = databaseCalc.genreList;
-  const title = "Public Collections";
-  res.render("collections/index", {
-    genreList,
-    title,
-    paginatedCollections,
-    totalPages,
-    currentPage,
-  });
-};
-
-module.exports.renderMyCollections = async (req, res) => {
-  // to paginate this:
+  // default to public collections. Query determines private list instead.
   try {
     const genreList = databaseCalc.genreList;
-
     const itemsPerPage = 10;
     const currentPage = req.query.page || 1;
     const skip = (currentPage - 1) * itemsPerPage;
@@ -58,6 +58,65 @@ module.exports.renderMyCollections = async (req, res) => {
     let matchedTags;
     // optional query tags:
     let queryTags = req.query.tags;
+    let queryTitle = req.query.title;
+    let queryDescription = req.query.description;
+    let queryMine = req.query.mine;
+    const charactersToCheck = ["<", ">", "&", "'", `"`, `/`, "$"];
+
+    let query = {
+      public: true,
+    };
+    let title = "Public Collections";
+
+    if (queryMine) {
+      queryMine = validator.escape(queryMine);
+      if (queryMine === "true") {
+        queryMine = true;
+        if (req.user && req.user._id) {
+          query = { poster: req.user._id };
+          title = "My Collections";
+        } else {
+          req.flash(
+            "error",
+            "You must be signed in to view your private collections"
+          );
+          return res.redirect("/login");
+        }
+      } else if (queryMine === "false") {
+        queryMine = false;
+      } else {
+        req.flash(
+          "error",
+          "There was an invalid entry in your search parameters"
+        );
+        return res.redirect("/collections");
+      }
+    }
+    if (queryTitle) {
+      queryTitle = decodeURIComponent(queryTitle);
+      if (charactersToCheck.some((char) => queryTitle.includes(char))) {
+        console.log(
+          `The following characters are not accepted in search terms: <, >, &, ' ," $, or /`
+        );
+        req.flash(
+          "error",
+          `The following characters are not accepted in search terms: <, >, &, ' ," $, or /`
+        );
+        return res.redirect("/collections");
+      }
+      queryTitle = validator.escape(queryTitle);
+    }
+    if (queryDescription) {
+      queryDescription = decodeURIComponent(validator.trim(queryDescription));
+      if (charactersToCheck.some((char) => queryDescription.includes(char))) {
+        req.flash(
+          "error",
+          `The following characters are not accepted in search terms: <, >, &, ' ," $, or /`
+        );
+        return res.redirect("/collections");
+      }
+      queryDescription = validator.escape(validator.trim(queryDescription));
+    }
     if (queryTags) {
       queryTags = queryTags.split(",");
       console.log("query tags", queryTags);
@@ -69,10 +128,18 @@ module.exports.renderMyCollections = async (req, res) => {
       );
     }
     console.log("matched tags: ", matchedTags);
-    let query = { poster: req.user._id };
     if (queryTags && matchedTags.length > 0) {
       query.tags = { $in: matchedTags };
     }
+
+    if (queryTitle) {
+      query.title = { $regex: queryTitle, $options: "i" };
+    }
+
+    if (queryDescription) {
+      query.description = { $regex: queryDescription, $options: "i" };
+    }
+
     console.log("my query", query);
     const paginatedCollections = await Collection.find(query)
       .sort({ upvotes: -1, title: 1 })
@@ -87,13 +154,22 @@ module.exports.renderMyCollections = async (req, res) => {
     console.log(totalPages, " TotalPages");
     console.log(currentPage, " currentPage");
 
-    const title = "My Collections";
+    if (queryTitle) {
+      queryTitle = validator.unescape(queryTitle);
+    }
+    if (queryDescription) {
+      queryDescription = validator.unescape(queryDescription);
+    }
+
     res.render("collections/index", {
       genreList,
       title,
       paginatedCollections,
       totalPages,
       currentPage,
+      queryTitle,
+      queryDescription,
+      matchedTags,
     });
   } catch (err) {
     console.log(err);
@@ -250,6 +326,7 @@ module.exports.updateCollection = async (req, res, next) => {
     const updatedCollectionData = {
       ...req.body.collection,
       stories: req.body.collection.stories || [],
+      public: req.body.collection.public || false,
     };
     console.log("updated data", updatedCollectionData);
     const updatedCollection = await Collection.findByIdAndUpdate(

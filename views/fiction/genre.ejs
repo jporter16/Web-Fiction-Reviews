@@ -1,53 +1,54 @@
 <% layout('layouts/boilerplate')%>
-
-<div class="row">
-  <div class="col-md-3"></div>
-  <div class="col-md-9">
-    <h1 class="text-center"><%=title%></h1>
+<div class="all-content-wrapper">
+  <div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-9">
+      <h1 class="text-center"><%=title%></h1>
+    </div>
   </div>
-</div>
 
-<div></div>
-<ul class="remove-padding">
-  <% for (let story of sortedStories) {%>
-  <div class="card mb-3">
-    <div class="row">
-      <div class="col-md-3">
-        <% if (story.images.length) {%>
-        <img class="img-width-100" src="<%=story.images[0].url%>" alt="" />
+  <ul class="remove-padding">
+    <% for (let story of sortedStories) {%>
+    <div class="card mb-3">
+      <div class="row">
+        <div class="col-md-3">
+          <% if (story.images.length) {%>
+          <img class="img-width-100" src="<%=story.images[0].url%>" alt="" />
 
-        <%} else {%>
-        <img class="img-width-100" src="" alt="" />
+          <%} else {%>
+          <img class="img-width-100" src="" alt="" />
 
-        <%}%>
-      </div>
-      <div class="col-md-9">
-        <div class="card-body">
-          <h4 class="card-title text-center">
-            <a href="/fiction/<%=story.id%>"> <%=story.title%> </a>
-          </h4>
-          <p class="card-text">
-            <% let trimmedDescription = story.description.substr(0, 500);
-            trimmedDescription = trimmedDescription.substr(0,
-            trimmedDescription.lastIndexOf(" ")); %> <%=trimmedDescription%>...
-          </p>
-          <p class="card-text">
-            <small class="text-muted"> <%=story.tags%> </small>
-          </p>
-          <p class="card-text">
-            <small class="text-muted">
-              Average Rating: <%if(story.ratingScore >-1) {%>
-              <%=story.ratingScore%> <%} else {%> This story is not yet rated.
-              <% } %>
-            </small>
-          </p>
+          <%}%>
+        </div>
+        <div class="col-md-9">
+          <div class="card-body">
+            <h4 class="card-title text-center">
+              <a href="/fiction/<%=story.id%>"> <%=story.title%> </a>
+            </h4>
+            <p class="card-text">
+              <% let trimmedDescription = story.description.substr(0, 500);
+              trimmedDescription = trimmedDescription.substr(0,
+              trimmedDescription.lastIndexOf(" ")); %>
+              <%=trimmedDescription%>...
+            </p>
+            <p class="card-text">
+              <small class="text-muted"> <%=story.tags%> </small>
+            </p>
+            <p class="card-text">
+              <small class="text-muted">
+                Average Rating: <%if(story.ratingScore >-1) {%>
+                <%=story.ratingScore%> <%} else {%> This story is not yet rated.
+                <% } %>
+              </small>
+            </p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  <%}%>
-</ul>
-<script>
+    <%}%>
+  </ul>
+  <script>
 
-  const sortedStories = {features: <%-JSON.stringify(sortedStories)%>}
-</script>
+    const sortedStories = {features: <%-JSON.stringify(sortedStories)%>}
+  </script>
+</div>

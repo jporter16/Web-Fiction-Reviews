@@ -1,66 +1,67 @@
 <% layout('layouts/boilerplate')%>
-
-<div class="container d-flex justify-content-center align-items-center mt-2">
-  <div class="row">
-    <div class="col-md-6 offset-md-3 col-xl-4 offset-xl-4">
-      <div class="card shadow mb-4">
-        <img
-          src="https://res.cloudinary.com/dj3dni7xt/image/upload/v1679290214/Welp/home-page-cropped_pdyznu.jpg"
-          alt=""
-          class="card-img-top"
-        />
-        <div class="card-body">
-          <h5 class="card-title">Register</h5>
-          <form
-            action="/register"
-            method="Post"
-            class="validated-form"
-            novalidate
-          >
-            <div class="mb-3">
-              <label class="form-label" for="username">Username</label>
-              <input
-                class="form-control"
-                type="text"
-                id="username"
-                name="username"
-                required
-                autofocus
-              />
-              <div class="valid-feedback">Looks good!</div>
-            </div>
-            <div class="mb-3">
-              <label class="form-label" for="email">Email</label>
-              <input
-                class="form-control"
-                type="email"
-                id="email"
-                name="email"
-                required
-              />
-              <div class="valid-feedback">Looks good!</div>
-            </div>
-            <div class="mb-3">
-              <label class="form-label" for="password">Password</label>
-              <input
-                class="form-control"
-                type="password"
-                id="password"
-                name="password"
-                pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
-                required
-              />
-              <p>
-                *Passwords must be at least 8 characters. They must contain at
-                least one uppercase letter, at least one lowercase letter, and
-                at least one number.
-              </p>
-              <div class="valid-feedback">Looks good!</div>
-            </div>
-            <div class="d-grid gap-2">
-              <button class="btn btn-success">Register</button>
-            </div>
-          </form>
+<div class="all-content-wrapper">
+  <div class="container d-flex justify-content-center align-items-center mt-2">
+    <div class="row">
+      <div class="col-md-6 offset-md-3 col-xl-4 offset-xl-4">
+        <div class="card shadow mb-4">
+          <img
+            src="https://res.cloudinary.com/dj3dni7xt/image/upload/v1679290214/Welp/home-page-cropped_pdyznu.jpg"
+            alt=""
+            class="card-img-top"
+          />
+          <div class="card-body">
+            <h5 class="card-title">Register</h5>
+            <form
+              action="/register"
+              method="Post"
+              class="validated-form"
+              novalidate
+            >
+              <div class="mb-3">
+                <label class="form-label" for="username">Username</label>
+                <input
+                  class="form-control"
+                  type="text"
+                  id="username"
+                  name="username"
+                  required
+                  autofocus
+                />
+                <div class="valid-feedback">Looks good!</div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label" for="email">Email</label>
+                <input
+                  class="form-control"
+                  type="email"
+                  id="email"
+                  name="email"
+                  required
+                />
+                <div class="valid-feedback">Looks good!</div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label" for="password">Password</label>
+                <input
+                  class="form-control"
+                  type="password"
+                  id="password"
+                  name="password"
+                  pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+                  required
+                />
+                <p>
+                  *Passwords must be at least 8 characters. They must contain at
+                  least one uppercase letter, at least one lowercase letter, and
+                  at least one number.
+                </p>
+                <div class="valid-feedback">Looks good!</div>
+              </div>
+              <div class="d-grid gap-2">
+                <button class="btn btn-success">Register</button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </div>

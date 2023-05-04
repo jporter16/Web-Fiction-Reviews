@@ -42,7 +42,7 @@ router
 router.get("/new", isLoggedIn, isVerified, stories.renderNewForm);
 
 // show stories filtered by tags
-router.get("/tags/:tag", stories.renderTag);
+// router.get("/tags/:tag", stories.renderTag);
 
 // show searched stories
 router.get("/search/:query", stories.renderSearch);

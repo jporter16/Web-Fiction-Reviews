@@ -81,5 +81,3 @@ function showDeleteConfirmation() {
   const dialog = document.getElementById("deleteStoryConfirmationDialog");
   dialog.style.display = "block";
 }
-
-console.log("test");

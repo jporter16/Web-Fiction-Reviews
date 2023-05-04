@@ -40,25 +40,6 @@ if (hiddenFormButtons) {
 }
 // This is to reveal the hidden div to edit the review:
 
-// const hiddenEditReviewForm = document.querySelector("#hide-edit-review-form");
-// const viewHiddenEditReviewForm = document.querySelector(
-//   "#view-edit-story-form"
-// );
-
-// viewHiddenEditReviewForm.addEventListener("click", () => {
-//   console.log("clicked on edit");
-//   hiddenEditReviewForm.classList.toggle("hide");
-//   if (viewHiddenEditReviewForm.innerText === "Cancel") {
-//     viewHiddenEditReviewForm.innerText = "Report";
-//     viewHiddenEditReviewForm.classList.remove("btn-primary");
-//     viewHiddenEditReviewForm.classList.add("btn-danger");
-//   } else {
-//     viewHiddenEditReviewForm.innerText = "Cancel";
-//     viewHiddenEditReviewForm.classList.remove("btn-danger");
-//     viewHiddenEditReviewForm.classList.add("btn-primary");
-//   }
-// });
-
 const hiddenEditReviewFormButtons = document.querySelectorAll(
   ".hidden-edit-review-form-button"
 );

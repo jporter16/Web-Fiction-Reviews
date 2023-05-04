@@ -5,6 +5,8 @@ locals.description = locals.description.substring(0, locals.description.lastInde
 %>
 <% layout('layouts/boilerplate'); %>
 <link rel="stylesheet" href="/stylesheets/stars.css" />
+<div class="all-content-wrapper">
+
 <div class="overlay" id="deleteConfirmationOverlay" style="display: none;"></div>
 
 <!-- Modal confirmation dialog for deleting a story: -->
@@ -97,9 +99,7 @@ locals.description = locals.description.substring(0, locals.description.lastInde
           Author: <%=story.author%>
         </li>
         <li class="list-group-item">
-          Tags: <%for (let tag of story.tags) {%>
-              <%=tag%>, 
-            <%}%>
+          Tags: <%=story.tags.join(', ')%>
         </li>
         <li class="list-group-item">
           Average Rating: 
@@ -542,6 +542,7 @@ locals.description = locals.description.substring(0, locals.description.lastInde
     </li>
   <% } %>
 </ul>
+</div>
 </div>
 
 <script>

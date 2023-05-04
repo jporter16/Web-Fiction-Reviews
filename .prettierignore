@@ -6,6 +6,7 @@
 /views/collections/edit.ejs
 /views/users/admin.ejs
 /views/collections/list.ejs
+/views/fiction/index.ejs
 /views/collections/index.ejs
 /views/collections/collections.ejs
 /views/collections/show-collection.ejs

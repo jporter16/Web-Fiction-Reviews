@@ -5,72 +5,83 @@ const { cloudinary } = require("../cloudinary");
 const databaseCalc = require("./databaseCalculations");
 const Review = require("../models/review");
 const User = require("../models/user");
+const validator = require("validator");
 
 module.exports.index = async (req, res) => {
   // to paginate this:
-  const itemsPerPage = 10;
-  const title = "All Stories";
-  const currentPage = req.query.page || 1;
-  const skip = (currentPage - 1) * itemsPerPage;
-  let totalStories;
-
-  const paginatedStories = await Fiction.find()
-    .sort({ popularity: -1, ratingScore: -1, title: 1 })
-    .skip(skip)
-    .limit(itemsPerPage);
-  // calculate the number of stories:
-
   try {
-    totalStories = await Fiction.countDocuments();
-    console.log(`There are ${totalStories} items in the Fiction collection.`);
-  } catch (err) {
-    console.error(err);
-    totalStories = 0;
-  }
-
-  const totalPages = Math.ceil(totalStories / itemsPerPage);
-  console.log(totalPages, " TotalPages");
-  console.log(currentPage, " currentPage");
-
-  res.render("fiction/index", {
-    paginatedStories,
-    totalPages,
-    currentPage,
-    title,
-  });
-};
-
-module.exports.renderNewForm = (req, res) => {
-  const genreList = databaseCalc.genreList;
-  res.render("fiction/new", { genreList });
-};
-
-module.exports.renderTag = async (req, res) => {
-  const { tag } = req.params;
-  if (!databaseCalc.genreList.includes(tag)) {
-    res.render("missingpage");
-  } else {
-    // const genreStories = await Fiction.find({
-    //   tags: { $regex: new RegExp(genre, "i") },
-    // });
-    // to paginate this:
+    const genreList = databaseCalc.genreList;
     const itemsPerPage = 10;
+    let title = "All Stories";
     const currentPage = req.query.page || 1;
     const skip = (currentPage - 1) * itemsPerPage;
     let totalStories;
+    let matchedTags;
 
-    const paginatedStories = await Fiction.find({
-      tags: { $regex: new RegExp(tag, "i") },
-    })
-      .sort({ popularity: -1, ratingScore: -1, title: 1 })
-      .skip(skip)
-      .limit(itemsPerPage);
+    // optional query tags:
+    let queryTags = req.query.tags;
+    let queryTitle = req.query.title;
+    let queryDescription = req.query.description;
+    let query = {};
+    // render an error if the search contains escaped titles.
+    const charactersToCheck = ["<", ">", "&", "'", `"`, `/`, "$"];
+    console.log("request query: ", queryTitle, queryDescription);
+
+    if (queryTitle) {
+      queryTitle = decodeURIComponent(queryTitle);
+      if (charactersToCheck.some((char) => queryTitle.includes(char))) {
+        console.log(
+          `The following characters are not accepted in search terms: <, >, &, ' ," $, or /`
+        );
+        req.flash(
+          "error",
+          `The following characters are not accepted in search terms: <, >, &, ' ," $, or /`
+        );
+        return res.redirect("/fiction");
+      }
+      queryTitle = validator.escape(queryTitle);
+    }
+    if (queryDescription) {
+      queryDescription = decodeURIComponent(validator.trim(queryDescription));
+      if (charactersToCheck.some((char) => queryDescription.includes(char))) {
+        req.flash(
+          "error",
+          `The following characters are not accepted in search terms: <, >, &, ' ," $, or /`
+        );
+        return res.redirect("/fiction");
+      }
+
+      queryDescription = validator.escape(validator.trim(queryDescription));
+    }
+    if (queryTags) {
+      queryTags = queryTags.split(",");
+      console.log("query tags", queryTags);
+      // compare queryTags with genreList
+      matchedTags = queryTags.filter((queryTag) =>
+        genreList.some(
+          (genre) => genre.toLowerCase() === queryTag.toLowerCase()
+        )
+      );
+    }
+    console.log("matched tags: ", matchedTags);
+    if (queryTags && matchedTags.length > 0) {
+      query.tags = { $in: matchedTags };
+    }
+
+    if (queryTitle) {
+      query.title = { $regex: queryTitle, $options: "i" };
+    }
+
+    if (queryDescription) {
+      query.description = { $regex: queryDescription, $options: "i" };
+    }
+
+    console.log("my query", query);
+
     // calculate the number of stories:
 
     try {
-      totalStories = await Fiction.countDocuments({
-        tags: { $regex: new RegExp(tag, "i") },
-      });
+      totalStories = await Fiction.find(query).countDocuments();
       console.log(`There are ${totalStories} items in the Fiction collection.`);
     } catch (err) {
       console.error(err);
@@ -80,16 +91,99 @@ module.exports.renderTag = async (req, res) => {
     const totalPages = Math.ceil(totalStories / itemsPerPage);
     console.log(totalPages, " TotalPages");
     console.log(currentPage, " currentPage");
-    const title = tag;
+
+    // Now do the search:
+
+    const paginatedStories = await Fiction.find(query)
+      .sort({ popularity: -1, ratingScore: -1, title: 1 })
+      .skip(skip)
+      .limit(itemsPerPage);
+    // calculate the number of stories:
+
+    if (queryTitle) {
+      queryTitle = validator.unescape(queryTitle);
+    }
+    if (queryDescription) {
+      queryDescription = validator.unescape(queryDescription);
+    }
+    // change title depending on tags:
+    if (
+      matchedTags &&
+      matchedTags.length === 1 &&
+      !(queryTitle || queryDescription)
+    ) {
+      title = `Showing stories with the tag: ${matchedTags[0]}`;
+    } else if (queryTitle || queryDescription) {
+      title = "Filtered Search";
+    }
 
     res.render("fiction/index", {
+      genreList,
       paginatedStories,
       totalPages,
       currentPage,
       title,
+      queryTitle,
+      queryDescription,
+      matchedTags,
     });
+  } catch (error) {
+    console.log(error);
+    req.flash("error", "There was an error loading this page");
+    return res.redirect("/fiction");
   }
 };
+
+module.exports.renderNewForm = (req, res) => {
+  const genreList = databaseCalc.genreList;
+  res.render("fiction/new", { genreList });
+};
+
+// module.exports.renderTag = async (req, res) => {
+//   const { tag } = req.params;
+//   if (!databaseCalc.genreList.includes(tag)) {
+//     res.render("missingpage");
+//   } else {
+//     // const genreStories = await Fiction.find({
+//     //   tags: { $regex: new RegExp(genre, "i") },
+//     // });
+//     // to paginate this:
+//     const itemsPerPage = 10;
+//     const currentPage = req.query.page || 1;
+//     const skip = (currentPage - 1) * itemsPerPage;
+//     let totalStories;
+
+//     const paginatedStories = await Fiction.find({
+//       tags: { $regex: new RegExp(tag, "i") },
+//     })
+//       .sort({ popularity: -1, ratingScore: -1, title: 1 })
+//       .skip(skip)
+//       .limit(itemsPerPage);
+//     // calculate the number of stories:
+
+//     try {
+//       totalStories = await Fiction.countDocuments({
+//         tags: { $regex: new RegExp(tag, "i") },
+//       });
+//       console.log(`There are ${totalStories} items in the Fiction collection.`);
+//     } catch (err) {
+//       console.error(err);
+//       totalStories = 0;
+//     }
+
+//     const totalPages = Math.ceil(totalStories / itemsPerPage);
+//     console.log(totalPages, " TotalPages");
+//     console.log(currentPage, " currentPage");
+//     const title = tag;
+
+//     res.render("fiction/index", {
+//       paginatedStories,
+//       totalPages,
+//       currentPage,
+//       title,
+//     });
+//   }
+// };
 
 module.exports.renderSearch = async (req, res) => {
   const { tag, query } = req.params;

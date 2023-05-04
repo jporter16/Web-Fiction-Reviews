@@ -1,6 +1,8 @@
 <% layout('layouts/boilerplate')%>
-<div class="row">
+<div class="all-content-wrapper">
+
   <h1 class="text-center"><%=title%></h1>
+  <!-- This is for the search and filtering options: -->
   <div class="d-flex flex-column">
     <ul class="d-flex justify-content-center">
       <li class="list-unstyled mx-2">
@@ -8,7 +10,7 @@
             <a href="/collections">Public Collections</a>
 
         <%} else {%>
-          <a href="/collections/my-collections">My Collections</a>
+          <a href="/collections?mine=true">My Collections</a>
 
         <%} %>
       </li>
@@ -16,41 +18,54 @@
         <a href="/collections/new">New Collection</a>
       </li>
     </ul>
-    <button class="btn btn-info mx-auto">Advanced Search</button>
-    <form class= "container" id="tagSelectionForm">
-      <label for="filter-title">Search By Title:</label>
-      <input id="filter-title" class="form-control" type="search" name="filter[title]"/>
-     
-      <label for="filter-description">Search By Description:</label>
-      <input id="filter-description" class="form-control" type="search" name="filter[description]"/>
-     
-     
-      <p>Filter collections by tag:</p>
+    <button class="btn btn-info mx-auto btn-sm" id="show-advanced-search">Advanced Search</button>
+    <form class= "card m-3" id="tagSelectionForm">
+      <div class="card-body">
+        <label for="filter-title">Search By Title:</label>
+        <input maxlength = "200" id="filter-title" class="form-control" type="search" name="filter[title]" value ="<%=queryTitle ? queryTitle : ""%>"/>
+        <small id="title-validation-error"class="hide"></small>
+        <br/>
 
-      <div class="genre-wrapper d-flex flex-column flex-wrap">
-        <% for (let tag of genreList) {%>
-        <div>
-          <input
-            class="form-check-input tag-check"
-            type="checkbox"
-            id="<%=tag%>"
-            name="filter[tags]" value="<%=tag%>" />
-          <label class="form-check-label" for="<%=tag%>"> <%=tag%></label>
+        <label class="mt-2" for="filter-description">Search By Description:</label>
+        <input maxlength = "200" id="filter-description" class="form-control" type="search" name="filter[description]" value ="<%=queryDescription ? queryDescription : ""%>"/>
+        <small id="description-validation-error"class="hide"></small>
+        <br/>
+        <label class="mt-2">Filter Collections by Tag:</label>
+        <br/>
+  
+        <div class="genre-wrapper d-flex flex-column flex-wrap">
+          <%console.log(matchedTags)%>
+          <% for (let tag of genreList) {%>
+          <div>
+            <input
+              class="form-check-input tag-check"
+              type="checkbox"
+              id="<%=tag%>"
+              name="filter[tags]" value="<%=tag%>" 
+              <% if( matchedTags) { 
+                if (matchedTags.includes(tag)) {%>
+                   checked 
+                <%}
+            }%>
+              />
+              
+            <label class="form-check-label" for="<%=tag%>"> <%=tag%></label>
+          </div>
+          <%}%>
         </div>
-        <%}%>
+        <button class="btn btn-success mt-3" type="submit">Search</button>
       </div>
-      <button class="btn btn-success" type="submit">Submit</button>
+      
     </form>
     
 
 
   </div>
 
-  <div></div>
   <ul class="remove-padding">
     <%if (!paginatedCollections.length>0) {%>
     <div class="row">
-      <h4 class="text-center">There are no public collections yet.</h4>
+      <h4 class="text-center">There are no collections to view.</h4>
     </div>
 
     <%} %> <% for (let collection of paginatedCollections) {%>
@@ -88,13 +103,15 @@
     </div>
     <%}%>
   </ul>
-  <ul class="pagination">
+    <ul class="pagination ">
     <% for(let i = 1; i <= totalPages; i++) { %>
     <li class="page-item <% if(currentPage == i) { %>active<% } %>">
       <a class="page-link" href="/collections?page=<%= i %>"><%= i %></a>
     </li>
     <% } %>
+
   </ul>
+  
 
   <script>
 

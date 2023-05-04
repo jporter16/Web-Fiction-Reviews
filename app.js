@@ -3,6 +3,19 @@
 // nothing populates. I think if I set it so there is always one review left, it will be fine.
 
 // CURRENT ISSUES to fix before going live:
+// filter Account so it either shows myStories or my reviews. eg use queries for that.
+// account page has a slight horizontal scroll bar-too wide.
+// show number of stories in a collection on index.
+// figure out why rankings aren't what I expect them to be.
+// add feature-nav box of bread crumbs or random story/random collection button.
+// restrict user id to alphanumeric options
+// add breadcrumb navigation for collections
+// account-the photos are left aligned for stories that you add, sometimes.
+// add cancel button to new form.
+// increase size of textbox for author's summary edit and new. maybe collections too.
+// consider adding webp to acceptable data formats for uploading files.(maybe add legion of nothing photo)
+// make way to delete account
+// make nav bar collapse earlier.
 // install validator for search queries with mongoose.
 // one person can review a story multiple times.
 // fix collections/collections view formatting
@@ -16,6 +29,8 @@
 // add site map
 
 // FEATURES TO ADD EVENTUALLY
+// fix leave a review for stories-put it in a clear form toggle.
+// create option to add to a a collection from a show page.
 // for an empty collection, the page numbers on the left are not at the bottom of the screen.
 // There are no limits to the number of times someone can report a story or review or collection.
 // add bootstrap backgrounds for cards

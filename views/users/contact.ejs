@@ -1,41 +1,48 @@
 <% layout('layouts/boilerplate')%>
-<div class="row justify-content-center">
-  <div class="col-md-6">
-    <div class="card shadow">
-      <div class="card-body">
-        <h3 class="text-center">Contact Web Fiction Reviews</h3>
+<div class="all-content-wrapper">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow">
+        <div class="card-body">
+          <h3 class="text-center">Contact Web Fiction Reviews</h3>
 
-        <form action="/contact" method="POST" novalidate class="validated-form">
-          <div class="mb-3">
-            <label class="form-label" for="subject">Subject</label>
-            <input
-              class="form-control"
-              type="text"
-              id="subject"
-              name="subject"
-              required
-            />
-            <div class="valid-feedback">Looks good!</div>
-          </div>
-          <div class="mb-3">
-            <label class="form-label" for="message">Message</label>
-            <textarea
-              class="form-control"
-              type="textarea"
-              id="message"
-              name="message"
-              required
-            ></textarea>
-            <div class="valid-feedback">Looks good!</div>
-          </div>
+          <form
+            action="/contact"
+            method="POST"
+            novalidate
+            class="validated-form"
+          >
+            <div class="mb-3">
+              <label class="form-label" for="subject">Subject</label>
+              <input
+                class="form-control"
+                type="text"
+                id="subject"
+                name="subject"
+                required
+              />
+              <div class="valid-feedback">Looks good!</div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="message">Message</label>
+              <textarea
+                class="form-control"
+                type="textarea"
+                id="message"
+                name="message"
+                required
+              ></textarea>
+              <div class="valid-feedback">Looks good!</div>
+            </div>
 
-          <div class="mb-3">
-            <button class="btn btn-success">Send Message</button>
-          </div>
-          <p>
-            *Responses will be sent to the email associated with your account.
-          </p>
-        </form>
+            <div class="mb-3">
+              <button class="btn btn-success">Send Message</button>
+            </div>
+            <p>
+              *Responses will be sent to the email associated with your account.
+            </p>
+          </form>
+        </div>
       </div>
     </div>
   </div>

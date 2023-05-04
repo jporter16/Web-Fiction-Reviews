@@ -1,9 +1,11 @@
 <% layout('layouts/boilerplate')%>
+<div class="all-content-wrapper">
+
 <div class="row justify-content-center">
   <div class="col-md-6 mx-auto">
     <div class="card shadow">
       <div class="card-body">
-        <h1 class="text-center">New Story</h1>
+        <h1 class="text-center" id="document-title">New Story</h1>
 
         <form
           action="/fiction"
@@ -103,6 +105,7 @@
               type="text"
               id="description"
               maxlength="4000"
+              rows="10"
 
               name="story[description]"
             ></textarea>
@@ -137,5 +140,6 @@
     <br>
 
   </div>
+</div>
 </div>
 <script src="/javascripts/storyClientsideValidation.js"></script>

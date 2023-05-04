@@ -30,7 +30,7 @@
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
             <% for (tag of genreList) {%>
             <li>
-              <a class="dropdown-item" href="/fiction/tags/<%=tag%>"
+              <a class="dropdown-item" href="/fiction?tags=<%=tag%>"
                 ><%=tag%></a
               >
             </li>
@@ -58,7 +58,7 @@
               >
             </li>
             <li>
-              <a class="dropdown-item" href="/collections/my-collections/"
+              <a class="dropdown-item" href="/collections?mine=true"
                 >My Collections</a
               >
             </li>
@@ -74,10 +74,10 @@
       </div>
 
       <div class="navbar-nav ms-auto">
-        <form class="d-flex" method="GET" action="/fiction" id="searchForm">
+        <form class="d-flex" id="nav-search">
           <input
             class="form-control me-2"
-            name="search"
+            name="filter[title]"
             type="search"
             placeholder="Search stories by title"
             aria-label="Search"
@@ -94,15 +94,3 @@
     </div>
   </div>
 </nav>
-<script>
-  const searchForm = document.querySelector("#searchForm");
-  const searchInput = document.querySelector("#searchForm input");
-  searchForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    searchForm.action = `/fiction/search/${searchInput.value}`;
-    if (searchInput.value.trim().length > 0) {
-      window.location.href = `${searchForm.action}`;
-    }
-  });
-</script>
