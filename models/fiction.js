@@ -95,12 +95,16 @@ FictionSchema.virtual("properties.popUpMarkup").get(function () {
 });
 
 FictionSchema.post("findOneAndDelete", async function (doc) {
-  if (doc) {
-    await Review.deleteMany({
-      _id: {
-        $in: doc.reviews,
-      },
-    });
+  try {
+    if (doc) {
+      await Review.deleteMany({
+        _id: {
+          $in: doc.reviews,
+        },
+      });
+    }
+  } catch (error) {
+    console.error(error);
   }
 });
 

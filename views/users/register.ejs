@@ -11,12 +11,7 @@
           />
           <div class="card-body">
             <h5 class="card-title">Register</h5>
-            <form
-              action="/register"
-              method="Post"
-              class="validated-form"
-              novalidate
-            >
+            <form class="" id="register-form" action="/register" method="Post">
               <div class="mb-3">
                 <label class="form-label" for="username">Username</label>
                 <input
@@ -27,6 +22,9 @@
                   required
                   autofocus
                 />
+                <small> *Usernames may only contain letters or numbers </small>
+                <p class="hide" id="username-error-message"></p>
+                <div class="invalid-feedback"></div>
                 <div class="valid-feedback">Looks good!</div>
               </div>
               <div class="mb-3">
@@ -50,11 +48,12 @@
                   pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
                   required
                 />
-                <p>
+                <small>
                   *Passwords must be at least 8 characters. They must contain at
                   least one uppercase letter, at least one lowercase letter, and
                   at least one number.
-                </p>
+                </small>
+                <div class="invalid-feedback"></div>
                 <div class="valid-feedback">Looks good!</div>
               </div>
               <div class="d-grid gap-2">
@@ -67,3 +66,4 @@
     </div>
   </div>
 </div>
+<script src="javascripts/validateUsername.js"></script>

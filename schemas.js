@@ -48,7 +48,8 @@ module.exports.storySchema = Joi.object({
       Joi.array().max(4).min(1),
       Joi.string().max(1000)
     ),
-    popularity: Joi.number().optional(),
+    popularity: Joi.number().optional().default(0),
+    ratingScore: Joi.number().min(-1).default(-1),
   }).required(),
   deleteImages: Joi.array(),
 });
@@ -106,4 +107,15 @@ module.exports.reportCollectionSchema = Joi.object({
   // This checks to make sure it is an object id
   reportedCollection: Joi.string().pattern(/^[0-9a-fA-F]{24}$/),
   poster: Joi.string().pattern(/^[0-9a-fA-F]{24}$/),
+});
+
+module.exports.userSchema = Joi.object({
+  email: Joi.string().email().required(),
+  username: Joi.string().alphanum().min(3).max(30).required(),
+  displayName: Joi.string().optional().allow("").allow(null),
+  isAdmin: Joi.boolean().optional().default(false),
+  isVerified: Joi.boolean().optional().default(false),
+  collections: Joi.array()
+    .items(Joi.string().regex(/^[0-9a-fA-F]{24}$/))
+    .optional(),
 });

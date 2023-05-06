@@ -88,8 +88,8 @@
             <h5>These are the reports for this story:</h5>
             <% for (i = 0; i <story.reportList.length; i++) { if
             (story.reportList[i].adminResponded ===false) {%>
-              <h6>reporter's username: <%=story.reportList[i].poster.username %></h6>
-            <h6>reporter's email: <%=story.reportList[i].poster.email %></h6>
+              <h6>reporter's username: <%= story.reportList[i].poster ? story.reportList[i].poster.displayName : "Deleted"%></h6>
+            <h6>reporter's email: <%=story.reportList[i].poster ? story.reportList[i].poster.email : "Deleted"%></h6>
             <p>Message: <%=story.reportList[i].body %></p>
             <form
               action="/fiction/<%=story._id%>/<%=story.reportList[i]._id%>/remove-report?_method=PUT"
@@ -199,7 +199,7 @@
   <% if (collection.reportList[0]) { for (let i = 0; i
   <collection.reportList.length; i++) { if
   (collection.reportList[i].adminResponded===false) { %>
-    <p>reporter's username: <%=collection.reportList[i].poster.username%></p>
+    <p>reporter's username: <%=collection.reportList[i].poster.displayName%></p>
   <p>reporter's email: <%=collection.reportList[i].poster.email%></p>
   <p>Report Text: <%=collection.reportList[i].body%></p>
 
@@ -264,7 +264,7 @@
             <% if (review.reportList[0]) { for (let i = 0; i
             <review.reportList.length; i++) { if
             (review.reportList[i].adminResponded===false) { %>
-            <p>reporter's username: <%=review.reportList[i].poster.username%></p>
+            <p>reporter's username: <%=review.reportList[i].poster.displayName%></p>
             <p>reporter's email: <%=review.reportList[i].poster.email%></p>
             <p>Report Text: <%=review.reportList[i].body%></p>
 

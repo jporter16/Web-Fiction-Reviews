@@ -51,17 +51,23 @@ const updateDatabase = async () => {
     );
   }
 };
-
-const updateDatabaseWarningsAndAudience = async () => {
-  const allStories = await Story.find();
-  const storyIds = allStories.map((story) => story._id);
-  for (let i = 0; i < storyIds.length; i++) {
-    await calculateAudienceAndWarnings(storyIds[i]);
-  }
-};
-
-updateDatabaseWarningsAndAudience().then(() => {
+updateDatabase().then(() => {
   setTimeout(() => {
     mongoose.connection.close();
-  }, 2000);
+  }, 6000);
 });
+
+// These two functions will work to update audience and warnings for all stories.
+// const updateDatabaseWarningsAndAudience = async () => {
+//   const allStories = await Story.find();
+//   const storyIds = allStories.map((story) => story._id);
+//   for (let i = 0; i < storyIds.length; i++) {
+//     await calculateAudienceAndWarnings(storyIds[i]);
+//   }
+// };
+
+// updateDatabaseWarningsAndAudience().then(() => {
+//   setTimeout(() => {
+//     mongoose.connection.close();
+//   }, 2000);
+// });

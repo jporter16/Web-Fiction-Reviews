@@ -95,9 +95,6 @@ module.exports.renderCollections = async (req, res) => {
     if (queryTitle) {
       queryTitle = decodeURIComponent(queryTitle);
       if (charactersToCheck.some((char) => queryTitle.includes(char))) {
-        console.log(
-          `The following characters are not accepted in search terms: <, >, &, ' ," $, or /`
-        );
         req.flash(
           "error",
           `The following characters are not accepted in search terms: <, >, &, ' ," $, or /`
@@ -119,7 +116,6 @@ module.exports.renderCollections = async (req, res) => {
     }
     if (queryTags) {
       queryTags = queryTags.split(",");
-      console.log("query tags", queryTags);
       // compare queryTags with genreList
       matchedTags = queryTags.filter((queryTag) =>
         genreList.some(
@@ -127,7 +123,6 @@ module.exports.renderCollections = async (req, res) => {
         )
       );
     }
-    console.log("matched tags: ", matchedTags);
     if (queryTags && matchedTags.length > 0) {
       query.tags = { $in: matchedTags };
     }
@@ -140,7 +135,6 @@ module.exports.renderCollections = async (req, res) => {
       query.description = { $regex: queryDescription, $options: "i" };
     }
 
-    console.log("my query", query);
     const paginatedCollections = await Collection.find(query)
       .sort({ upvotes: -1, title: 1 })
       .skip(skip)
@@ -148,11 +142,8 @@ module.exports.renderCollections = async (req, res) => {
     // calculate the number of stories:
 
     totalCollections = await Collection.find(query).countDocuments();
-    console.log(`There are ${totalCollections} collections altogether.`);
 
     const totalPages = Math.ceil(totalCollections / itemsPerPage);
-    console.log(totalPages, " TotalPages");
-    console.log(currentPage, " currentPage");
 
     if (queryTitle) {
       queryTitle = validator.unescape(queryTitle);
@@ -172,7 +163,7 @@ module.exports.renderCollections = async (req, res) => {
       matchedTags,
     });
   } catch (err) {
-    console.log(err);
+    console.error(err);
     req.flash("error", "There was an error accessing this page.");
     return res.redirect("/collections");
   }
@@ -180,82 +171,94 @@ module.exports.renderCollections = async (req, res) => {
 
 module.exports.renderNewForm = async (req, res) => {
   const storyList = await Fiction.find({}, "_id title").sort({ title: 1 });
-  console.log(storyList, "these are the story titles");
-
   const genreList = databaseCalc.genreList;
   res.render("collections/new", { genreList, storyList });
 };
 
 module.exports.createCollection = async (req, res, next) => {
-  console.log(req.body.collection, "collection");
-  console.log(req.body, "req.body");
-  const collection = new Collection(req.body.collection);
-  collection.poster = req.user._id;
-  // story.link = databaseCalc.cleanUrl(story.link);
-  collection.upvotes = { number: 0, upvoters: [] };
-  if (!req.body.collection.public) {
-    collection.public = false;
-  }
-  collection.reported = false;
-  collection.pending = true;
+  try {
+    const collection = new Collection(req.body.collection);
+    collection.poster = req.user._id;
+    // story.link = databaseCalc.cleanUrl(story.link);
+    collection.upvotes = { number: 0, upvoters: [] };
+    if (!req.body.collection.public) {
+      collection.public = false;
+    }
+    collection.reported = false;
+    collection.pending = true;
 
-  if (typeof collection.tags === "string") {
-    collection.tags = [collection.tags];
-  }
+    if (typeof collection.tags === "string") {
+      collection.tags = [collection.tags];
+    }
 
-  await collection.save();
-  req.flash("success", "Successfully added a new collection!");
-  res.redirect(`/collections`);
+    await collection.save();
+    req.flash("success", "Successfully added a new collection!");
+    res.redirect(`/collections`);
+  } catch (error) {
+    console.error(error);
+    req.flash(
+      "error",
+      "There was an error adding this collection to the database."
+    );
+    res.redirect(`/collections`);
+  }
 };
 
 module.exports.showCollection = async (req, res) => {
-  // to paginate this:
-  const itemsPerPage = 10;
-  const { collectionId } = req.params;
-  const currentPage = req.query.page || 1;
-  const skip = (currentPage - 1) * itemsPerPage;
-  let totalStories;
-
-  const paginatedCollection = await Collection.findById(collectionId).populate({
-    path: "stories",
-    populate: {
-      path: "poster",
-    },
-    options: {
-      skip: skip,
-      limit: itemsPerPage,
-    },
-  });
-  // calculate the number of stories:
-
   try {
-    totalStories = await Collection.findById(collectionId)
-      .populate({
-        path: "stories",
-      })
-      .countDocuments();
-    console.log(`There are ${totalStories} items in the Fiction collection.`);
-  } catch (err) {
-    console.error(err);
-    totalStories = 0;
+    // to paginate this:
+    const itemsPerPage = 10;
+    const { collectionId } = req.params;
+    const currentPage = req.query.page || 1;
+    const skip = (currentPage - 1) * itemsPerPage;
+    let totalStories;
+
+    const paginatedCollection = await Collection.findById(
+      collectionId
+    ).populate({
+      path: "stories",
+      populate: {
+        path: "poster",
+      },
+      options: {
+        skip: skip,
+        limit: itemsPerPage,
+      },
+    });
+    // calculate the number of stories:
+
+    try {
+      totalStories = await Collection.findById(collectionId)
+        .populate({
+          path: "stories",
+        })
+        .countDocuments();
+    } catch (err) {
+      console.error(err);
+      totalStories = 0;
+    }
+
+    const totalPages = Math.ceil(totalStories / itemsPerPage);
+    const title = paginatedCollection.title;
+
+    res.render("collections/show-collection", {
+      paginatedCollection,
+      totalPages,
+      currentPage,
+      title,
+    });
+  } catch (error) {
+    console.error(error);
+    req.flash(
+      "error",
+      "There was an error loading the collections from the database."
+    );
+    res.redirect(`/collections`);
   }
-
-  const totalPages = Math.ceil(totalStories / itemsPerPage);
-  console.log(totalPages, " TotalPages");
-  console.log(currentPage, " currentPage");
-  const title = paginatedCollection.title;
-
-  res.render("collections/show-collection", {
-    paginatedCollection,
-    totalPages,
-    currentPage,
-    title,
-  });
 };
 
 module.exports.upvoteCollection = async (req, res) => {
   try {
-    console.log("upvoting");
     const { collectionId } = req.params;
     const collection = await Collection.findById(collectionId);
     collection.upvotes.number += 1;
@@ -265,7 +268,7 @@ module.exports.upvoteCollection = async (req, res) => {
     req.flash("success", "Successfully upvoted a collection");
     res.redirect(`/collections/${collectionId}`);
   } catch (error) {
-    console.log(error);
+    console.error(error);
     req.flash("error", "There was an error upvoting this collection");
     return req.redirect("/collections");
   }
@@ -275,14 +278,13 @@ module.exports.deleteCollection = async (req, res) => {
   try {
     const { collectionId } = req.params;
     const collection = await Collection.findById(collectionId);
-    console.log(collection, "collection");
     if (!collection) {
       req.flash("error", "The collection was not found.");
       return res.redirect("/collections");
     }
     const userId = req.user._id;
     const user = await User.findById(userId);
-    if (user.isAdmin && collection.poster.equals(userId)) {
+    if (user.isAdmin || collection.poster.equals(userId)) {
       await Collection.findByIdAndDelete(collectionId);
       req.flash("success", "You successfully deleted this collection.");
       res.redirect("/collections");
@@ -294,6 +296,7 @@ module.exports.deleteCollection = async (req, res) => {
       return res.redirect("/collections");
     }
   } catch (e) {
+    console.error(e);
     req.flash("error", "Something went wrong with deleting this collection.");
     return res.redirect("/collections");
   }
@@ -313,22 +316,19 @@ module.exports.renderEditForm = async (req, res) => {
     const genreList = databaseCalc.genreList;
     res.render("collections/edit", { collection, genreList, storyList });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     req.flash("error", "Something went wrong with opening the edit page.");
   }
 };
 
 module.exports.updateCollection = async (req, res, next) => {
   try {
-    console.log(req.body.collection, "collection");
-    console.log(req.body, "req.body");
     const { collectionId } = req.params;
     const updatedCollectionData = {
       ...req.body.collection,
       stories: req.body.collection.stories || [],
       public: req.body.collection.public || false,
     };
-    console.log("updated data", updatedCollectionData);
     const updatedCollection = await Collection.findByIdAndUpdate(
       collectionId,
       updatedCollectionData
@@ -337,7 +337,7 @@ module.exports.updateCollection = async (req, res, next) => {
     res.redirect(`/collections/${collectionId}`);
   } catch (error) {
     req.flash("error", "There was an error updating your collection");
-    console.log(error);
+    console.error(error);
     res.redirect(`/collections`);
   }
 };
@@ -346,7 +346,6 @@ module.exports.reportCollection = async (req, res) => {
   try {
     const { collectionId } = req.params;
     const { message } = req.body;
-    console.log(message);
     const newReport = new ReportCollection({
       body: message,
       adminResponded: false,
@@ -360,7 +359,6 @@ module.exports.reportCollection = async (req, res) => {
 
       const collection = await Collection.findById(collectionId);
       collection.reported = true;
-      console.log("reportid: ", reportId);
 
       collection.reportList.push(reportId);
       collection.save();
@@ -369,7 +367,7 @@ module.exports.reportCollection = async (req, res) => {
     req.flash("success", "Successfully reported the collection");
     res.redirect("/collections");
   } catch (e) {
-    console.log(e);
+    console.error(e);
     req.flash("error", "there was an error reporting this collection.");
     res.redirect("/collections");
   }
@@ -382,7 +380,6 @@ module.exports.unReportCollection = async (req, res) => {
       path: "reportList",
       ref: "reportCollection",
     });
-    console.log("collection,", collection);
     let active = false;
 
     const report = await ReportCollection.findById(reportId);
@@ -393,22 +390,19 @@ module.exports.unReportCollection = async (req, res) => {
       ref: "reportCollection",
     });
     for (let report of updatedCollection.reportList) {
-      console.log(report.adminResponded, "responded?");
       if (report.adminResponded === false) {
-        console.log("admin did not respond to one report");
         active = true;
       }
     }
     if (active === false) {
       collection.reported = false;
-      console.log("inside if");
       await collection.save();
     }
 
     req.flash("success", "Successfully responded to a report of a collection.");
     res.redirect("/admin");
   } catch (error) {
-    console.log(error);
+    console.error(error);
     req.flash(
       "error",
       "There was an error responding to this collection report"

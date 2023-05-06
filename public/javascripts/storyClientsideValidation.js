@@ -10,16 +10,13 @@ if (
 }
 let checkedCount = 0;
 
-console.log("All checkboxes", allCheckboxes);
 function countCheckedBoxes(max) {
-  console.log("called");
   checkedCount = 0;
   for (checkbox of allCheckboxes) {
     if (checkbox.checked) {
       checkedCount += 1;
     }
   }
-  console.log(checkedCount);
   // now disable the unchecked boxes when checkedCount >=4
   // This sets the number of tags to 4 on the client side.
   if (checkedCount >= max) {

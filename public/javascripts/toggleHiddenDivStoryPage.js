@@ -4,7 +4,6 @@ const viewHiddenStoryForm = document.querySelector("#view-report-story-form");
 // This is for the report story form:
 if (viewHiddenStoryForm) {
   viewHiddenStoryForm.addEventListener("click", () => {
-    console.log("clicked on report");
     hiddenStoryForm.classList.toggle("hide");
     if (viewHiddenStoryForm.innerText === "Cancel") {
       viewHiddenStoryForm.innerText = "Report";
@@ -120,5 +119,3 @@ function showDeleteConfirmation() {
   const dialog = document.getElementById("deleteStoryConfirmationDialog");
   dialog.style.display = "block";
 }
-
-console.log("test");

@@ -6,7 +6,6 @@ const viewHiddenStoryForm = document.querySelector(
 // This is for the report story form:
 if (viewHiddenStoryForm) {
   viewHiddenStoryForm.addEventListener("click", () => {
-    console.log("clicked on report");
     hiddenStoryForm.classList.toggle("hide");
     hiddenStoryForm.classList.toggle("center-contents");
 

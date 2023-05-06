@@ -25,14 +25,10 @@ module.exports.index = async (req, res) => {
     let query = {};
     // render an error if the search contains escaped titles.
     const charactersToCheck = ["<", ">", "&", "'", `"`, `/`, "$"];
-    console.log("request query: ", queryTitle, queryDescription);
 
     if (queryTitle) {
       queryTitle = decodeURIComponent(queryTitle);
       if (charactersToCheck.some((char) => queryTitle.includes(char))) {
-        console.log(
-          `The following characters are not accepted in search terms: <, >, &, ' ," $, or /`
-        );
         req.flash(
           "error",
           `The following characters are not accepted in search terms: <, >, &, ' ," $, or /`
@@ -55,7 +51,6 @@ module.exports.index = async (req, res) => {
     }
     if (queryTags) {
       queryTags = queryTags.split(",");
-      console.log("query tags", queryTags);
       // compare queryTags with genreList
       matchedTags = queryTags.filter((queryTag) =>
         genreList.some(
@@ -63,7 +58,6 @@ module.exports.index = async (req, res) => {
         )
       );
     }
-    console.log("matched tags: ", matchedTags);
     if (queryTags && matchedTags.length > 0) {
       query.tags = { $in: matchedTags };
     }
@@ -76,21 +70,16 @@ module.exports.index = async (req, res) => {
       query.description = { $regex: queryDescription, $options: "i" };
     }
 
-    console.log("my query", query);
-
     // calculate the number of stories:
 
     try {
       totalStories = await Fiction.find(query).countDocuments();
-      console.log(`There are ${totalStories} items in the Fiction collection.`);
     } catch (err) {
       console.error(err);
       totalStories = 0;
     }
 
     const totalPages = Math.ceil(totalStories / itemsPerPage);
-    console.log(totalPages, " TotalPages");
-    console.log(currentPage, " currentPage");
 
     // Now do the search:
 
@@ -128,7 +117,7 @@ module.exports.index = async (req, res) => {
       matchedTags,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     req.flash("error", "There was an error loading this page");
     return res.redirect("/fiction");
   }
@@ -197,9 +186,7 @@ module.exports.renderSearch = async (req, res) => {
 };
 
 module.exports.createStory = async (req, res, next) => {
-  console.log("story tags 1", req.body.story.tags);
   const story = new Fiction(req.body.story);
-  console.log(story.tags, "story tags");
   story.images = req.files.map((f) => ({
     url: f.path,
     filename: f.filename,
@@ -211,6 +198,7 @@ module.exports.createStory = async (req, res, next) => {
   story.verifiedByAuthor = false;
   story.pending = true;
   story.audience = 0;
+  story.popularity = 0;
   story.warnings = { violence: 0, profanity: 0, sexualContent: 0 };
   // if there is no image, add this default image.
   if (story.images.length < 1) {
@@ -256,9 +244,7 @@ module.exports.showStory = async (req, res) => {
     const totalReviews = await Review.countDocuments({
       reviewedStory: req.params.id,
     });
-    console.log(totalReviews, "total reviews");
     const totalPages = Math.ceil(totalReviews / itemsPerPage);
-    console.log("totalPages", totalPages);
 
     // Check for audience, convert audience from 1-3 to E, T, M
     let estimatedAudience =
@@ -286,6 +272,8 @@ module.exports.showStory = async (req, res) => {
       estimatedAudience,
     });
   } catch (e) {
+    console.error(e);
+    req.flash("error", "Cannot find this story");
     res.render("missingpage");
   }
 };
@@ -302,69 +290,69 @@ module.exports.renderEditForm = async (req, res) => {
 };
 
 module.exports.updateStory = async (req, res) => {
-  const { id } = req.params;
+  try {
+    const { id } = req.params;
 
-  const story = await Fiction.findByIdAndUpdate(id, {
-    ...req.body.story,
-  }).populate("images");
-  const storyFileNameArray = story.images.map((image) => image.filename);
+    const story = await Fiction.findByIdAndUpdate(id, {
+      ...req.body.story,
+    }).populate("images");
+    const storyFileNameArray = story.images.map((image) => image.filename);
 
-  const imgs = req.files.map((f) => ({
-    url: f.path,
-    filename: f.filename,
-  }));
-  console.log("imgs", imgs);
-  if (req.body.deleteImages) {
-    for (let filename of req.body.deleteImages) {
-      if (filename !== "placeholder-book-cover_iyoeqw") {
-        // check to make sure file is actually used by this story
-        if (storyFileNameArray.includes(filename)) {
-          await cloudinary.uploader.destroy(filename);
+    const imgs = req.files.map((f) => ({
+      url: f.path,
+      filename: f.filename,
+    }));
+    if (req.body.deleteImages) {
+      for (let filename of req.body.deleteImages) {
+        if (filename !== "placeholder-book-cover_iyoeqw") {
+          // check to make sure file is actually used by this story
+          if (storyFileNameArray.includes(filename)) {
+            await cloudinary.uploader.destroy(filename);
+          }
         }
       }
+      await story.updateOne({
+        $pull: { images: { filename: { $in: req.body.deleteImages } } },
+      });
     }
-    await story.updateOne({
-      $pull: { images: { filename: { $in: req.body.deleteImages } } },
-    });
-    console.log("just removed,", story.images);
-  }
-  story.images.push(...imgs);
-  console.log(story.images, "story images");
-  // story.link = databaseCalc.cleanUrl(story.link);
+    story.images.push(...imgs);
+    // story.link = databaseCalc.cleanUrl(story.link);
 
-  await story.save();
+    await story.save();
 
-  const updatedStory = await Fiction.findById(id).populate("images");
-  console.log(updatedStory.images, "updatedVersion");
-  // remove the default image if it appears:
-  if (updatedStory.images.length > 1) {
-    console.log("about to remove default image");
-    const removeThisItem = {
-      url: "https://res.cloudinary.com/dj3dni7xt/image/upload/v1678325550/webfictionreviews/placeholder-book-cover_jmu4wk.png",
-      filename: "placeholder-book-cover_jmu4wk",
-    };
-    updatedStory.images = updatedStory.images.filter((item) => {
-      return (
-        item.url !== removeThisItem.url ||
-        item.filename !== removeThisItem.filename
-      );
-    });
-
-    await updatedStory.save();
-  }
-
-  if (updatedStory.images.length === 0) {
-    console.log("about to add default image");
-    updatedStory.images = [
-      {
+    const updatedStory = await Fiction.findById(id).populate("images");
+    // remove the default image if it appears:
+    if (updatedStory.images.length > 1) {
+      const removeThisItem = {
         url: "https://res.cloudinary.com/dj3dni7xt/image/upload/v1678325550/webfictionreviews/placeholder-book-cover_jmu4wk.png",
         filename: "placeholder-book-cover_jmu4wk",
-      },
-    ];
-    await updatedStory.save();
+      };
+      updatedStory.images = updatedStory.images.filter((item) => {
+        return (
+          item.url !== removeThisItem.url ||
+          item.filename !== removeThisItem.filename
+        );
+      });
+
+      await updatedStory.save();
+    }
+
+    if (updatedStory.images.length === 0) {
+      updatedStory.images = [
+        {
+          url: "https://res.cloudinary.com/dj3dni7xt/image/upload/v1678325550/webfictionreviews/placeholder-book-cover_jmu4wk.png",
+          filename: "placeholder-book-cover_jmu4wk",
+        },
+      ];
+      await updatedStory.save();
+    }
+    req.flash("success", "Successfully updated the story.");
+    res.redirect(`/fiction/${story._id}`);
+  } catch (error) {
+    console.error(error);
+    req.flash("error", "There was an error uploading this story.");
+    return res.redirect("/fiction");
   }
-  req.flash("success", "Successfully updated the story.");
-  res.redirect(`/fiction/${story._id}`);
 };
 
 module.exports.deleteStory = async (req, res) => {
@@ -392,14 +380,15 @@ module.exports.deleteStory = async (req, res) => {
       res.redirect("/fiction");
     }
   } catch (e) {
+    console.error(e);
     req.flash("error", "Something went wrong with deleting this story.");
+    return res.redirect("/fiction");
   }
 };
 module.exports.reportStory = async (req, res) => {
   try {
     const { id } = req.params;
     const { message } = req.body;
-    console.log(message);
     const newReport = new ReportStory({
       body: message,
       adminResponded: false,
@@ -413,7 +402,6 @@ module.exports.reportStory = async (req, res) => {
 
       const story = await Fiction.findById(id);
       story.reported = true;
-      console.log("reportid: ", reportId);
 
       story.reportList.push(reportId);
       story.save();
@@ -422,34 +410,46 @@ module.exports.reportStory = async (req, res) => {
     req.flash("success", "Successfully reported the story");
     res.redirect("/fiction");
   } catch (e) {
-    console.log(e);
+    console.error(e);
     req.flash("error", "there was an error reporting this story.");
-    res.redirect("/fiction");
+    return res.redirect("/fiction");
   }
 };
 
 module.exports.unReportStory = async (req, res) => {
-  const { id, reportId } = req.params;
-  // const story = await Fiction.findById(id);
-  // story.reported = false;
-  // story.save();
-  const report = await ReportStory.findById(reportId);
-  report.adminResponded = true;
-  report.save();
-  req.flash("success", "Successfully responded to a report of a story.");
-  res.redirect("/admin");
+  try {
+    const { id, reportId } = req.params;
+    // const story = await Fiction.findById(id);
+    // story.reported = false;
+    // story.save();
+    const report = await ReportStory.findById(reportId);
+    report.adminResponded = true;
+    report.save();
+    req.flash("success", "Successfully responded to a report of a story.");
+    res.redirect("/admin");
+  } catch (error) {
+    console.error(error);
+    req.flash("error", "There was an error responding to this report");
+    return res.redirect("/fiction");
+  }
 };
 
 module.exports.markNotPending = async (req, res) => {
-  const { id } = req.params;
-  const story = await Fiction.findById(id);
-  if (!story.pending) {
-    req.flash("error", "Already marked not pending");
-    res.redirect("/fiction");
-  } else {
-    story.pending = false;
-    story.save();
-    req.flash("success", "Successfully marked story as not pending");
-    res.redirect("/admin");
+  try {
+    const { id } = req.params;
+    const story = await Fiction.findById(id);
+    if (!story.pending) {
+      req.flash("error", "Already marked not pending");
+      res.redirect("/fiction");
+    } else {
+      story.pending = false;
+      story.save();
+      req.flash("success", "Successfully marked story as not pending");
+      res.redirect("/admin");
+    }
+  } catch (error) {
+    console.error(error);
+    req.flash("error", "There was an error marking this as not pending.");
+    return res.redirect("/admin");
   }
 };

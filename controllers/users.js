@@ -15,7 +15,10 @@ module.exports.register = async (req, res) => {
     const { email, username, password } = req.body;
     const isAdmin = false;
     const user = new User({ email, username, isAdmin });
+    const displayName = username;
     const registeredUser = await User.register(user, password);
+    registeredUser.displayName = displayName;
+    await registeredUser.save();
     req.login(registeredUser, async (err) => {
       let token = await new Token({
         userId: user._id,
@@ -80,7 +83,6 @@ module.exports.resendVerificationEmail = async (req, res) => {
 
 module.exports.verify = async (req, res) => {
   try {
-    console.log("landed on correct route");
     const user = await User.findById(req.params.id);
     if (!user) return res.status(400).send("Invalid link");
 
@@ -89,21 +91,19 @@ module.exports.verify = async (req, res) => {
       token: req.params.token,
     });
     if (!token) return res.status(400).send("Invalid link");
-    console.log("found token");
     try {
       // await User.updateOne({ _id: user._id, isVerified: true });
       const user = await User.findById(req.params.id);
       user.isVerified = true;
       user.save();
-    } catch (error) {
-      console.log("user update failed");
-    }
+    } catch (error) {}
     await Token.findByIdAndRemove(token._id);
     req.flash("success", "Your email has been verified!");
     res.redirect("/fiction");
 
     // res.send("email verified sucessfully");
   } catch (error) {
+    console.error(error);
     res.status(400).send("An error occured");
   }
 };
@@ -130,94 +130,114 @@ module.exports.logout = (req, res, next) => {
 };
 
 module.exports.renderAdmin = async (req, res, next) => {
-  const pendingStories = await Fiction.find({ pending: true });
-  const reportedCollections = await Collection.find({
-    reported: true,
-  }).populate({
-    path: "reportList",
-    model: "reportCollection",
-    populate: {
-      path: "poster",
-      model: "User",
-      select: "username email",
-    },
-  });
-  const reportedStories = await Fiction.find({ reported: true }).populate({
-    path: "reportList",
-    model: "reportStory",
-    populate: {
-      path: "poster",
-      model: "User",
-      select: "username email",
-    },
-  });
-
-  const reportedReviews = await Review.find({ reported: true })
-    .populate({
-      path: "reviewedStory",
-      model: "Fiction",
-    })
-    .populate({
+  try {
+    const pendingStories = await Fiction.find({ pending: true });
+    const reportedCollections = await Collection.find({
+      reported: true,
+    }).populate({
       path: "reportList",
-      // Fix me-does this need to be capitalized?
-      model: "ReportReview",
+      model: "reportCollection",
       populate: {
         path: "poster",
-        select: "email",
-        select: "username email",
+        model: "User",
+        select: "username displayName email",
+      },
+    });
+    const reportedStories = await Fiction.find({ reported: true }).populate({
+      path: "reportList",
+      model: "reportStory",
+      populate: {
+        path: "poster",
+        model: "User",
+        select: "username displayName email",
       },
     });
 
-  const requestToDeleteStories = await Fiction.find({ requestDelete: true });
-  console.log(requestToDeleteStories, "request to delete stories");
+    const reportedReviews = await Review.find({ reported: true })
+      .populate({
+        path: "reviewedStory",
+        model: "Fiction",
+      })
+      .populate({
+        path: "reportList",
+        // Fix me-does this need to be capitalized?
+        model: "ReportReview",
+        populate: {
+          path: "poster",
+          select: "email",
+          select: "username displayName email",
+        },
+      });
 
-  let storiesWithUnrespondedReports = [];
-  // console.log(reportedStories, "reportedStories");
-  for (let i = 0; i < reportedStories.length; i++) {
-    for (let j = 0; j < reportedStories[i].reportList.length; j++) {
-      if (reportedStories[i].reportList[j].adminResponded === false) {
-        storiesWithUnrespondedReports.push(reportedStories[i]);
-        break;
+    const requestToDeleteStories = await Fiction.find({ requestDelete: true });
+
+    let storiesWithUnrespondedReports = [];
+    // console.log(reportedStories, "reportedStories");
+    for (let i = 0; i < reportedStories.length; i++) {
+      for (let j = 0; j < reportedStories[i].reportList.length; j++) {
+        if (reportedStories[i].reportList[j].adminResponded === false) {
+          storiesWithUnrespondedReports.push(reportedStories[i]);
+          break;
+        }
       }
     }
-  }
 
-  let reviewsWithUnrespondedReports = [];
-  for (let i = 0; i < reportedReviews.length; i++) {
-    for (let j = 0; j < reportedReviews[i].reportList.length; j++) {
-      if (reportedReviews[i].reportList[j].adminResponded === false) {
-        reviewsWithUnrespondedReports.push(reportedReviews[i]);
-        break;
+    let reviewsWithUnrespondedReports = [];
+    for (let i = 0; i < reportedReviews.length; i++) {
+      for (let j = 0; j < reportedReviews[i].reportList.length; j++) {
+        if (reportedReviews[i].reportList[j].adminResponded === false) {
+          reviewsWithUnrespondedReports.push(reportedReviews[i]);
+          break;
+        }
       }
     }
-  }
-  // console.log(reviewsWithUnrespondedReports, "unresponded report reviews");
-  // console.log(reviewsWithUnrespondedReports[0].reportList, "list of reports");
+    // console.log(reviewsWithUnrespondedReports, "unresponded report reviews");
+    // console.log(reviewsWithUnrespondedReports[0].reportList, "list of reports");
 
-  res.render("users/admin", {
-    pendingStories,
-    storiesWithUnrespondedReports,
-    reviewsWithUnrespondedReports,
-    reportedReviews,
-    requestToDeleteStories,
-    reportedCollections,
-  });
+    res.render("users/admin", {
+      pendingStories,
+      storiesWithUnrespondedReports,
+      reviewsWithUnrespondedReports,
+      reportedReviews,
+      requestToDeleteStories,
+      reportedCollections,
+    });
+  } catch (error) {
+    console.error(error);
+    req.flash("error", "There was an error accessing data from the database.");
+    return res.redirect("/fiction");
+  }
 };
 
 module.exports.renderAccount = async (req, res, next) => {
   // Originally I included pending stories. But I'm not approving stories in advance.
   // const pendingStories = await Fiction.find({ pending: true });
-  const myStories = await Fiction.find({ poster: req.user._id });
 
-  const userReviews = await Review.find({ poster: req.user._id }).populate({
-    path: "reviewedStory",
-    model: "Fiction",
-  });
+  try {
+    let myStories;
+    let userReviews;
+    const toggle = req.query.toggle;
+    if (toggle === "stories") {
+      myStories = await Fiction.find({ poster: req.user._id });
+    } else if (toggle === "reviews") {
+      userReviews = await Review.find({ poster: req.user._id }).populate({
+        path: "reviewedStory",
+        model: "Fiction",
+      });
+    }
 
-  res.render("users/account", {
-    myStories,
-    userReviews,
-  });
+    res.render("users/account", {
+      myStories,
+      userReviews,
+    });
+  } catch (error) {
+    console.error(error);
+    req.flash(
+      "error",
+      "There was an error loading your account information from the database."
+    );
+    return res.redirect("/fiction");
+  }
 };
 
 module.exports.renderResetPasswordPage = (req, res) => {
@@ -248,13 +268,10 @@ module.exports.resetPassword = async (req, res) => {
       return res.redirect("/account");
       // return res.status(400).send("Invalid link. Maybe the link expired?");
     }
-    console.log("found token");
 
     // now confirm that the email entered belongs ot the same user as the id:
     const confirmUser = await User.findOne({ email: email });
-    console.log("This is the confirmed user: ", user.email);
     if (user._id.equals(confirmUser._id)) {
-      console.log("inside if");
       try {
         await user.setPassword(password);
         await user.save();
@@ -276,7 +293,7 @@ module.exports.resetPassword = async (req, res) => {
         req.flash("success", "Your password has been updated!");
         res.redirect("/login");
       } catch (error) {
-        console.log("user update failed");
+        console.error("user update failed");
         req.flash("error", "There was an error resetting your password");
         res.redirect("/login");
       }
@@ -286,7 +303,7 @@ module.exports.resetPassword = async (req, res) => {
     }
   } catch (e) {
     req.flash("error", "There was an error resetting your password");
-    console.log(e);
+    console.error(e);
     res.redirect("/login");
   }
 };
@@ -307,7 +324,6 @@ module.exports.sendResetPasswordLink = async (req, res) => {
       token: crypto.randomBytes(32).toString("hex"),
       date: Date.now(),
     }).save();
-    console.log(token);
     const message = `Click this link to reset your password with Web Fiction Reviews: ${process.env.BASE_URL}/reset-password/${user.id}/${token.token}`;
     await sendEmail(user.email, "Reset Your Password", message);
 
@@ -328,7 +344,6 @@ module.exports.renderRecoverUsername = (req, res) => {
 
 module.exports.recoverUsername = async (req, res) => {
   try {
-    console.log(req.body.email, "email recovery");
     const user = await User.findOne({ email: req.body.email });
 
     const message = `Your WebFictionReviews username is: ${user.username}`;
@@ -350,30 +365,61 @@ module.exports.renderContact = (req, res) => {
 };
 
 module.exports.sendContactEmail = async (req, res) => {
-  const user = await User.findById(req.user._id);
-  userInfo = {
-    username: user.username,
-    email: user.email,
-    verified: user.isVerified,
-  };
   try {
-    console.log(req.body);
-    const { subject, message } = req.body;
-    const newMessage = `From: ${userInfo.email} ` + message;
+    const user = await User.findById(req.user._id);
+    userInfo = {
+      username: user.username,
+      email: user.email,
+      verified: user.isVerified,
+    };
+    try {
+      const { subject, message } = req.body;
+      const newMessage = `From: ${userInfo.email} ` + message;
 
-    await sendEmail("webfictionreviews@gmail.com", subject, newMessage);
+      await sendEmail("webfictionreviews@gmail.com", subject, newMessage);
 
-    req.flash(
-      "success",
-      "Your message has been sent. A response will be sent to your the email linked to your account. Please check your spam folder if you do not see it."
-    );
-    res.redirect("/fiction");
-  } catch (e) {
+      req.flash(
+        "success",
+        "Your message has been sent. A response will be sent to your the email linked to your account. Please check your spam folder if you do not see it."
+      );
+      res.redirect("/fiction");
+    } catch (e) {
+      req.flash(
+        "error",
+        e.message
+        // In this case, the username is taken.
+      );
+      res.redirect("/fiction");
+    }
+  } catch (error) {
+    console.error(error);
     req.flash(
       "error",
-      e.message
-      // In this case, the username is taken.
+      "There was an error accessing the user from the database"
     );
-    res.redirect("/fiction");
+    return res.redirect("/fiction");
+  }
+};
+
+module.exports.deleteAccount = async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.user._id);
+    if (!user) {
+      req.flash("error", "User not found");
+      return res.redirect("/account");
+    }
+    req.logout(function (err) {
+      if (err) {
+        console.error(err);
+        req.flash("error", "There was an error logging you out.");
+        return res.redirect("/login");
+      }
+      req.flash("success", "Account successfully deleted.");
+      res.redirect("/login");
+    });
+  } catch (error) {
+    console.error(error);
+    req.flash("error", "There was an error deleting this account.");
+    return res.redirect("/account");
   }
 };

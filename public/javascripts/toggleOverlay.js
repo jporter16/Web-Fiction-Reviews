@@ -3,6 +3,8 @@ const reviewDialog = document.getElementById("deleteReviewConfirmationDialog");
 const overlay = document.getElementById("deleteConfirmationOverlay");
 const deleteReviewBtns = document.querySelectorAll(".delete-review-btn");
 
+// I am setting this up so that delete-general applies to everything except reviews. reviews needed special code.
+
 const closeDeleteReview = document.getElementById(
   "closeDeleteReviewConfirmationDialog"
 );
@@ -14,7 +16,9 @@ if (deleteStoryBtn) {
 const hideDialogButton = document.getElementById(
   "closeDeleteStoryConfirmationDialog"
 );
-hideDialogButton.addEventListener("click", hideDeleteConfirmation);
+if (hideDialogButton) {
+  hideDialogButton.addEventListener("click", hideDeleteConfirmation);
+}
 
 function hideDeleteConfirmation() {
   // Hide the confirmation dialog
@@ -40,11 +44,12 @@ deleteReviewBtns.forEach((btn) => {
     reviewDialog.style.display = "block";
   });
 });
-
-closeDeleteReview.addEventListener("click", () => {
-  reviewDialog.style.display = "none";
-  overlay.style.display = "none";
-});
+if (closeDeleteReview) {
+  closeDeleteReview.addEventListener("click", () => {
+    reviewDialog.style.display = "none";
+    overlay.style.display = "none";
+  });
+}
 
 function showDeleteConfirmation() {
   overlay.style.display = "block";

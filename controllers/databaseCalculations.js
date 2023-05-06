@@ -119,8 +119,8 @@ module.exports.calculateAudienceAndWarnings = async (storyId) => {
         avgProfanity = avgProfanity / countProfanity;
       }
     } catch (e) {
-      console.log(e);
-      console.log("there was an error calculating warning ratings");
+      console.error(e);
+      console.error("there was an error calculating warning ratings");
     }
     story.warnings = {};
     story.warnings.sexualContent = avgSexualContent;

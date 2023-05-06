@@ -34,7 +34,6 @@
         <br/>
   
         <div class="genre-wrapper d-flex flex-column flex-wrap">
-          <%console.log(matchedTags)%>
           <% for (let tag of genreList) {%>
           <div>
             <input
@@ -95,6 +94,12 @@
               <small class="text-muted">
                 Total Upvotes: <%if(collection.upvotes.number >-1) {%>
                 <%=collection.upvotes.number%> <% } else {%> 0 <% } %>
+              </small>
+            </p>
+            <p class="m-1">
+              <small class="text-muted">
+                Number of Stories: <%if(collection.stories) {%>
+                <%=collection.stories.length%> <% } else {%> 0 <% } %>
               </small>
             </p>
           </div>

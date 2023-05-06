@@ -9,9 +9,6 @@ if (tagForm) {
     const url = new URL(window.location.href);
     const charactersToCheck = ["<", ">", "&", "'", `"`, `/`, "$"];
     if (charactersToCheck.some((char) => title.includes(char))) {
-      console.log(
-        `The following characters are not accepted in search terms: <, >, &, ' ," $, or /`
-      );
       const titleError = document.querySelector("#title-validation-error");
       if (titleError) {
         titleError.classList.remove("hide");
@@ -40,12 +37,10 @@ if (tagForm) {
 // This is for revealing the advanced search:
 const showAdvancedSearch = document.getElementById("show-advanced-search");
 window.addEventListener("load", toggleAdvancedSearch);
-console.log(showAdvancedSearch);
 if (showAdvancedSearch) {
   showAdvancedSearch.addEventListener("click", () => {
     toggleAdvancedSearch();
   });
-  console.log("check");
 }
 
 function toggleAdvancedSearch() {

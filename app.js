@@ -3,32 +3,21 @@
 // nothing populates. I think if I set it so there is always one review left, it will be fine.
 
 // CURRENT ISSUES to fix before going live:
-// filter Account so it either shows myStories or my reviews. eg use queries for that.
-// account page has a slight horizontal scroll bar-too wide.
-// show number of stories in a collection on index.
-// figure out why rankings aren't what I expect them to be.
-// add feature-nav box of bread crumbs or random story/random collection button.
-// restrict user id to alphanumeric options
-// add breadcrumb navigation for collections
-// account-the photos are left aligned for stories that you add, sometimes.
-// add cancel button to new form.
-// increase size of textbox for author's summary edit and new. maybe collections too.
-// consider adding webp to acceptable data formats for uploading files.(maybe add legion of nothing photo)
-// make way to delete account
-// make nav bar collapse earlier.
-// install validator for search queries with mongoose.
-// one person can review a story multiple times.
-// fix collections/collections view formatting
-// make sure all mongoose searches are wrapped in try/catch blocks.
-// fix username issue capitalization
+// extensively test username creation and capitalization (it should work)
+// add navigation to collections.
 // backup mongo db upgrade
-// confirm you can only upvote reviews once.
-// I don't have schemas for reportReview.
 // figure out server options
-// the flash alerts are sometimes out of sync. like a page reload late or they never appear.
 // add site map
 
 // FEATURES TO ADD EVENTUALLY
+// the flash alerts were out of sync sometimes but not lately.
+// I don't have schemas/middleware for reportReview.
+// consider adding webp to acceptable data formats for uploading files.(maybe add legion of nothing photo)
+// add feature-nav box of bread crumbs or random story/random collection button.
+// sometimes when you create a story it creates two?
+// improve collection appearance-add images to index.
+// When I delete a user and it deletes reviews, it doesn't update story data. (deleting a review individually does)
+// add pagination to account page.
 // fix leave a review for stories-put it in a clear form toggle.
 // create option to add to a a collection from a show page.
 // for an empty collection, the page numbers on the left are not at the bottom of the screen.
@@ -48,6 +37,9 @@
 // the fiction index page-and all search/filter pages--should limit description to maybe 100 words.
 
 // Other things:
+// I added middleware so you can only upvote reviews once.
+// I made sure all mongoose searches are wrapped in try/catch blocks.
+// I restricted user id to alphanumeric options
 // I made sure is a limit to the number of images-I did this client side and the server side with Multer. technically not with when you edit a story.
 // I fixed it so validateReview doesn't crash on errors. ValidateStory never has.
 // I don't know why the story route middleware upload(array) goes before the validateStory. But it needs to go first or there is an error...
@@ -125,7 +117,7 @@ const store = new MongoDBStore({
 });
 
 store.on("error", function (e) {
-  console.log("session store error", e);
+  console.error("session store error", e);
 });
 const sessionConfig = {
   store,

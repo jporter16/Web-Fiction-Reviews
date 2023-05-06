@@ -1,6 +1,33 @@
 <% layout('layouts/boilerplate')%>
 <div class="all-content-wrapper">
 
+
+  <div class="overlay" id="deleteConfirmationOverlay" style="display: none;"></div>
+
+  <!-- Modal confirmation dialog for deleting a story: -->
+  <div class="confirmation-dialog" id="deleteStoryConfirmationDialog" style="display: none;">
+  <p>Are you sure you want to delete your account? This will delete all your reviews and collections.</p>
+  <div class="d-flex justify-content-between">
+    <button class = "btn-info btn btn-sm" id="closeDeleteStoryConfirmationDialog">Don't Delete</button>
+  
+    <form
+    action ="/account/<%=currentUser._id%>/?_method=Delete"
+    method = "POST"
+    class = "form"
+    id="delete-account-form"
+    >
+      <button
+      class="btn btn-sm btn-danger"
+      >Delete 
+      </button>
+    </form>
+  </div>
+    
+  </div>
+  <!--Modal confirmation dialog for deleting a review:  -->
+
+
+
 <div class="row">
   <div class="col-md-2"></div>
   <div class="col-md-10">
@@ -10,7 +37,7 @@
 </div>
 
 <div class="card">
-  <p class = 'm-3'>Username: <%=currentUser.username%></p>
+  <p class = 'm-3'>Username: <%=currentUser.displayName%></p>
   <p class = "m-3">Email: <%=currentUser.email%></p>
   <p class = "m-3">Account Status: <% if (currentUser.verified === true) {%>
     <span>Verified</span> </p>
@@ -25,17 +52,40 @@
             </form>
     <%}%>
   <span> <a class="btn btn-primary m-3" href="/contact">Contact Web Fiction Reviews</a></span> 
+  <div class="d-flex align-items-center">
+    <span> <a class="btn btn-sm btn-primary m-3" href="/logout">Logout</a></span> 
+    <button class="btn btn-danger btn-sm" id="delete-story-button">Delete</button> 
+  </div>
+  
 
-  <span> <a class="btn btn-primary m-3" href="/logout">Logout</a></span> 
 
 
 </div>
 <div class="row">
+
+
+
   <div class="col-md-2"></div>
   <div class="col-md-10">
+    <ul class="d-flex justify-content-center">
+
+    <li class="list-unstyled mx-2">
+          <a href="/account?toggle=stories">My Stories</a>
+        <a href="/account?toggle=reviews">My Reviews</a>
+        <a href="/collections?mine=true">My Collections</a>
+
+    </li>
+
+  </ul>
+    <%if (myStories) {%>
     <h2 class="text-center">My Stories</h2>
+
+    <%}%>
+
   </div>
 </div>
+
+<%if (myStories) {%>
 <div>
   <ul class = 'remove-padding'>
     <% for (let story of myStories) {%>
@@ -43,10 +93,10 @@
       <div class="row">
         <div class="col-md-2">
           <% if (story.images.length) {%>
-          <img class="img-fluid" src="<%=story.images[0].url%>" alt="" />
+          <img class="img-width-100" src="<%=story.images[0].url%>" alt="" />
 
           <%} else {%>
-          <img class="img-fluid" src="" alt="" />
+          <img class="img-width-100" src="" alt="" />
 
           <%}%>
         </div>
@@ -90,6 +140,9 @@
     <%}%>
   </ul>
 </div>
+<%}%>
+
+<%if (userReviews) {%>
 
   <div class="row">
     <div class="col-md-2"></div>
@@ -99,20 +152,20 @@
 
   </div>
 
-  <ul class ="remove-padding">
+  <ul >
     <% for (let review of userReviews) {%>
     <div class="card m-2">
       <div class="row">
         <div class="col-md-2">
           <% if (review.reviewedStory.images.length) {%>
           <img
-            class="img-fluid"
+          class="img-width-100"
             src="<%=review.reviewedStory.images[0].url%>"
             alt=""
           />
 
           <%} else {%>
-          <img class="img-fluid" src="" alt="" />
+          <img class="img-width-100" src="" alt="" />
 
           <%}%>
         </div>
@@ -142,8 +195,12 @@
     </div>
     <%}%>
   </ul>
+
 </div>
+<% }%>
+
 </div>
 <script>
 
 </script>
+<script src = "javascripts/toggleOverlay.js"></script>

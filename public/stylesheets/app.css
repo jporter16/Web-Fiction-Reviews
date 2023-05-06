@@ -186,3 +186,14 @@ body {
     max-height: 280px; /* Adjust the max-height for smaller screens */
   }
 }
+/* This makes the nav bar fit: */
+@media screen and (min-width: 990px) {
+  #nav-bar-search {
+    width: 160px;
+  }
+}
+@media screen and (min-width: 1030px) {
+  #nav-bar-search {
+    width: 210px;
+  }
+}

@@ -11,15 +11,17 @@ const {
   isLoggedIn,
   isVerified,
   isAdmin,
+  isCurrentUser,
   limiter,
   userLimiter,
   resetPasswordLimiter,
+  validateUsername,
 } = require("../middleware");
 
 router
   .route("/register")
   .get(users.renderRegister)
-  .post(catchAsync(users.register));
+  .post(validateUsername, catchAsync(users.register));
 
 router
   .route("/login")
@@ -46,6 +48,9 @@ router.get(
 );
 
 router.get("/account", isLoggedIn, catchAsync(users.renderAccount));
+router
+  .route("/account/:userId")
+  .delete(isLoggedIn, isCurrentUser, catchAsync(users.deleteAccount));
 
 router.get("/logout", users.logout);
 router.get("/reset-password", users.enterEmailtoResetPassword);

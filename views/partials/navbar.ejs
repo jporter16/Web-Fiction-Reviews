@@ -1,6 +1,6 @@
 <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
-    <a class="navbar-brand" href="/">Web Fiction Reviews</a>
+    <a class="navbar-brand" href="/"><small>Web Fiction Reviews</small></a>
 
     <button
       class="navbar-toggler"
@@ -81,8 +81,11 @@
             type="search"
             placeholder="Search stories by title"
             aria-label="Search"
+            id="nav-bar-search"
           />
-          <button class="btn btn-outline-success" type="submit">Search</button>
+          <button class="btn btn-outline-success" type="submit">
+            <small>Search</small>
+          </button>
         </form>
         <% if (!currentUser) { %>
         <a class="nav-link" aria-current="page" href="/login">Login</a>

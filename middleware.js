@@ -1,5 +1,6 @@
 const rateLimit = require("express-rate-limit");
 const MongoStore = require("rate-limit-mongo");
+const BadWords = require("bad-words");
 
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
@@ -12,6 +13,7 @@ const {
   collectionSchema,
   reportCollectionSchema,
   reportStorySchema,
+  userSchema,
 } = require("./schemas.js");
 const ExpressError = require("./utils/ExpressError");
 const Story = require("./models/fiction");
@@ -28,11 +30,27 @@ module.exports.isLoggedIn = (req, res, next) => {
   next();
 };
 
+module.exports.isCurrentUser = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id);
+    const { userId } = req.params;
+    if (user._id.equals(userId)) {
+      next();
+    } else {
+      req.flash("error", "There was an error accessing your userID.");
+      return res.redirect("/account");
+    }
+  } catch (error) {
+    console.error(error);
+    req.flash("error", "There was an finding your account.");
+  }
+};
+
 module.exports.isVerified = async (req, res, next) => {
   const user = await User.findById(req.user._id);
   if (!user.isVerified) {
     req.flash("error", "You must verify your account first.");
-    console.log("not verified account");
+    console.error("not verified account");
     return res.redirect(`/fiction/`);
   }
 
@@ -73,7 +91,7 @@ module.exports.validateCollection = (req, res, next) => {
   const { error } = collectionSchema.validate(req.body);
   if (error) {
     const msg = error.details.map((el) => el.message).join(",");
-    console.log(error);
+    console.error(error);
     throw new ExpressError(msg, 400);
   } else {
     next();
@@ -95,7 +113,6 @@ module.exports.validateReview = async (req, res, next) => {
     const user = await User.findById(req.user._id);
     // const allUserIds = users.map((user) => user._id);
     // if user doesn't exist, then throw error.
-    console.log(user, "user");
     if (!user) {
       message = "invalid user id";
       return next(new ExpressError(message, 400));
@@ -158,7 +175,6 @@ module.exports.isAdmin = async (req, res, next) => {
     next();
   } else {
     req.flash("error", "You must be an admin to complete this action.");
-    console.log("not an admin");
     return res.redirect(`/fiction/`);
   }
 };
@@ -168,22 +184,19 @@ module.exports.isAdminOrStoryPoster = async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id);
     const { id } = req.params;
-    console.log(id);
     const story = await Story.findById(id);
-    console.log("this is the story", story);
     if (!story) {
       req.flash("error", "Story not found.");
       return res.redirect("/fiction/");
     }
     if (user.isAdmin || story.poster.equals(req.user._id)) {
-      console.log("user is admin or poster");
       next();
     } else {
       req.flash("error", "You do not have permission to do that.");
       return res.redirect(`/fiction/${id}`);
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
     req.flash("error", "There was an error with this request");
     return res.redirect(`/fiction/`);
   }
@@ -199,14 +212,13 @@ module.exports.isAdminOrReviewPoster = async (req, res, next) => {
       return res.redirect("/fiction/");
     }
     if (user.isAdmin || review.poster.equals(req.user._id)) {
-      console.log("user is admin or poster");
       next();
     } else {
       req.flash("error", "You do not have permission to do that.");
       return res.redirect(`/fiction/${id}`);
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
     req.flash("error", "There was an error with this request");
     return res.redirect(`/fiction/`);
   }
@@ -217,13 +229,11 @@ module.exports.isAdminOrCollectionPoster = async (req, res, next) => {
     const user = await User.findById(req.user._id);
     const { collectionId } = req.params;
     const collection = await Collection.findById(collectionId);
-    console.log("this is the collection", collection);
     if (!collection) {
       req.flash("error", "Collection not found.");
       return res.redirect("/collections/");
     }
     if (user.isAdmin || collection.poster.equals(req.user._id)) {
-      console.log("user is admin or poster");
       next();
     } else {
       req.flash("error", "You do not have permission to do that.");
@@ -295,3 +305,54 @@ const resetPasswordLimiter = rateLimit({
 module.exports.limiter = loginlimiter;
 module.exports.userLimiter = userLimiter;
 module.exports.resetPasswordLimiter = resetPasswordLimiter;
+
+module.exports.validateUsername = async (req, res, next) => {
+  const filter = new BadWords();
+  const minLength = 2;
+  const maxLength = 30;
+  const alphanumericRegex = /^[a-z0-9]+$/i;
+  const reservedWords = ["admin", "moderator"];
+  const { username } = req.body;
+
+  if (!username) {
+    req.flash("error", "Username is required.");
+    return res.redirect("/register");
+  } else if (username.length < minLength) {
+    req.flash("error", "Username is too short.");
+    return res.redirect("/register");
+  } else if (username.length > maxLength) {
+    req.flash("error", "Username is too long.");
+    return res.redirect("/register");
+  } else if (!alphanumericRegex.test(username)) {
+    req.flash("error", "Username is not alphanumeric.");
+    return res.redirect("/register");
+  } else if (username.includes(" ")) {
+    req.flash("error", "Username contains spaces.");
+    return res.redirect("/register");
+  } else if (
+    reservedWords.some((word) => username.toLowerCase().includes(word))
+  ) {
+    req.flash("error", "Username contains a reserved word.");
+    return res.redirect("/register");
+  } else if (filter.isProfane(username)) {
+    req.flash(
+      "error",
+      "It looks like your username might contain inappropriate language. Please choose a different username."
+    );
+    return res.redirect("/register");
+  }
+
+  // If the username passes validation, proceed to the next middleware or route handler
+  next();
+};
+
+// I don't think I need this because I have validate username: also I haven't finished this middleware.
+// module.exports.validateUser = async (req, res, next) => {
+//   const { error } = User.validate(req.body);
+//   if (error) {
+//     const msg = error.details.map((el) => el.message).join(",");
+//     throw new ExpressError(msg, 400);
+//   } else {
+//     next();
+//   }
+// };
