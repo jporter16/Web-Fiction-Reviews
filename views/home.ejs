@@ -20,9 +20,20 @@
     />
     <link rel="stylesheet" href="stylesheets/home.css" />
   </head>
-  <body class="text-center text-white bg-dark">
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-2005HZ71DL" nonce="<%= nonce %>"></script>
+<script nonce="<%= nonce %>">
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-2005HZ71DL', { storage: "none" });
+</script>
+
+  <body class="text-white bg-dark">
     <%-include('./partials/navbar')%>
-    <div class="everything-else d-flex">
+    <div class=" text-center everything-else d-flex">
       
       <main class="px-3 col-8 offset-2">
         <h1 class="welcome" >Welcome to Web Fiction Reviews!</h1>

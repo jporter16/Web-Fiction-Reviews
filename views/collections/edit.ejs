@@ -68,6 +68,8 @@
               type="text"
               id="description"
               maxlength="2000"
+              minlength="1"
+              required
               name="collection[description]"
             >
 <%=collection.description%></textarea
@@ -92,22 +94,15 @@
           <br />
 
           <div class="mb-3">
-            <label class="" for="selected-stories"
-              >Search and Select stories:*</label
-            >
-            <input
-              class="form-control mb-2"
-              list="story-titles"
-              id="selected-stories"
-            />
-            <datalist id="story-titles">
+            <label class="" for="selected-stories">Select Stories:</label>
+            <select class = "form-control mb-2" id="selected-stories">
               <% storyList.forEach(function(story) { %>
-              <option value="<%= story.title %>" data-id="<%= story._id %>">
-                <%= story.title %>
-              </option>
+                <option value="<%= story.title %>" data-id="<%= story._id %>"><%= story.title %></option>
               <% }); %>
-            </datalist>
-            <small>*You may add up to 50 stories in a collection. You must add at least one story.</small>
+            </select>
+
+
+            <small>*You may add up to 50 stories in a collection.</small>
             <div id="checkbox-container" class="m-1">
               <%for (let story of collection.stories) {%> 
                 <div class = "">

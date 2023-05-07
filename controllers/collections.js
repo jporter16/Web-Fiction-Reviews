@@ -92,6 +92,10 @@ module.exports.renderCollections = async (req, res) => {
         return res.redirect("/collections");
       }
     }
+    if (queryMine !== true && queryMine !== false) {
+      queryMine = false;
+    }
+
     if (queryTitle) {
       queryTitle = decodeURIComponent(queryTitle);
       if (charactersToCheck.some((char) => queryTitle.includes(char))) {
@@ -154,6 +158,7 @@ module.exports.renderCollections = async (req, res) => {
 
     res.render("collections/index", {
       genreList,
+      queryMine,
       title,
       paginatedCollections,
       totalPages,

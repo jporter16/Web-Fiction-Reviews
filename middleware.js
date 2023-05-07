@@ -20,6 +20,7 @@ const Story = require("./models/fiction");
 const Review = require("./models/review");
 const User = require("./models/user");
 const Collection = require("./models/collection");
+const { builtinModules } = require("module");
 
 module.exports.isLoggedIn = (req, res, next) => {
   if (!req.isAuthenticated()) {
@@ -367,6 +368,13 @@ module.exports.validateUsername = async (req, res, next) => {
   }
 
   // If the username passes validation, proceed to the next middleware or route handler
+  next();
+};
+
+module.exports.generateNonce = (req, res, next) => {
+  // Generate a 16-byte random base64 string
+  const nonce = require("crypto").randomBytes(16).toString("base64");
+  res.locals.nonce = nonce;
   next();
 };
 

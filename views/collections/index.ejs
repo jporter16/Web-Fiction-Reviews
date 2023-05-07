@@ -111,17 +111,14 @@
     <ul class="pagination ">
     <% for(let i = 1; i <= totalPages; i++) { %>
     <li class="page-item <% if(currentPage == i) { %>active<% } %>">
-      <a class="page-link" href="/collections?page=<%= i %>"><%= i %></a>
+      <a class="page-link" href="/collections?title=<%=queryTitle%>&description=<%=queryDescription%>&tags=<%=matchedTags%>&mine=<%=queryMine%>&page=<%=i%>"><%= i %></a>
     </li>
     <% } %>
 
   </ul>
-  
 
-  <script>
 
-    const paginatedCollections = {features: <%-JSON.stringify(paginatedCollections)%>}
-  </script>
+
 </div>
 
 <script src="/javascripts/filterByTag.js"></script>

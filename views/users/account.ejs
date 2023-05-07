@@ -118,21 +118,15 @@
                 <% } %>
               </small>
             </p>
-
-            <a
-              class="btn btn-info card-link"
+            <div class="d-flex justify-content-center">
+              <a
+              class="btn btn-info card-links"
               href="/fiction/<%=story._id%>/edit"
               >Edit</a
             >
-            <form
-              action="/fiction/<%=story._id%>?_method=DELETE"
-              method="POST"
-              class="d-inline"
-            >
-              <button class="btn btn-danger" type="submit">
-                Delete this Story
-              </button>
-            </form>
+            </div>
+            
+         
           </div>
         </div>
       </div>
@@ -180,15 +174,6 @@
             <p class="card-text">Review: <%=review.body%></p>
             <p class="card-text">Upvotes: <%=review.upvotes.number%></p>
 
-            <br />
-            <form
-              action="/fiction/<%=review.reviewedStory._id%>/reviews/<%=review._id%>?_method=DELETE"
-              method="POST"
-              class="d-inline"
-            >
-              <button class="btn btn-danger">Delete this Review</button>
-            </form>
-
           </div>
         </div>
       </div>
@@ -200,7 +185,5 @@
 <% }%>
 
 </div>
-<script>
 
-</script>
 <script src = "javascripts/toggleOverlay.js"></script>

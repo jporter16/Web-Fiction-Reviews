@@ -46,7 +46,7 @@ selectedStories.addEventListener("change", () => {
 
 function getStoryIdByTitle(title) {
   const storyOption = Array.from(
-    document.querySelectorAll("#story-titles option")
+    document.querySelectorAll("#selected-stories option")
   ).find((option) => option.value === title);
   return storyOption ? storyOption.getAttribute("data-id") : null;
 }

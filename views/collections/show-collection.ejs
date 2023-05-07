@@ -57,9 +57,9 @@
 
 
 
-      <ul class="d-flex justify-content-center">
+      <ul class="d-flex justify-content-center p-0">
 
-        <li class="list-group-item mx-2">
+        <li class="list-group-item mx-1 mx-sm-2">
           <form
           method="POST" 
           action="/collections/<%=paginatedCollection._id%>/upvote?_method=PUT">
@@ -68,21 +68,21 @@
         </li>
         <% if (currentUser && paginatedCollection.poster &&
         paginatedCollection.poster._id.equals(currentUser._id)) { %>
-        <li class="list-group-item mx-2">
+        <li class="list-group-item mx-1 mx-sm-2">
           <a class="btn btn-sm btn-info card-link mx-2" href="/collections/<%=paginatedCollection._id%>/edit">
             Edit</a>
           <%}%> <% if(currentUser && paginatedCollection.poster &&
           paginatedCollection.poster._id.equals(currentUser._id)){ %>
         </li>
 
-        <li class="list-group-item mx-2">
+        <li class="list-group-item mx-1 mx-sm-2">
           <button class="btn btn-sm btn-danger" id="delete-story-button">
             Delete
           </button>
         </li>
         <%}%>
 
-        <li class="list-group-item mx-2">
+        <li class="list-group-item mx-1 mx-sm-2">
           <button class="btn btn-danger btn-sm" type="button" id="view-report-collection-form">Report</button>
           
       
@@ -159,8 +159,5 @@
 </ul>
 </div>
 
-<script>
 
-  const paginatedCollection = {features: <%-JSON.stringify(paginatedCollection)%>}
-</script>
 <script src="/javascripts/toggleHiddenDivCollectionPage.js"></script>

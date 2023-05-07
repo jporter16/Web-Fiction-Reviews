@@ -3,20 +3,15 @@
 // nothing populates. I think if I set it so there is always one review left, it will be fine.
 
 // CURRENT ISSUES to fix before going live:
-// consider adding confirm password for register.
-// Collections mobile story search options show up weirdly
-
-// javascript should stop new collection from being submitted if description is empty
+// the currentuser gets logged in console at some point-not sure why.
 // confirm account status updates in timely manner with newly verified user.
-// there is no confirmation option when you delete reviews (and stories) from account.
-// the tag dropdown doesn't scroll if the window is narrow.
-// the nav bar doesn't collapse properly.
-// extensively test username creation and capitalization (it should work)
 // add navigation to collections.
-// backup mongo db upgrade
 // add site map
 
 // FEATURES TO ADD EVENTUALLY
+// consider adding confirm password for register.
+// the tag dropdown doesn't scroll if the window is narrow (try iphone in developer view)
+
 // Spacing for reported stories admin buttons is off.
 
 // the flash alerts were out of sync sometimes but not lately.
@@ -84,6 +79,7 @@ const userRoutes = require("./routes/users");
 const fictionRoutes = require("./routes/fiction");
 const reviewRoutes = require("./routes/reviews");
 const collectionRoutes = require("./routes/collections");
+const middleware = require("./middleware.js");
 
 // const MongoStore = require("connect-mongo");
 
@@ -170,6 +166,8 @@ const styleSrcUrls = [
 // ];
 const fontSrcUrls = [];
 // app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
+
+app.use(middleware.generateNonce);
 app.use(
   helmet({
     crossOriginEmbedderPolicy: false,
@@ -177,14 +175,25 @@ app.use(
       directives: {
         defaultSrc: [],
         // connectSrc: ["'self'", ...connectSrcUrls],
-        scriptSrc: ["'unsafe-inline'", "'self'", ...scriptSrcUrls],
+        // I'm taking out unsafe inline. "'unsafe-inline'"
+        scriptSrc: [
+          "'self'",
+          ...scriptSrcUrls,
+          "https://www.googletagmanager.com",
+          "https://www.google-analytics.com",
+          (req, res) => `'nonce-${res.locals.nonce}'`,
+        ],
+
         styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
         workerSrc: ["'self'", "blob:"],
+        connectSrc: ["'self'", "https://www.google-analytics.com"],
         objectSrc: [],
         imgSrc: [
           "'self'",
           "blob:",
           "data:",
+          "https://www.googletagmanager.com",
+          "https://www.google-analytics.com",
           "https://res.cloudinary.com/dj3dni7xt/", //SHOULD MATCH YOUR CLOUDINARY ACCOUNT!
           "https://images.unsplash.com/",
         ],
