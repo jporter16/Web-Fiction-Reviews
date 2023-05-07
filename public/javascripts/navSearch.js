@@ -4,7 +4,7 @@ if (navForm) {
     e.preventDefault();
     const formData = new FormData(navForm);
     const title = formData.get("filter[title]");
-    const url = new URL("http://localhost:3000/fiction");
+    const url = new URL("https://www.webfictionreviews.com/fiction");
     const charactersToCheck = ["<", ">", "&", "'", `"`, `/`, "$"];
 
     url.searchParams.set("title", encodeURIComponent(title));

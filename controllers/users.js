@@ -164,7 +164,6 @@ module.exports.renderAdmin = async (req, res, next) => {
         model: "ReportReview",
         populate: {
           path: "poster",
-          select: "email",
           select: "username displayName email",
         },
       });

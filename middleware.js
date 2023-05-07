@@ -236,10 +236,34 @@ module.exports.isAdminOrCollectionPoster = async (req, res, next) => {
     if (user.isAdmin || collection.poster.equals(req.user._id)) {
       next();
     } else {
-      req.flash("error", "You do not have permission to do that.");
-      return res.redirect(`/${collectionId}`);
+      req.flash("error", "You do not have permission to view that page.");
+      return res.redirect(`/collections`);
     }
   } catch (error) {
+    console.error(error);
+
+    req.flash("error", "There was an error with this request");
+    return res.redirect(`/collections`);
+  }
+};
+
+module.exports.collectionIsPublic = async (req, res, next) => {
+  try {
+    const { collectionId } = req.params;
+    const collection = await Collection.findById(collectionId);
+    if (!collection) {
+      req.flash("error", "Collection not found.");
+      return res.redirect("/collections/");
+    }
+    if (collection.public === true) {
+      next();
+    } else {
+      module.exports.isLoggedIn(req, res, () => {
+        module.exports.isAdminOrCollectionPoster(req, res, next);
+      });
+    }
+  } catch (error) {
+    console.error(error);
     req.flash("error", "There was an error with this request");
     return res.redirect(`/collections`);
   }

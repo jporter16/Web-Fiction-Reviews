@@ -3,13 +3,22 @@
 // nothing populates. I think if I set it so there is always one review left, it will be fine.
 
 // CURRENT ISSUES to fix before going live:
+// consider adding confirm password for register.
+// Collections mobile story search options show up weirdly
+
+// javascript should stop new collection from being submitted if description is empty
+// confirm account status updates in timely manner with newly verified user.
+// there is no confirmation option when you delete reviews (and stories) from account.
+// the tag dropdown doesn't scroll if the window is narrow.
+// the nav bar doesn't collapse properly.
 // extensively test username creation and capitalization (it should work)
 // add navigation to collections.
 // backup mongo db upgrade
-// figure out server options
 // add site map
 
 // FEATURES TO ADD EVENTUALLY
+// Spacing for reported stories admin buttons is off.
+
 // the flash alerts were out of sync sometimes but not lately.
 // I don't have schemas/middleware for reportReview.
 // consider adding webp to acceptable data formats for uploading files.(maybe add legion of nothing photo)
@@ -37,6 +46,7 @@
 // the fiction index page-and all search/filter pages--should limit description to maybe 100 words.
 
 // Other things:
+// I went through all the populates to make sure I'm never putting all the user information onto the screen.
 // I added middleware so you can only upvote reviews once.
 // I made sure all mongoose searches are wrapped in try/catch blocks.
 // I restricted user id to alphanumeric options

@@ -15,6 +15,7 @@ const {
   notCollectionUpvoter,
   isAdminOrCollectionPoster,
   validateReportCollection,
+  collectionIsPublic,
 } = require("../middleware");
 
 router
@@ -37,7 +38,7 @@ router.get("/new", isLoggedIn, isVerified, collections.renderNewForm);
 
 router
   .route("/:collectionId")
-  .get(catchAsync(collections.showCollection))
+  .get(collectionIsPublic, catchAsync(collections.showCollection))
   .delete(
     isLoggedIn,
     isVerified,

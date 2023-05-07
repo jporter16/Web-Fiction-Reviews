@@ -213,18 +213,15 @@ module.exports.showCollection = async (req, res) => {
     const skip = (currentPage - 1) * itemsPerPage;
     let totalStories;
 
-    const paginatedCollection = await Collection.findById(
-      collectionId
-    ).populate({
-      path: "stories",
-      populate: {
-        path: "poster",
-      },
-      options: {
-        skip: skip,
-        limit: itemsPerPage,
-      },
-    });
+    const paginatedCollection = await Collection.findById(collectionId)
+      .populate({
+        path: "stories",
+        options: {
+          skip: skip,
+          limit: itemsPerPage,
+        },
+      })
+      .populate({ path: "poster", select: "displayName" });
     // calculate the number of stories:
 
     try {

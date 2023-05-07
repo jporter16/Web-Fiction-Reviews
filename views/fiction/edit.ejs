@@ -48,9 +48,9 @@
               </legend>
               <div class = "genre-wrapper d-flex flex-column  flex-wrap"> 
               <% for (let tag of genreList) {%>
-                <div>
+                <div class="form-check">
                   <input
-                  class="form-check-input tag-check"
+                  class="form-check-input tag-check checkbox-large"
                   type="checkbox"
                   id= <%=tag%>
                   name="story[tags]"
@@ -122,7 +122,9 @@
             <br />
             <%})%>
           </div>
-          <div class="mb-3">
+          <div class="mb-3 d-flex justify-content-between">
+            <button type = "button" class="btn btn-info"><a class="text-decoration-none" style = "color: black" href="/fiction/<%=story._id%>">Cancel </a></button>
+
             <button class="btn btn-success">Update Story</button>
           </div>
         </form>

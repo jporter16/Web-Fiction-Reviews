@@ -12,7 +12,7 @@
   <p>Are you sure you want to delete this collection?</p>
   <div class="d-flex justify-content-between">
     <button class="btn-info btn btn-sm" id="closeDeleteStoryConfirmationDialog">
-      Don't Delete
+      Nevermind
     </button>
 
     <form
@@ -28,12 +28,12 @@
 <div class="row">
   <div class="col-md-2"></div>
   <div class="col-md-10">
-    <h1 class="text-center"><%=title%> (Collection)</h1>
+    <h1 class="text-center"><%=title%></h1>
+    <p class="text-center">Created by: <%=paginatedCollection.poster.displayName%></p>
+
   </div>
 </div>
 
-<div></div>
-<ul class="remove-padding">
   <%if (!paginatedCollection.stories.length>0) {%>
   <div class="row">
     <div class="col-md-2"></div>
@@ -46,7 +46,7 @@
   <div class="row">
     <div class="col-md-2"></div>
     <div class="col-md-10 mx-auto" >
-      <h4 class="text-center">Description:</h4>
+      <!-- <h4 class="text-center">Description:</h4> -->
       <p class="text-center"><%=paginatedCollection.description%></p>
       <p class="text-center">
         Tags: <%=paginatedCollection.tags.join(', ')%></p>
@@ -67,12 +67,12 @@
       </form>
         </li>
         <% if (currentUser && paginatedCollection.poster &&
-        paginatedCollection.poster.equals(currentUser._id)) { %>
+        paginatedCollection.poster._id.equals(currentUser._id)) { %>
         <li class="list-group-item mx-2">
           <a class="btn btn-sm btn-info card-link mx-2" href="/collections/<%=paginatedCollection._id%>/edit">
             Edit</a>
           <%}%> <% if(currentUser && paginatedCollection.poster &&
-          paginatedCollection.poster.equals(currentUser._id)){ %>
+          paginatedCollection.poster._id.equals(currentUser._id)){ %>
         </li>
 
         <li class="list-group-item mx-2">
@@ -145,7 +145,6 @@
     </div>
   </div>
   <%}%>
-</ul>
 
 <ul class="pagination">
   <% for(let i = 1; i <= totalPages; i++) { %>

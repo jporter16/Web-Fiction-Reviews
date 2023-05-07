@@ -21,7 +21,7 @@ db.once("open", () => {
   console.log("database connected");
 });
 
-const updateDatabase = async () => {
+const updateStoryPopularity = async () => {
   console.log("in update db");
 
   const allStories = await Story.find().populate("reviews");
@@ -51,20 +51,21 @@ const updateDatabase = async () => {
     );
   }
 };
-updateDatabase().then(() => {
-  setTimeout(() => {
-    mongoose.connection.close();
-  }, 6000);
-});
+// This should work.
+// updateStoryPopularity().then(() => {
+//   setTimeout(() => {
+//     mongoose.connection.close();
+//   }, 6000);
+// });
 
 // These two functions will work to update audience and warnings for all stories.
-// const updateDatabaseWarningsAndAudience = async () => {
-//   const allStories = await Story.find();
-//   const storyIds = allStories.map((story) => story._id);
-//   for (let i = 0; i < storyIds.length; i++) {
-//     await calculateAudienceAndWarnings(storyIds[i]);
-//   }
-// };
+const updateDatabaseWarningsAndAudience = async () => {
+  const allStories = await Story.find();
+  const storyIds = allStories.map((story) => story._id);
+  for (let i = 0; i < storyIds.length; i++) {
+    await calculateAudienceAndWarnings(storyIds[i]);
+  }
+};
 
 // updateDatabaseWarningsAndAudience().then(() => {
 //   setTimeout(() => {

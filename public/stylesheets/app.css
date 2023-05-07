@@ -144,7 +144,7 @@
   text-align: center;
 }
 .genre-wrapper {
-  max-height: 200px; /* The number of columns for larger screens */
+  max-height: 220px; /* The number of columns for larger screens */
 }
 /* this sets the pagination numbers at the bottom of the pages */
 .all-content-wrapper {
@@ -181,9 +181,13 @@ body {
   background-color: #f1f8ff;
 }
 
-@media screen and (max-width: 900px) {
+@media screen and (max-width: 910px) {
   .genre-wrapper {
-    max-height: 280px; /* Adjust the max-height for smaller screens */
+    max-height: 310px; /* Adjust the max-height for smaller screens */
+  }
+  .checkbox-large {
+    width: 20px; /* adjust this value to change the width of the checkbox */
+    height: 20px;
   }
 }
 /* This makes the nav bar fit: */

@@ -36,9 +36,9 @@
               <div
                 class="genre-wrapper d-flex flex-column flex-wrap">
                 <% for (let tag of genreList) {%>
-                <div>
+                <div class="form-check">
                   <input
-                    class="form-check-input tag-check"
+                    class="form-check-input checkbox-large tag-check"
                     type="checkbox"
                     id="<%=tag%>"
                     name="collection[tags]" value= "<%=tag%>" required />

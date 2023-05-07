@@ -8,7 +8,7 @@
   <div class="confirmation-dialog" id="deleteStoryConfirmationDialog" style="display: none;">
   <p>Are you sure you want to delete your account? This will delete all your reviews and collections.</p>
   <div class="d-flex justify-content-between">
-    <button class = "btn-info btn btn-sm" id="closeDeleteStoryConfirmationDialog">Don't Delete</button>
+    <button class = "btn-info btn btn-sm" id="closeDeleteStoryConfirmationDialog">Nevermind</button>
   
     <form
     action ="/account/<%=currentUser._id%>/?_method=Delete"
@@ -39,7 +39,7 @@
 <div class="card">
   <p class = 'm-3'>Username: <%=currentUser.displayName%></p>
   <p class = "m-3">Email: <%=currentUser.email%></p>
-  <p class = "m-3">Account Status: <% if (currentUser.verified === true) {%>
+  <p class = "m-3">Account Status: <% if (currentUser.isVerified === true) {%>
     <span>Verified</span> </p>
     <% } else { %>
       <span> Not Verified</span> </p>

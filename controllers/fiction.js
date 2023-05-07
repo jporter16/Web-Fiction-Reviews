@@ -226,6 +226,7 @@ module.exports.showStory = async (req, res) => {
         path: "reviews",
         populate: {
           path: "poster",
+          select: "displayName",
         },
         options: {
           sort: { "upvotes.number": -1 }, // sort by upvotes in descending order
@@ -233,7 +234,7 @@ module.exports.showStory = async (req, res) => {
           limit: itemsPerPage,
         },
       })
-      .populate("poster");
+      .populate({ path: "poster", select: "displayName" });
     // pass organized reviews-reviews ranked by upvotes.
 
     if (!story) {
