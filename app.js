@@ -239,12 +239,17 @@ app.use((req, res, next) => {
 });
 
 app.use("/", userRoutes);
+
 app.use("/fiction", fictionRoutes);
 app.use("/fiction/:id/reviews", reviewRoutes);
 app.use("/collections", collectionRoutes);
 
 app.get("/", (req, res) => {
   res.render("home");
+});
+
+app.get("/sitemap.xml", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "sitemap.xml"));
 });
 // get all stories
 
