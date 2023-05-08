@@ -6,7 +6,6 @@
 // the currentuser gets logged in console at some point-not sure why.
 // confirm account status updates in timely manner with newly verified user.
 // add navigation to collections.
-// add site map
 
 // FEATURES TO ADD EVENTUALLY
 // consider adding confirm password for register.

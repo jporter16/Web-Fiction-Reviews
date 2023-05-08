@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+      xmlns="https://www.sitemaps.org/schemas/sitemap/0.9"
+      xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="https://www.sitemaps.org/schemas/sitemap/0.9
+            https://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+
+
+<url>
+  <loc>https://www.webfictionreviews.com/</loc>
+  <lastmod>2023-05-08T00:00:31+00:00</lastmod>
+  <priority>1.00</priority>
+</url>
+<url>
+  <loc>https://www.webfictionreviews.com/fiction</loc>
+  <lastmod>2023-05-08T00:00:31+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.webfictionreviews.com/fiction?tags=Action</loc>
+  <lastmod>2023-05-08T00:00:31+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.webfictionreviews.com/fiction?tags=Adventure</loc>
+  <lastmod>2023-05-08T00:00:31+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.webfictionreviews.com/fiction?tags=Alternate%20Universe</loc>
+  <lastmod>2023-05-08T00:00:31+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.webfictionreviews.com/fiction?tags=Anti-hero</loc>
+  <lastmod>2023-05-08T00:00:31+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.webfictionreviews.com/fiction?tags=Contemporary</loc>
+  <lastmod>2023-05-08T00:00:31+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.webfictionreviews.com/fiction?tags=Comedy</loc>
+  <lastmod>2023-05-08T00:00:31+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.webfictionreviews.com/fiction?tags=Cultivation</loc>
+  <lastmod>2023-05-08T00:00:31+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.webfictionreviews.com/fiction?tags=Drama</loc>
+  <lastmod>2023-05-08T00:00:31+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.webfictionreviews.com/fiction?tags=Fantasy</loc>
+  <lastmod>2023-05-08T00:00:31+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.webfictionreviews.com/fiction?tags=Female%20Lead</loc>
+  <lastmod>2023-05-08T00:00:31+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.webfictionreviews.com/fiction?tags=Historical</loc>
+  <lastmod>2023-05-08T00:00:31+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.webfictionreviews.com/fiction?tags=Horror</loc>
+  <lastmod>2023-05-08T00:00:31+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.webfictionreviews.com/fiction?tags=litRPG</loc>
+  <lastmod>2023-05-08T00:00:31+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.webfictionreviews.com/fiction?tags=Martial%20Arts</loc>
+  <lastmod>2023-05-08T00:00:31+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.webfictionreviews.com/fiction?tags=Mystery</loc>
+  <lastmod>2023-05-08T00:00:31+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.webfictionreviews.com/fiction?tags=Reincarnation</loc>
+  <lastmod>2023-05-08T00:00:31+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.webfictionreviews.com/fiction?tags=Romance</loc>
+  <lastmod>2023-05-08T00:00:31+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.webfictionreviews.com/fiction?tags=Science%20Fiction</loc>
+  <lastmod>2023-05-08T00:00:31+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.webfictionreviews.com/fiction?tags=Slice%20of%20Life</loc>
+  <lastmod>2023-05-08T00:00:31+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.webfictionreviews.com/fiction?tags=Strategy</loc>
+  <lastmod>2023-05-08T00:00:31+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.webfictionreviews.com/fiction?tags=Time%20Travel</loc>
+  <lastmod>2023-05-08T00:00:31+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.webfictionreviews.com/fiction?tags=Virtual%20Reality</loc>
+  <lastmod>2023-05-08T00:00:31+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.webfictionreviews.com/login</loc>
+  <lastmod>2023-05-08T00:00:31+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.webfictionreviews.com/collections/</loc>
+  <lastmod>2023-05-08T00:00:31+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.webfictionreviews.com/guidelines</loc>
+  <lastmod>2023-05-08T00:00:31+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.webfictionreviews.com/register</loc>
+  <lastmod>2023-05-08T00:00:31+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+
+<url>
+  <loc>https://www.webfictionreviews.com/recover-username</loc>
+  <lastmod>2023-05-08T00:00:31+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://www.webfictionreviews.com/reset-password</loc>
+  <lastmod>2023-05-08T00:00:31+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+
+
+</urlset>
