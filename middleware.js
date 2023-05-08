@@ -21,6 +21,7 @@ const Review = require("./models/review");
 const User = require("./models/user");
 const Collection = require("./models/collection");
 const { builtinModules } = require("module");
+const { request } = require("http");
 
 module.exports.isLoggedIn = (req, res, next) => {
   if (!req.isAuthenticated()) {
@@ -285,7 +286,7 @@ const loginlimiter = rateLimit({
   handler: (req, res, next) => {
     // res.status(429).send("Too many login attempts. Please try again later.");
     req.flash("error", "Too many login attempts. Please try again later.");
-    res.redirect("/login");
+    return res.redirect("/login");
   },
 });
 
@@ -300,6 +301,23 @@ const userLimiter = rateLimit({
   max: 7, // maximum number of attempts
   // skipSuccessfulRequests: true,
   keyGenerator: (req) => req.body.username.toString(), // use the user ID as the rate limit key
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  handler: (req, res, next) => {
+    // res.status(429).send("Too many login attempts. Please try again later.");
+    req.flash("error", "Too many login attempts. Please try again later.");
+    res.redirect("/login");
+  },
+});
+const requestUsernameEmailLimiter = rateLimit({
+  store: new MongoStore({
+    uri: dbUrl, //
+    collectionName: "username-email-requests",
+    expireTimeMs: 5 * 60 * 1000,
+  }),
+  windowMs: 5 * 60 * 1000,
+  max: 7, // maximum number of attempts
+  // skipSuccessfulRequests: true,
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
   handler: (req, res, next) => {
@@ -330,6 +348,7 @@ const resetPasswordLimiter = rateLimit({
 module.exports.limiter = loginlimiter;
 module.exports.userLimiter = userLimiter;
 module.exports.resetPasswordLimiter = resetPasswordLimiter;
+module.exports.requestUsernameEmailLimiter = requestUsernameEmailLimiter;
 
 module.exports.validateUsername = async (req, res, next) => {
   const filter = new BadWords();

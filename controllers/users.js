@@ -253,7 +253,7 @@ module.exports.resetPassword = async (req, res) => {
     const user = await User.findById(req.params.id);
     if (!user) {
       req.flash("error", "Invalid link. Maybe the link expired?");
-      return res.redirect("/account");
+      return res.redirect("/login");
       // return res.status(400).send("Invalid link. Maybe the link expired?");
     }
 
@@ -264,7 +264,7 @@ module.exports.resetPassword = async (req, res) => {
     });
     if (!token) {
       req.flash("error", "Invalid link. Maybe the link expired?");
-      return res.redirect("/account");
+      return res.redirect("/login");
       // return res.status(400).send("Invalid link. Maybe the link expired?");
     }
 
@@ -294,16 +294,16 @@ module.exports.resetPassword = async (req, res) => {
       } catch (error) {
         console.error("user update failed");
         req.flash("error", "There was an error resetting your password");
-        res.redirect("/login");
+        return res.redirect("/login");
       }
     } else {
       req.flash("error", "Your email and account information do not match");
-      res.redirect("/login");
+      return res.redirect("/login");
     }
   } catch (e) {
     req.flash("error", "There was an error resetting your password");
     console.error(e);
-    res.redirect("/login");
+    return res.redirect("/login");
   }
 };
 
@@ -333,7 +333,7 @@ module.exports.sendResetPasswordLink = async (req, res) => {
     res.redirect("/fiction");
   } catch (e) {
     req.flash("error", e.message);
-    res.redirect("/fiction");
+    return res.redirect("/fiction");
   }
 };
 
@@ -344,7 +344,10 @@ module.exports.renderRecoverUsername = (req, res) => {
 module.exports.recoverUsername = async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email });
-
+    if (!user) {
+      req.flash("error", "That email does not exist in our database.");
+      return res.redirect("/login");
+    }
     const message = `Your WebFictionReviews username is: ${user.username}`;
     await sendEmail(user.email, "Recover Your Username", message);
 
@@ -352,10 +355,10 @@ module.exports.recoverUsername = async (req, res) => {
       "success",
       "An email has been sent to your account. Please check your spam folder if you do not see it."
     );
-    res.redirect("/login");
+    return res.redirect("/login");
   } catch (e) {
     req.flash("error", e.message);
-    res.redirect("/account");
+    return res.redirect("/login");
   }
 };
 
@@ -419,6 +422,6 @@ module.exports.deleteAccount = async (req, res) => {
   } catch (error) {
     console.error(error);
     req.flash("error", "There was an error deleting this account.");
-    return res.redirect("/account");
+    return res.redirect("/fiction");
   }
 };

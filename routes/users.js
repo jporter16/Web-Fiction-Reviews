@@ -16,6 +16,7 @@ const {
   userLimiter,
   resetPasswordLimiter,
   validateUsername,
+  requestUsernameEmailLimiter,
 } = require("../middleware");
 
 router
@@ -67,7 +68,11 @@ router.post(
 );
 
 router.get("/recover-username", users.renderRecoverUsername);
-router.post("/recover-username", users.recoverUsername);
+router.post(
+  "/recover-username",
+  requestUsernameEmailLimiter,
+  users.recoverUsername
+);
 
 router.get("/contact", isLoggedIn, users.renderContact);
 router.post("/contact", isLoggedIn, catchAsync(users.sendContactEmail));

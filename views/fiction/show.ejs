@@ -320,7 +320,7 @@ locals.description = locals.description.substring(0, locals.description.lastInde
       </div>
 
       <div class="form-group m-2">
-      <label class = "warning-label-report"  for="sexual-content"><h6>Sexual Content</h6></label>
+      <label class = "warning-label-report"  for="sexual-content"><h6>Sexual Content:</h6></label>
       <br/>
       <input class="rating-range" type="range" min="0" max="3" name="review[warnings][sexualContent]" id="sexual-content" value="0">
       <br/>
@@ -330,7 +330,7 @@ locals.description = locals.description.substring(0, locals.description.lastInde
         
       </div>
       <div class="form-group m-2">
-      <label class = "warning-label-report" for="audience"><h6>Estimated Target Audience</h6></label>
+      <label class = "warning-label-report" for="audience"><h6>Estimated Target Audience:</h6></label>
       <br/>
       <input class="rating-range" type="range" min="0" max="3" name="review[audience]" id="audience" value="0">
       <br/>
@@ -492,7 +492,7 @@ locals.description = locals.description.substring(0, locals.description.lastInde
       </div>
 
       <div class="form-group m-2">
-      <label class = "warning-label-report"  for="sexual-content-edit"><h6>Sexual Content</h6></label>
+      <label class = "warning-label-report"  for="sexual-content-edit"><h6>Sexual Content:</h6></label>
       <br/>
       <input class="rating-range" type="range" min="0" max="3" name="review[warnings][sexualContent]" id="sexual-content-edit" value="<%=review.warnings ? review.warnings.sexualContent : 0%>">
       <br/>
@@ -502,7 +502,7 @@ locals.description = locals.description.substring(0, locals.description.lastInde
         
       </div>
       <div class="form-group m-2">
-      <label class = "warning-label-report" for="audience-edit"><h6>Estimated Target Audience</h6></label>
+      <label class = "warning-label-report" for="audience-edit"><h6>Estimated Target Audience:</h6></label>
       <br/>
       <input class="rating-range" type="range" min="0" max="3" name="review[audience]" id="audience-edit" value="<%=review.audience%>">
       <br/>

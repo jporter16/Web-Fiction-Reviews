@@ -4,10 +4,14 @@
 
 // CURRENT ISSUES to fix before going live:
 // the currentuser gets logged in console at some point-not sure why.
-// confirm account status updates in timely manner with newly verified user.
-// add navigation to collections.
+// add register an account link to login.
 
 // FEATURES TO ADD EVENTUALLY
+// reword: a user with the given username is already registered.
+
+// add navigation to collections.
+// regardless of how long a description is, it cuts off the last word?
+
 // consider adding confirm password for register.
 // the tag dropdown doesn't scroll if the window is narrow (try iphone in developer view)
 
