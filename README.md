@@ -15,22 +15,19 @@
 <br />
 <div align="center">
   <a href="https://github.com/jporter16/Web-Fiction-Reviews">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+    <img src="public/images/webfiction-favicon-no-background.png" alt="Logo" width="80" height="80">
   </a>
 
 <h3 align="center">Web Fiction Reviews</h3>
 
   <p align="center">
-    project_description
     <br />
-    <a href="https://github.com/jporter16/Web-Fiction-Reviews"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/jporter16/Web-Fiction-Reviews"><strong>View the Code »</strong></a>
     <br />
-    <br />
-    <a href="https://github.com/jporter16/Web-Fiction-Reviews">View Demo</a>
+    <br />    
+    <a href="https://github.com/jporter16/Web-Fiction-Reviews/issues">Report a Bug</a>
     ·
-    <a href="https://github.com/jporter16/Web-Fiction-Reviews/issues">Report Bug</a>
-    ·
-    <a href="https://github.com/jporter16/Web-Fiction-Reviews/issues">Request Feature</a>
+    <a href="https://github.com/jporter16/Web-Fiction-Reviews/issues">Request a Feature</a>
   </p>
 </div>
 
@@ -68,7 +65,7 @@
 ## About The Project
 
 
-Web Fiction Reviews is a full-stack web app that provides a forum for users to review their favorite stories. Users can add new pages for stories, review stories, upvote reviews, and create collections of their favorite stories.
+Web Fiction Reviews is a full-stack web app that provides a forum for users to review their favorite stories that have been posted online. Users can add new pages for stories, review stories, upvote reviews, and create collections of their favorite stories.
 To test out the app, visit www.webfictionreviews.com
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -103,9 +100,9 @@ All rights reserved. This repository is available to view, but not to copy or re
 
 <!-- CONTACT -->
 ## Contact
+<p> Website: www.joelmporter.com</p>
+<p> LinkedIn: https://www.linkedin.com/in/joelmporter/</p>
 
-Website: www.joelmporter.com
-Project Link: [https://github.com/jporter16/Web-Fiction-Reviews]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
