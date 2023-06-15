@@ -81,15 +81,6 @@ To test out the app, visit www.webfictionreviews.com
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
-<!-- CONTRIBUTING -->
-## Contributing
-
-This project was built solely by Joel Porter.
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
 <!-- LICENSE -->
 ## License
 
