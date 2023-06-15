@@ -29,12 +29,6 @@ router
   );
 
 router.get("/new", isLoggedIn, isVerified, collections.renderNewForm);
-// router.get(
-//   "/my-collections",
-//   isLoggedIn,
-//   isVerified,
-//   collections.renderMyCollections
-// );
 
 router
   .route("/:collectionId")

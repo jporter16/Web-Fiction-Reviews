@@ -64,33 +64,3 @@ if (publicToggle && publicLabel) {
     publicLabel.innerText = "This collection is private";
   }
 }
-
-// limit the number of images you can upload on client side:
-// const fileInput = document.getElementById("inputGroupFile02");
-// if (fileInput) {
-//   fileInput.addEventListener("change", function () {
-//     // check to see if there are selected images already -eg in edit form
-//     const existingImagesNumber = fileInput.getAttribute("data-original-images");
-//     console.log("existing images", existingImagesNumber);
-//     if (!existingImagesNumber) {
-//       if (fileInput.files.length > 5) {
-//         const imageError = document.querySelector("#image-error");
-//         imageError.style.display = "block";
-//         fileInput.value = ""; // clear the file input
-//       } else {
-//         const imageError = document.querySelector("#image-error");
-//         imageError.style.display = "none";
-//       }
-//       // if we are in the edit page:
-//     } else {
-//       if (fileInput.files.length + parseInt(existingImagesNumber) > 5) {
-//         const imageError = document.querySelector("#image-error");
-//         imageError.style.display = "block";
-//         fileInput.value = ""; // clear the file input
-//       } else {
-//         const imageError = document.querySelector("#image-error");
-//         imageError.style.display = "none";
-//       }
-//     }
-//   });
-// }

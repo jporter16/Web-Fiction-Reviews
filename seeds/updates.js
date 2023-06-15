@@ -27,13 +27,6 @@ const updateStoryPopularity = async () => {
   const allStories = await Story.find().populate("reviews");
   console.log("after allStories db");
 
-  // for (let story of allStories) {
-  //   story.updateOne
-
-  //   await calculatePopularity(story._id);
-  //   console.log("in for loop");
-  // }
-
   for (let story of allStories) {
     const avgRating = story.ratingScore;
     const minNumRatings = 1;

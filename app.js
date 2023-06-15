@@ -1,61 +1,3 @@
-// This is where everything starts.
-// currently working on... There is a weird glitch on the admin page where if there are no reported reviews,
-// nothing populates. I think if I set it so there is always one review left, it will be fine.
-
-// CURRENT ISSUES to fix before going live:
-// the currentuser gets logged in console at some point-not sure why.
-// add register an account link to login.
-
-// FEATURES TO ADD EVENTUALLY
-// reword: a user with the given username is already registered.
-
-// add navigation to collections.
-// regardless of how long a description is, it cuts off the last word?
-
-// consider adding confirm password for register.
-// the tag dropdown doesn't scroll if the window is narrow (try iphone in developer view)
-
-// Spacing for reported stories admin buttons is off.
-
-// the flash alerts were out of sync sometimes but not lately.
-// I don't have schemas/middleware for reportReview.
-// consider adding webp to acceptable data formats for uploading files.(maybe add legion of nothing photo)
-// add feature-nav box of bread crumbs or random story/random collection button.
-// sometimes when you create a story it creates two?
-// improve collection appearance-add images to index.
-// When I delete a user and it deletes reviews, it doesn't update story data. (deleting a review individually does)
-// add pagination to account page.
-// fix leave a review for stories-put it in a clear form toggle.
-// create option to add to a a collection from a show page.
-// for an empty collection, the page numbers on the left are not at the bottom of the screen.
-// There are no limits to the number of times someone can report a story or review or collection.
-// add bootstrap backgrounds for cards
-// style the review form so it disappears when a button is pressed and reappears.
-// consider centering the review form.
-// currently I can post multiple reviews.
-// fix delete option--make it a form request like a report when reviews <<I think I did this.
-// update app.js cookies to say secure: true.
-// add a background?
-// replace buttons with larger clickable areas.
-// set expiration date for validation email
-// right now reviews cannot be edited only deleted.
-// add recaptcha for requesting email or username reset.
-// for security purposes user entered data (like username? should be filtered to exclude <>/ symbols)
-// the fiction index page-and all search/filter pages--should limit description to maybe 100 words.
-
-// Other things:
-// I went through all the populates to make sure I'm never putting all the user information onto the screen.
-// I added middleware so you can only upvote reviews once.
-// I made sure all mongoose searches are wrapped in try/catch blocks.
-// I restricted user id to alphanumeric options
-// I made sure is a limit to the number of images-I did this client side and the server side with Multer. technically not with when you edit a story.
-// I fixed it so validateReview doesn't crash on errors. ValidateStory never has.
-// I don't know why the story route middleware upload(array) goes before the validateStory. But it needs to go first or there is an error...
-// is there a difference between the language "remove report on this review" and "mark this report as responded" for a story.
-// NO sql injections are fixed by express-mongo-sanitize
-// sessions don't time out in db-I checked. They don't.
-// figure out whether to delete reviews when a story gets deleted--It does this.
-
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
@@ -134,9 +76,11 @@ const sessionConfig = {
   secret: secret,
   resave: false,
   saveUninitialized: true,
-  // secure: true
+  secure: true,
   cookie: {
     httpOnly: true,
+    sameSite: "strict",
+
     expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
     maxAge: 1000 * 60 * 60 * 24 * 7,
   },
@@ -161,12 +105,7 @@ const styleSrcUrls = [
   "https://use.fontawesome.com/",
   "https://cdn.jsdelivr.net/npm/",
 ];
-// const connectSrcUrls = [
-//   "https://api.mapbox.com/",
-//   "https://a.tiles.mapbox.com/",
-//   "https://b.tiles.mapbox.com/",
-//   "https://events.mapbox.com/",
-// ];
+
 const fontSrcUrls = [];
 // app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
 
@@ -177,8 +116,7 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         defaultSrc: [],
-        // connectSrc: ["'self'", ...connectSrcUrls],
-        // I'm taking out unsafe inline. "'unsafe-inline'"
+
         scriptSrc: [
           "'self'",
           ...scriptSrcUrls,
@@ -205,27 +143,6 @@ app.use(
     },
   })
 );
-// app.use(
-//   helmet.contentSecurityPolicy({
-//     directives: {
-//       defaultSrc: [],
-//       // connectSrc: ["'self'", ...connectSrcUrls],
-//       scriptSrc: ["'unsafe-inline'", "'self'", ...scriptSrcUrls],
-//       styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
-//       workerSrc: ["'self'", "blob:"],
-//       objectSrc: [],
-//       imgSrc: [
-//         "'self'",
-//         "blob:",
-//         "data:",
-//         "https://res.cloudinary.com/dj3dni7xt/", //SHOULD MATCH YOUR CLOUDINARY ACCOUNT!
-//         "https://images.unsplash.com/",
-//       ],
-//       fontSrc: ["'self'", ...fontSrcUrls],
-//     },
-//     // crossOriginEmbedderPolicy: false,
-//   })
-// );
 
 app.use(passport.initialize());
 app.use(passport.session());

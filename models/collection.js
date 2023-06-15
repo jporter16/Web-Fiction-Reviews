@@ -1,6 +1,4 @@
-const { number, boolean } = require("joi");
 const mongoose = require("mongoose");
-const Review = require("./review");
 const Schema = mongoose.Schema;
 
 const CollectionSchema = new Schema({

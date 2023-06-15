@@ -44,19 +44,27 @@ module.exports.isCurrentUser = async (req, res, next) => {
     }
   } catch (error) {
     console.error(error);
-    req.flash("error", "There was an finding your account.");
+    req.flash("error", "There was an error finding your account.");
   }
 };
 
 module.exports.isVerified = async (req, res, next) => {
-  const user = await User.findById(req.user._id);
-  if (!user.isVerified) {
-    req.flash("error", "You must verify your account first.");
-    console.error("not verified account");
-    return res.redirect(`/fiction/`);
-  }
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user.isVerified) {
+      req.flash("error", "You must verify your account first.");
+      console.error("not verified account");
+      return res.redirect(`/fiction/`);
+    }
 
-  next();
+    next();
+  } catch (error) {
+    console.error(error);
+    req.flash(
+      "error",
+      "There was an error checking if this account is verified."
+    );
+  }
 };
 
 module.exports.validateStory = (req, res, next) => {

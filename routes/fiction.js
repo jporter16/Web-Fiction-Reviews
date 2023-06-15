@@ -34,10 +34,6 @@ router
     catchAsync(stories.createStory)
   );
 
-// .post(upload.array("image"), async (req, res) => {
-//   await console.log(req.body, req.files);
-//   res.send("it worked!");
-// });
 // create new story:
 router.get("/new", isLoggedIn, isVerified, stories.renderNewForm);
 

@@ -73,39 +73,3 @@ function validateUser(username) {
 
   return validationResult;
 }
-
-// if (registerForm && usernameInput && usernameErrorMessage) {
-//     registerForm.addEventListener("submit", validateUsername);
-//   }
-
-// function validateUsername(event) {
-//   event.preventDefault();
-//   const username = usernameInput.value;
-//   usernameErrorMessage.classList.remove("hide");
-//   usernameErrorMessage.style.color = "red";
-
-//   const minLength = 2;
-//   const maxLength = 30;
-//   const alphanumericRegex = /^[a-z0-9]+$/i;
-//   const reservedWords = ["admin", "moderator"];
-
-//   if (username.length < minLength) {
-//     usernameErrorMessage.textContent = `Username must be ${minLength} characters or longer.`;
-//   } else if (username.length > maxLength) {
-//     console.error("Error: Username is too long.");
-//     usernameErrorMessage.textContent = `Username must be shorter than ${
-//       maxLength + 1
-//     } characters`;
-//   } else if (!alphanumericRegex.test(username)) {
-//     console.error("Error: Username must only include letters and numbers.");
-//     usernameErrorMessage.textContent = `Username can only include letters and numbers.`;
-//   } else if (username.includes(" ")) {
-//     usernameErrorMessage.textContent = `Username cannot include spaces`;
-//   } else if (
-//     reservedWords.some((word) => username.toLowerCase().includes(word))
-//   ) {
-//     usernameErrorMessage.textContent = `Username includes a reserved word.`;
-//   } else {
-//     console.log("Username is valid.");
-//   }
-// }

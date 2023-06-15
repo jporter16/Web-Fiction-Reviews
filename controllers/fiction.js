@@ -128,52 +128,6 @@ module.exports.renderNewForm = (req, res) => {
   res.render("fiction/new", { genreList });
 };
 
-// module.exports.renderTag = async (req, res) => {
-//   const { tag } = req.params;
-//   if (!databaseCalc.genreList.includes(tag)) {
-//     res.render("missingpage");
-//   } else {
-//     // const genreStories = await Fiction.find({
-//     //   tags: { $regex: new RegExp(genre, "i") },
-//     // });
-//     // to paginate this:
-//     const itemsPerPage = 10;
-//     const currentPage = req.query.page || 1;
-//     const skip = (currentPage - 1) * itemsPerPage;
-//     let totalStories;
-
-//     const paginatedStories = await Fiction.find({
-//       tags: { $regex: new RegExp(tag, "i") },
-//     })
-//       .sort({ popularity: -1, ratingScore: -1, title: 1 })
-//       .skip(skip)
-//       .limit(itemsPerPage);
-//     // calculate the number of stories:
-
-//     try {
-//       totalStories = await Fiction.countDocuments({
-//         tags: { $regex: new RegExp(tag, "i") },
-//       });
-//       console.log(`There are ${totalStories} items in the Fiction collection.`);
-//     } catch (err) {
-//       console.error(err);
-//       totalStories = 0;
-//     }
-
-//     const totalPages = Math.ceil(totalStories / itemsPerPage);
-//     console.log(totalPages, " TotalPages");
-//     console.log(currentPage, " currentPage");
-//     const title = tag;
-
-//     res.render("fiction/index", {
-//       paginatedStories,
-//       totalPages,
-//       currentPage,
-//       title,
-//     });
-//   }
-// };
-
 module.exports.renderSearch = async (req, res) => {
   const { tag, query } = req.params;
   const searchStories = await Fiction.find({
@@ -192,7 +146,6 @@ module.exports.createStory = async (req, res, next) => {
     filename: f.filename,
   }));
   story.poster = req.user._id;
-  // story.link = databaseCalc.cleanUrl(story.link);
   story.ratingScore = -1;
   story.reported = false;
   story.verifiedByAuthor = false;
@@ -253,9 +206,9 @@ module.exports.showStory = async (req, res) => {
     let rounded;
     if (story.audience > 0) {
       rounded = Math.round(story.audience);
-      if (rounded == 1) {
+      if (rounded === 1) {
         estimatedAudience = "E";
-      } else if (rounded == 2) {
+      } else if (rounded === 2) {
         estimatedAudience = "T";
       } else if (rounded === 3) {
         estimatedAudience = "M";

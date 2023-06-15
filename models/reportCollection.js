@@ -2,9 +2,18 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const reportCollectionSchema = new Schema({
-  body: String,
-  adminResponded: Boolean,
-  adminAccepted: Boolean,
+  body: {
+    type: String,
+    maxLength: 500,
+  },
+  adminResponded: {
+    type: Boolean,
+    default: false,
+  },
+  adminAccepted: {
+    type: Boolean,
+    default: false,
+  },
   reportedCollection: {
     type: Schema.Types.ObjectId,
     ref: "Collection",

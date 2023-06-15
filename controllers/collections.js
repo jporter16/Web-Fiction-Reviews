@@ -2,50 +2,12 @@ const { request } = require("express");
 const Fiction = require("../models/fiction");
 const ReportStory = require("../models/reportStory");
 const ReportCollection = require("../models/reportCollection");
-const { cloudinary } = require("../cloudinary");
 const databaseCalc = require("./databaseCalculations");
 const Review = require("../models/review");
 const User = require("../models/user");
 const Collection = require("../models/collection");
 const { reportCollectionSchema } = require("../schemas");
 const validator = require("validator");
-
-// // collections:
-// module.exports.renderOldCollections = async (req, res) => {
-//   // to paginate this:
-//   const itemsPerPage = 10;
-//   const currentPage = req.query.page || 1;
-//   const skip = (currentPage - 1) * itemsPerPage;
-//   let totalCollections;
-
-//   const paginatedCollections = await Collection.find({ public: true })
-//     .sort({ upvotes: -1, title: 1 })
-//     .skip(skip)
-//     .limit(itemsPerPage);
-//   // calculate the number of stories:
-
-//   try {
-//     totalCollections = await Collection.find({ public: true }).countDocuments();
-//     console.log(`There are ${totalCollections} collections altogether.`);
-//   } catch (err) {
-//     console.error(err);
-//     totalCollections = 0;
-//   }
-
-//   const totalPages = Math.ceil(totalCollections / itemsPerPage);
-//   console.log(totalPages, " TotalPages");
-//   console.log(currentPage, " currentPage");
-
-//   const genreList = databaseCalc.genreList;
-//   const title = "Public Collections";
-//   res.render("collections/index", {
-//     genreList,
-//     title,
-//     paginatedCollections,
-//     totalPages,
-//     currentPage,
-//   });
-// };
 
 module.exports.renderCollections = async (req, res) => {
   // default to public collections. Query determines private list instead.
@@ -184,7 +146,6 @@ module.exports.createCollection = async (req, res, next) => {
   try {
     const collection = new Collection(req.body.collection);
     collection.poster = req.user._id;
-    // story.link = databaseCalc.cleanUrl(story.link);
     collection.upvotes = { number: 0, upvoters: [] };
     if (!req.body.collection.public) {
       collection.public = false;

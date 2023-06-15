@@ -171,7 +171,6 @@ module.exports.renderAdmin = async (req, res, next) => {
     const requestToDeleteStories = await Fiction.find({ requestDelete: true });
 
     let storiesWithUnrespondedReports = [];
-    // console.log(reportedStories, "reportedStories");
     for (let i = 0; i < reportedStories.length; i++) {
       for (let j = 0; j < reportedStories[i].reportList.length; j++) {
         if (reportedStories[i].reportList[j].adminResponded === false) {
@@ -190,8 +189,6 @@ module.exports.renderAdmin = async (req, res, next) => {
         }
       }
     }
-    // console.log(reviewsWithUnrespondedReports, "unresponded report reviews");
-    // console.log(reviewsWithUnrespondedReports[0].reportList, "list of reports");
 
     res.render("users/admin", {
       pendingStories,
